@@ -146,7 +146,7 @@ For all three, $H_0:$ the group variances are equal, vs. $H_1:$ they are not. A 
 ### Decision Summary
 
 | Question | Test to use if assumption holds | Test to use if normality assumption is violated |
-|:---|:---|:---|
+|:-----------------------|:-----------------------|:-----------------------|
 | Compare 1 sample mean to a fixed value | One-sample t-test (or z-test if $\sigma$ known) | Wilcoxon signed-rank test |
 | Compare 2 independent group means | Student's t-test (equal variance) | Welch's t-test (unequal variance) or Mann-Whitney U (non-normal) |
 | Compare paired/matched measurements | Paired t-test | Wilcoxon signed-rank test |
@@ -309,7 +309,7 @@ $$ H_0: \mu_1=\mu_2=\dots=\mu_g \qquad \text{vs.} \qquad H_1: \text{at least one
 Total variability is partitioned into a between-groups and a within-groups component, exactly as in the regression ANOVA table (Numerical data analysis chapter):
 
 | Source | df | SS | MS | F |
-|:---|:--:|:--:|:--:|:--:|
+|:--------------|:-------------:|:-------------:|:-------------:|:-------------:|
 | Between groups | $g-1$ | $SS_{Between}=\sum n_i(\bar x_i-\bar x)^2$ | $SS_{Between}/(g-1)$ | $F_0=MS_{Between}/MS_{Within}$ |
 | Within groups | $N-g$ | $SS_{Within}=\sum\sum(x_{ij}-\bar x_i)^2$ | $SS_{Within}/(N-g)$ |  |
 | Total | $N-1$ | $SS_{Total}$ |  |  |
@@ -499,7 +499,7 @@ DescTools::MeanCI(x = data$bmi, sd = sd(data$bmi), conf.level = 0.95,sides = "tw
 ## Summary Table: Choosing the Right Test
 
 | Design | Parametric test | Non-parametric alternative |
-|:---|:---|:---|
+|:-----------------------|:-----------------------|:-----------------------|
 | 1 sample vs. fixed value | One-sample t-test (or z-test if $\sigma$ known) | Wilcoxon signed-rank test |
 | 2 independent groups | Student's t-test (equal var.) / Welch's t-test (unequal var.) | Mann-Whitney U / Wilcoxon rank-sum test |
 | 2 paired/matched measurements | Paired t-test | Wilcoxon signed-rank test (on the differences) |

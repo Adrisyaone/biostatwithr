@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Introduction to Biostatistics – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Section2/02_measures_central_tendency.html" rel="next">
+<link href="../section1/chapter6/04_graphics.html" rel="prev">
+<link href="../cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html"><span class="chapter-title">Introduction to Biostatistics</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone/epidemiologyR.git" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Biostatistics-with-R.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Biostatistics-with-R.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter5/04_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter6/04_graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Selection of Graphics for data presentation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/01_introduction_descriptive_statistics.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/02_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/03_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/04_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/07_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Numerical data analysis/06_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Categorical data analysis/Categorical_data_analysis2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Count data analysis/Poisson's regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Survival analysis/Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Sample size calculation/Sample size calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#a-brief-history-of-biostatistics" id="toc-a-brief-history-of-biostatistics" class="nav-link active" data-scroll-target="#a-brief-history-of-biostatistics">A brief history of Biostatistics</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#importance-of-biostatistics" id="toc-importance-of-biostatistics" class="nav-link" data-scroll-target="#importance-of-biostatistics"><strong>Importance of Biostatistics</strong></a></li>
+  <li><a href="#scope-of-biostatistics" id="toc-scope-of-biostatistics" class="nav-link" data-scroll-target="#scope-of-biostatistics">Scope of Biostatistics</a></li>
+  <li><a href="#types-of-biostatistics" id="toc-types-of-biostatistics" class="nav-link" data-scroll-target="#types-of-biostatistics">Types of Biostatistics</a></li>
+  </ul></li>
+  <li><a href="#types-of-data" id="toc-types-of-data" class="nav-link" data-scroll-target="#types-of-data">Types of Data</a>
+  <ul class="collapse">
+  <li><a href="#qualitative-categorical-data" id="toc-qualitative-categorical-data" class="nav-link" data-scroll-target="#qualitative-categorical-data">Qualitative (Categorical) Data</a></li>
+  <li><a href="#quantitative-numerical-data" id="toc-quantitative-numerical-data" class="nav-link" data-scroll-target="#quantitative-numerical-data">Quantitative (Numerical) Data</a></li>
+  </ul></li>
+  <li><a href="#population-vs.-sample" id="toc-population-vs.-sample" class="nav-link" data-scroll-target="#population-vs.-sample">Population vs.&nbsp;Sample</a></li>
+  <li><a href="#variables" id="toc-variables" class="nav-link" data-scroll-target="#variables">Variables</a>
+  <ul class="collapse">
+  <li><a href="#classification-of-variables" id="toc-classification-of-variables" class="nav-link" data-scroll-target="#classification-of-variables">Classification of Variables</a></li>
+  </ul></li>
+  <li><a href="#scales-of-measurement" id="toc-scales-of-measurement" class="nav-link" data-scroll-target="#scales-of-measurement">Scales of Measurement</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/edit/main/Section2/01_introduction_descriptive_statistics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html"><span class="chapter-title">Introduction to Biostatistics</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Introduction to Biostatistics</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="a-brief-history-of-biostatistics" class="level2">
+<h2 class="anchored" data-anchor-id="a-brief-history-of-biostatistics">A brief history of Biostatistics</h2>
+<p>Biostatistics developed through a long-running tension between <strong>continuity and change</strong>. The continuity derives from focusing on the group rather than the clinically distinct individual. The change derives from developments in statistical theory that have led to more sophisticated analyses<span class="citation" data-cites="matthews2016">(<a href="#ref-matthews2016" role="doc-biblioref">Matthews 2016</a>)</span>.</p>
+<p><strong>Ancient precedents.</strong> The Hippocratic treatise <em>On Airs, Waters, and Places</em> (c.&nbsp;400 BCE) linked seasonal climate changes to disease patterns. It was a qualitative work but it looked beyond individual and suggested geographical and environmental factor’s role. It relied on naturalistic explaination rather than using dieties to account for illness. Another ancient forerunner of contemporary clinical trials is discussed in the Bible’s Book of Daniel. In this book, King Nebuchadnezzar of Babylon wanted some subjects to eat only meat and wine, and other jewish chidren to eat legumes and water for 10 days. Though this experiment was informal and did not use any comparative testing but they used comparison to test efficacy of a dietary intervention<span class="citation" data-cites="matthews2016">(<a href="#ref-matthews2016" role="doc-biblioref">Matthews 2016</a>)</span>.</p>
+<p><strong>18th century.</strong> Smallpox inoculation debates introduced early risk-benefit reasoning. John Arbuthnot (1722) used mortality data to argue inoculation reduced death rates tenfold<span class="citation" data-cites="rusnock2002">(<a href="#ref-rusnock2002" role="doc-biblioref">Rusnock 2002</a>)</span>. Later, Daniel Bernoulli and Jean d’Alembert clashed over whether probability math could capture real human decision-making around risk<span class="citation" data-cites="rusnock2002">(<a href="#ref-rusnock2002" role="doc-biblioref">Rusnock 2002</a>)</span>. Separately, ship’s surgeon James Lind ran what’s regarded as the first true controlled clinical trial in 1757: dividing 12 scurvy-stricken sailors into six paired groups with differing diets, finding citrus fruit clearly superior<span class="citation" data-cites="collier2009">(<a href="#ref-collier2009" role="doc-biblioref">Collier 2009</a>)</span>.</p>
+<p><strong>19th century.</strong> Pierre-Charles-Alexandre Louis pioneered the “numerical method,” using hospital data to show bloodletting increased mortality, arguing statistics should replace physicians’ intuitive judgment. Critics like Risueño d’Amador and François Double countered that population averages couldn’t predict outcomes for any individual patient, a debate over whether medicine should serve scientific knowledge or personalized care. Jules Gavarret then added mathematical rigor, showing Louis’s results carried what we’d now call a confidence interval, prescient work that nonetheless failed to gain contemporary followers, leaving disputes over statistical evidence unresolved for decades.</p>
+<p><strong>Founding the modern clinical trial.</strong> Karl Pearson’s Biometric School (UCL, 1893) formalized statistical techniques like correlation and goodness-of-fit testing and pushed their use in medicine. His student Major Greenwood became the first professor of epidemiology and vital statistics <span class="citation" data-cites="farewell2016">(<a href="#ref-farewell2016" role="doc-biblioref">Farewell and Johnson 2016</a>)</span>. Greenwood’s own student, Austin Bradford Hill, designed the 1946 streptomycin tuberculosis trial, the first to use formal randomization, and later developed the Bradford Hill Criteria (1965) for judging whether an association reflects true causation<span class="citation" data-cites="doll1992">(<a href="#ref-doll1992" role="doc-biblioref">Doll 1992</a>)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Pictures/Karl Pearson.png" class="img-fluid figure-img"></p>
+<figcaption>Karl Pearson (1857-1936)</figcaption>
+</figure>
+</div>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Biostatistics is the branch of statistics concerned with the collection, organization, analysis, interpretation, and presentation of data arising from the biological and health sciences, including medicine, epidemiology, public health, biology, and pharmacology. It applies mathematical and statistical principles to design studies, summarize data, test hypotheses, and draw valid conclusions about health-related phenomena — ranging from the effectiveness of a new drug to the spread of an infectious disease across a population. At its core, biostatistics provides the quantitative framework that allows researchers to distinguish real, meaningful patterns in health data from patterns that could plausibly have occurred by chance alone.</p>
+<section id="importance-of-biostatistics" class="level3">
+<h3 class="anchored" data-anchor-id="importance-of-biostatistics"><strong>Importance of Biostatistics</strong></h3>
+<p>Think of <strong>biostatistics</strong> as the backbone of modern medicine and public health. Without it, most of what we know about diseases, treatments, and health policies would just be guesswork. Here’s why it matters:</p>
+<ul>
+<li><p>It builds evidence-based medicine. Every time a doctor prescribes a drug based on “proven effectiveness,” biostatistics is behind that proof.</p></li>
+<li><p>It separates real effects from chance. A patient may improve after treatment but was it the drug, or just luck? Statistics tells us the difference.</p></li>
+<li><p>It helps design better research. Before a study even begins, biostatistics decides how many people are needed, how they should be grouped, and how bias can be avoided.</p></li>
+<li><p>It powers public health planning. Governments use disease rates, death rates, and survey data to decide where hospitals, vaccines, or health campaigns are most needed.</p></li>
+<li><p>It ensures new drugs are safe. Regulatory bodies like the FDA require statistical proof before approving any new medicine or vaccine.</p></li>
+<li><p>It helps track and control epidemics. During outbreaks (like COVID-19), statistical models are used to predict spread and evaluate control measures.</p></li>
+<li><p>It supports personalized treatment. By analyzing patterns in patient data, statistics helps doctors predict who is at higher risk and tailor treatment accordingly.</p></li>
+</ul>
+</section>
+<section id="scope-of-biostatistics" class="level3">
+<h3 class="anchored" data-anchor-id="scope-of-biostatistics">Scope of Biostatistics</h3>
+<p>Biostatistics is a vast field, touching almost every stage of medical and health research. Its scope can be understood as a journey from planning a study to interpreting its results:</p>
+<ol type="1">
+<li><p><strong>Planning the Study</strong><br>
+Before any data is collected, biostatistics helps decide the best way to conduct research — whether through a cohort study, case-control study, or a randomized controlled trial.</p></li>
+<li><p><strong>Describing the Data</strong><br>
+Once data is collected, it needs to be summarized using averages, percentages, and simple charts, so that patterns are easy to see.</p></li>
+<li><p><strong>Drawing Conclusions</strong><br>
+This is where biostatistics answers the big question: “Is this result real, or just by chance?” Tools like hypothesis testing, p-values, and confidence intervals are used here.</p></li>
+<li><p><strong>Studying Disease Over Time</strong><br>
+Especially important in chronic disease research which looks at how long patients survive, or how long it takes for a disease event to occur, using tools like Kaplan-Meier curves.</p></li>
+<li><p><strong>Following People Over Time (Longitudinal Studies)</strong><br>
+Some diseases develop slowly, so researchers study the same people repeatedly over months or years, using specialized statistical models.</p></li>
+<li><p><strong>Measuring Disease in Populations</strong><br>
+This includes calculating rates of disease occurrence and figuring out risk factors — essential for public health decision-making.</p></li>
+<li><p><strong>Testing New Treatments</strong><br>
+Biostatistics guides every phase of drug and vaccine testing from calculating the right sample size to monitoring safety during the trial.</p></li>
+<li><p><strong>Handling Complex Surveys</strong><br>
+National health surveys often use special sampling methods. Biostatistics ensures the results still represent the whole population accurately.</p></li>
+<li><p><strong>Modern Applications</strong><br>
+Today, biostatistics also supports genetic research and machine learning tools used for predicting disease risk.</p></li>
+</ol>
+</section>
+<section id="types-of-biostatistics" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-biostatistics">Types of Biostatistics</h3>
+<p>Biostatistics is broadly divided into two major types: <strong>descriptive</strong> and <strong>analytical (or inferential) statistics</strong>.</p>
+<section id="descriptive-statistics" class="level4">
+<h4 class="anchored" data-anchor-id="descriptive-statistics">Descriptive Statistics</h4>
+<p>Descriptive statistics refers to the set of methods used to organize, summarize, and present data in a clear and meaningful way, without drawing conclusions that go beyond the data itself.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Definition:</strong> Descriptive statistics is the branch of statistics concerned with <strong>summarizing, organizing, and presenting</strong> data using numbers, tables, and graphs, so that the essential features of a data set can be understood quickly and accurately.</p>
+</div>
+</div>
+</div>
+<p>Descriptive statistics answers questions such as:</p>
+<ul>
+<li>What is the “typical” value in this data set? (measures of central tendency)</li>
+<li>How spread out or variable are the observations? (measures of dispersion)</li>
+<li>What is the shape of the distribution? Is it symmetric or skewed?</li>
+<li>How are categorical characteristics distributed across groups?</li>
+</ul>
+<p>Descriptive statistics is contrasted with <strong>inferential statistics</strong>, which uses sample data to draw conclusions, make predictions, or test hypotheses about a larger population (covered later in this book, beginning with Section 9). Descriptive statistics is almost always the <strong>first step</strong> in any statistical analysis before we can test hypotheses or build models, we must understand the basic structure of our data.</p>
+<p><strong>Example (Public Health):</strong> Suppose a health department records the systolic blood pressure of 200 adults attending a community screening. Before running any hypothesis test, we would first describe the data: What is the mean blood pressure? What is the range? How many participants have blood pressure above 140 mmHg? These are all descriptive statistics questions.</p>
+<p><strong>Importance of Descriptive Statistics in Public Health</strong></p>
+<p>Descriptive statistics is foundational to public health practice and research for several reasons:</p>
+<ol type="1">
+<li><strong>Surveillance:</strong> Public health surveillance systems (e.g., disease registries, vital statistics) rely on descriptive statistics — incidence rates, prevalence, mortality rates — to monitor population health over time.</li>
+<li><strong>Needs assessment:</strong> Descriptive statistics identify which populations are most affected by a disease or risk factor, guiding resource allocation.</li>
+<li><strong>Hypothesis generation:</strong> Patterns observed in descriptive data (e.g., a cluster of cases in a geographic area) often generate hypotheses that are later tested using inferential statistics.</li>
+<li><strong>Communication:</strong> Tables, graphs, and summary numbers translate complex data into a form that policymakers, clinicians, and the public can understand.</li>
+<li><strong>Quality control and monitoring:</strong> Hospitals and health systems use descriptive statistics (e.g., average length of stay, infection rates) to monitor quality of care.</li>
+<li><strong>Baseline for comparison:</strong> Before evaluating an intervention, descriptive statistics establish a baseline against which post-intervention data can be compared.</li>
+</ol>
+<p><strong>Applications of Descriptive Statistics</strong></p>
+<p>Common applications encountered in biostatistics and epidemiology include:</p>
+<ul>
+<li>Summarizing <strong>demographic characteristics</strong> of a study population in a “Table 1” of a research paper (age, sex, BMI, comorbidities).</li>
+<li>Calculating <strong>prevalence</strong> and <strong>incidence</strong> of diseases in a population.</li>
+<li>Describing the <strong>distribution of a biomarker</strong> (e.g., mean and SD of fasting glucose in a diabetes study).</li>
+<li>Creating <strong>epidemic curves</strong> to show the number of new cases of a disease over time during an outbreak.</li>
+<li>Producing <strong>choropleth maps</strong> showing the geographic distribution of disease rates.</li>
+<li>Reporting <strong>vaccination coverage</strong> rates across regions or age groups.</li>
+<li>Summarizing <strong>clinical trial</strong> baseline characteristics before comparing treatment arms.</li>
+</ul>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Descriptive statistics <strong>describes</strong> the data you have; it does <strong>not</strong> allow you to generalize findings to a broader population with a stated level of confidence which is done by analutical statistics. That is the role of inferential statistics, introduced starting in Section 9 of this chapter. Confusing the two — for example, treating a sample mean as if it were the population mean without accounting for sampling variability — is a common and important error to avoid.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="analytical-inferential-statistics" class="level4">
+<h4 class="anchored" data-anchor-id="analytical-inferential-statistics"><strong>Analytical (inferential) statistics</strong></h4>
+<p>Analytical statistics by contrast, goes further by using sample data to draw conclusions, make predictions, or test hypotheses about a larger population. This branch includes techniques such as hypothesis testing, confidence interval estimation, regression analysis, survival analysis, and analysis of variance (ANOVA). Analytical statistics allow researchers to determine, for example, whether a difference in recovery rates between two treatment groups is statistically significant or likely due to chance, or to estimate the strength and direction of the relationship between a risk factor and a health outcome. Because analytical methods involve making inferences beyond the observed data, they require careful attention to study design, sample size, and the assumptions underlying each statistical test reinforcing why the historical development of rigorous statistical reasoning, discussed earlier, remains so central to sound biomedical research today.</p>
+<p><strong>Importance of Analytical Statistics</strong></p>
+<ul>
+<li><p><strong>Tests hypotheses scientifically</strong> – helps confirm or reject assumptions using objective, mathematical methods rather than opinion or observation alone.</p></li>
+<li><p><strong>Establishes cause-and-effect relationships</strong> – helps identify whether a risk factor (like smoking) is actually associated with a disease outcome (like lung cancer).</p></li>
+<li><p><strong>Reduces the role of chance and bias</strong> – through significance testing (p-values, confidence intervals), it tells us whether a result is likely real or just random variation.</p></li>
+<li><p><strong>Supports decision-making in medicine</strong> – guides whether a new drug, vaccine, or intervention should be adopted based on solid proof of effectiveness.</p></li>
+<li><p><strong>Allows generalization</strong> – lets researchers apply conclusions from a small sample to a larger population with a known degree of confidence.</p></li>
+<li><p><strong>Strengthens research validity</strong> – proper analytical methods control for confounding factors and bias, making study results more trustworthy.</p></li>
+<li><p><strong>Helps compare groups</strong> – enables comparison between treatment vs.&nbsp;control groups, exposed vs.&nbsp;unexposed populations, etc.</p></li>
+<li><p><strong>Improves resource allocation</strong> – governments and health organizations use analytical findings to prioritize where funding and interventions are most needed.</p></li>
+<li><p><strong>Enables risk prediction</strong> – helps calculate the probability of disease occurrence based on various risk factors.</p></li>
+<li><p><strong>Forms the basis of evidence-based practice</strong> – nearly every clinical guideline is built on findings validated through analytical statistical methods.</p></li>
+</ul>
+<p><strong>Applications of Analytical Statistics</strong></p>
+<ol type="1">
+<li><strong>Hypothesis Testing</strong><br>
+Used to test whether a new treatment is significantly better than an existing one (e.g., t-test, chi-square test, ANOVA).</li>
+<li><strong>Measures of Association</strong><br>
+Calculating relative risk, odds ratio, and attributable risk to understand how strongly a factor is linked to a disease.</li>
+<li><strong>Regression Analysis</strong><br>
+Used to study the relationship between one outcome and multiple risk factors simultaneously (linear, logistic, Cox regression).</li>
+<li><strong>Correlation Analysis</strong><br>
+Determines whether two variables (e.g., blood pressure and age) move together, and how strongly.</li>
+<li><strong>Survival Analysis</strong><br>
+Applied in chronic disease and cancer research to study time-to-event outcomes, like time until death or relapse.</li>
+<li><strong>Epidemiological Study Designs</strong><br>
+Used in cohort and case-control studies to identify risk factors and calculate disease association.</li>
+<li><strong>Clinical Trials</strong><br>
+Applied to test whether new drugs or vaccines produce statistically significant improvements over placebo or standard treatment.</li>
+<li><strong>Quality Control in Public Health Programs</strong><br>
+Used to monitor whether a health intervention (like a vaccination drive) is producing the intended effect at a population level.</li>
+<li><strong>Predictive Modeling</strong><br>
+Helps forecast disease outbreaks or identify high-risk individuals using statistical/machine learning models.</li>
+<li><strong>Survey Data Analysis</strong><br>
+Applied in large-scale health surveys to draw valid conclusions while accounting for complex sampling designs.</li>
+</ol>
+</section>
+</section>
+</section>
+<section id="types-of-data" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-data">Types of Data</h2>
+<p>Data collected in biostatistics and epidemiology generally fall into two broad categories: <strong>qualitative (categorical)</strong> and <strong>quantitative (numerical)</strong> data.</p>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    A[Types of Data] --&gt; B[Qualitative / Categorical]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    A --&gt; C[Quantitative / Numerical]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    B --&gt; B1[Nominal]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    B --&gt; B2[Ordinal]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    C --&gt; C1[Discrete]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    C --&gt; C2[Continuous]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[Types of Data] --&gt; B[Qualitative / Categorical]
+    A --&gt; C[Quantitative / Numerical]
+    B --&gt; B1[Nominal]
+    B --&gt; B2[Ordinal]
+    C --&gt; C1[Discrete]
+    C --&gt; C2[Continuous]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="qualitative-categorical-data" class="level3">
+<h3 class="anchored" data-anchor-id="qualitative-categorical-data">Qualitative (Categorical) Data</h3>
+<p>Categorical data represent characteristics or attributes that place individuals into groups or categories. They cannot be meaningfully added, subtracted, or averaged.</p>
+<ul>
+<li><strong>Nominal data:</strong> Categories with no inherent order. Example: blood type (A, B, AB, O), sex, marital status, country of residence, vaccination status (vaccinated/unvaccinated).</li>
+<li><strong>Ordinal data:</strong> Categories with a meaningful order, but the intervals between categories are not necessarily equal. Example: cancer stage (I, II, III, IV), pain severity (mild, moderate, severe), socioeconomic status (low, middle, high), Likert scale responses (strongly disagree to strongly agree).</li>
+</ul>
+</section>
+<section id="quantitative-numerical-data" class="level3">
+<h3 class="anchored" data-anchor-id="quantitative-numerical-data">Quantitative (Numerical) Data</h3>
+<p>Numerical data represent measurable quantities and can be manipulated arithmetically.</p>
+<ul>
+<li><strong>Discrete data:</strong> Data that can take only specific, countable values (usually whole numbers), typically arising from counting. Example: number of children per household, number of hospital admissions per day, number of new COVID-19 cases per week, parity (number of live births).</li>
+<li><strong>Continuous data:</strong> Data that can take any value within a range, typically arising from measurement. Example: height, weight, blood pressure, serum cholesterol level, BMI, gestational age.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>A useful rule of thumb: if you can meaningfully ask “how many?” the data are usually discrete; if you can ask “how much?” and fractional values make sense, the data are usually continuous.</p>
+</div>
+</div>
+</div>
+<p><strong>Comparison Table</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Nominal</th>
+<th>Ordinal</th>
+<th>Discrete</th>
+<th>Continuous</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Type</td>
+<td>Categorical</td>
+<td>Categorical</td>
+<td>Numerical</td>
+<td>Numerical</td>
+</tr>
+<tr class="even">
+<td>Order meaningful?</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="odd">
+<td>Arithmetic meaningful?</td>
+<td>No</td>
+<td>No (generally)</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td>Example</td>
+<td>Blood type</td>
+<td>Cancer stage</td>
+<td>Number of pregnancies</td>
+<td>Blood pressure</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="population-vs.-sample" class="level2">
+<h2 class="anchored" data-anchor-id="population-vs.-sample">Population vs.&nbsp;Sample</h2>
+<p>Two of the most fundamental concepts in statistics are the <strong>population</strong> and the <strong>sample</strong>.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<ul>
+<li><p><strong>Population:</strong> The complete set of individuals, items, or events that share a defining characteristic and about which we want to draw conclusions.</p></li>
+<li><p><strong>Sample:</strong> A subset of the population that is actually observed or measured, ideally selected so that it represents the population well.</p>
+<p><img src="Pictures/sample and population.png" class="img-fluid"></p></li>
+</ul>
+</div>
+</div>
+</div>
+<p>We use Greek letters for <strong>population parameters</strong> (fixed but usually unknown quantities) and Roman letterss for <strong>sample statistics</strong> (computed from data and used to estimate the parameters).</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Quantity</th>
+<th>Population Parameter</th>
+<th>Sample Statistic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td><span class="math inline">\(\bar{x}\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td><span class="math inline">\(s^2\)</span></td>
+</tr>
+<tr class="odd">
+<td>Standard deviation</td>
+<td><span class="math inline">\(\sigma\)</span></td>
+<td><span class="math inline">\(s\)</span></td>
+</tr>
+<tr class="even">
+<td>Proportion</td>
+<td><span class="math inline">\(\pi\)</span> or <span class="math inline">\(P\)</span></td>
+<td><span class="math inline">\(\hat{p}\)</span></td>
+</tr>
+<tr class="odd">
+<td>Size</td>
+<td><span class="math inline">\(N\)</span></td>
+<td><span class="math inline">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Public health example:</strong> A researcher wants to know the average hemoglobin level of all pregnant women in a country (the population, size <span class="math inline">\(N\)</span>). Since testing every pregnant woman is infeasible, a <strong>sample</strong> of <span class="math inline">\(n = 500\)</span> pregnant women is selected from antenatal clinics, and the sample mean <span class="math inline">\(\bar{x}\)</span> is used to <strong>estimate</strong> the unknown population mean <span class="math inline">\(\mu\)</span>.</p>
+<p>Why do we sample instead of studying the whole population?</p>
+<ul>
+<li><strong>Feasibility:</strong> Populations are often too large (e.g., all adults in a country).</li>
+<li><strong>Cost and time:</strong> Surveying an entire population is expensive and slow.</li>
+<li><strong>Practicality:</strong> Some measurements are destructive or invasive (e.g., biopsy), so testing everyone is not possible.</li>
+<li><strong>Accuracy:</strong> A well-designed sample with careful data collection can sometimes yield more accurate information than a poorly conducted census.</li>
+</ul>
+<p>For a sample to give a good estimate of the population, it should ideally be selected using a method that avoids <strong>selection bias</strong>, such as simple random sampling, stratified sampling, or cluster sampling.</p>
+</section>
+<section id="variables" class="level2">
+<h2 class="anchored" data-anchor-id="variables">Variables</h2>
+<p>A <strong>variable</strong> is any characteristic, number, or quantity that can be measured or counted and that can differ from one individual (or observation) to another.</p>
+<section id="classification-of-variables" class="level3">
+<h3 class="anchored" data-anchor-id="classification-of-variables">Classification of Variables</h3>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    V[Variables] --&gt; Q[Quantitative]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    V --&gt; C[Qualitative]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    Q --&gt; QD[Discrete]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    Q --&gt; QC[Continuous]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    C --&gt; CN[Nominal]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    C --&gt; CO[Ordinal]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    V --&gt; R[By Role in Analysis]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    R --&gt; R1[Independent / Exposure Variable]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    R --&gt; R2[Dependent / Outcome Variable]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    R --&gt; R3[Confounding Variable]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    V[Variables] --&gt; Q[Quantitative]
+    V --&gt; C[Qualitative]
+    Q --&gt; QD[Discrete]
+    Q --&gt; QC[Continuous]
+    C --&gt; CN[Nominal]
+    C --&gt; CO[Ordinal]
+    V --&gt; R[By Role in Analysis]
+    R --&gt; R1[Independent / Exposure Variable]
+    R --&gt; R2[Dependent / Outcome Variable]
+    R --&gt; R3[Confounding Variable]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>Independent variable (exposure/predictor):</strong> The variable believed to influence or predict the outcome. Example: smoking status.</li>
+<li><strong>Dependent variable (outcome/response):</strong> The variable being predicted or explained. Example: lung cancer status.</li>
+<li><strong>Confounding variable:</strong> A variable associated with both the exposure and the outcome that can distort the observed association if not controlled for. Example: age as a confounder in the relationship between physical activity and heart disease.</li>
+</ul>
+<p><strong>Public health example:</strong> In a study of the relationship between air pollution (independent variable measured as PM2.5 concentration, a continuous variable) and asthma attacks (dependent variable, a discrete count), age and smoking status might act as confounding variables.</p>
+</section>
+</section>
+<section id="scales-of-measurement" class="level2">
+<h2 class="anchored" data-anchor-id="scales-of-measurement">Scales of Measurement</h2>
+<p>Stanley Smith Stevens (1946) classified measurement into four scales<span class="citation" data-cites="stevens1946">(<a href="#ref-stevens1946" role="doc-biblioref">Stevens 1946</a>)</span>. Understanding the scale of measurement of a variable is essential because it determines which descriptive statistics and which statistical tests are appropriate.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scale</th>
+<th>Order?</th>
+<th>Equal intervals?</th>
+<th>True zero?</th>
+<th>Allowed operations</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Nominal</strong></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Counting, mode, frequencies</td>
+<td>Blood type, sex, ethnicity</td>
+</tr>
+<tr class="even">
+<td><strong>Ordinal</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Median, percentiles, ranking</td>
+<td>Cancer stage, pain scale</td>
+</tr>
+<tr class="odd">
+<td><strong>Interval</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No (arbitrary zero)</td>
+<td>Mean, SD, addition/subtraction</td>
+<td>Temperature (°C), IQ score</td>
+</tr>
+<tr class="even">
+<td><strong>Ratio</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes (true zero)</td>
+<td>All arithmetic, including ratios</td>
+<td>Weight, height, age, blood pressure</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>A simple test for <strong>ratio scale</strong>: does “zero” mean “none of the quantity,” and does it make sense to say “20 kg is twice as heavy as 10 kg”? If yes, it is a ratio scale. Temperature in Celsius fails this test (0°C is not “no temperature,” and 20°C is not “twice as hot” as 10°C), so it is only an interval scale.</p>
+</div>
+</div>
+</div>
+<p>Nominal and ordinal scales are collectively referred to as <strong>categorical</strong>, while interval and ratio scales are collectively referred to as <strong>numerical/quantitative</strong>. Most public health and clinical measurements (weight, blood pressure, cell counts, survival time) are on the ratio scale.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Descriptive statistics organizes, summarizes, and presents data using numbers, tables, and graphs.</li>
+<li>Data are broadly classified as <strong>qualitative</strong> (nominal, ordinal) or <strong>quantitative</strong> (discrete, continuous).</li>
+<li>A <strong>population</strong> is the complete group of interest; a <strong>sample</strong> is a subset used to estimate population characteristics.</li>
+<li><strong>Variables</strong> may serve as independent, dependent, or confounding variables in an analysis.</li>
+<li>The <strong>scale of measurement</strong> (nominal, ordinal, interval, ratio) determines which statistical summaries and tests are valid.</li>
+<li>Descriptive statistics underlies nearly every activity in public health practice, from surveillance to communication of results.</li>
+</ul>
+<p>The next section will build on these foundations by covering <strong>measures of central tendency</strong> in depth.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-collier2009" class="csl-entry" role="listitem">
+Collier, Roger. 2009. <span>“Legumes, Lemons and Streptomycin: A Short History of the Clinical Trial.”</span>
+</div>
+<div id="ref-doll1992" class="csl-entry" role="listitem">
+Doll, R. 1992. <span>“Sir Austin Bradford Hill and the progress of medical science.”</span> <em>BMJ</em> 305 (6868): 1521–26. <a href="https://doi.org/10.1136/bmj.305.6868.1521">https://doi.org/10.1136/bmj.305.6868.1521</a>.
+</div>
+<div id="ref-farewell2016" class="csl-entry" role="listitem">
+Farewell, Vern, and Tony Johnson. 2016. <span>“Major Greenwood (1880-1949): a biographical and bibliographical study.”</span> <em>Statistics in Medicine</em> 35 (5): 645–70. <a href="https://doi.org/10.1002/sim.6772">https://doi.org/10.1002/sim.6772</a>.
+</div>
+<div id="ref-matthews2016" class="csl-entry" role="listitem">
+Matthews, Rosser. 2016. <span>“History of Biostatistics.”</span> <em>Medical Writing</em> 25: 8–11.
+</div>
+<div id="ref-rusnock2002" class="csl-entry" role="listitem">
+Rusnock, Andrea A. 2002. <em>Vital Accounts: Quantifying Health and Population in Eighteenth-Century England and France</em>. Cambridge University Press.
+</div>
+<div id="ref-stevens1946" class="csl-entry" role="listitem">
+Stevens, S. S. 1946. <span>“On the Theory of Scales of Measurement.”</span> <em>Science</em> 103 (2684): 677–80. <a href="https://doi.org/10.1126/science.103.2684.677">https://doi.org/10.1126/science.103.2684.677</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../section1/chapter6/04_graphics.html" class="pagination-link" aria-label="Selection of Graphics for data presentation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Selection of Graphics for data presentation</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Section2/02_measures_central_tendency.html" class="pagination-link" aria-label="Measures of Central Tendency">
+        <span class="nav-page-text"><span class="chapter-title">Measures of Central Tendency</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/edit/main/Section2/01_introduction_descriptive_statistics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
