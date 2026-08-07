@@ -1,6 +1,5 @@
 ---
-title: "Descriptive Statistics and Probability Foundations"
-subtitle: "Section 7: Discrete Probability Distributions"
+title: "Discrete Probability Distributions"
 output:
   pdf_document:
     number_sections: yes
@@ -16,8 +15,6 @@ editor:
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align = "center")
 library(ggplot2)
 ```
-
-# Discrete Probability Distributions
 
 ## Random Variables
 

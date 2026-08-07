@@ -6,9 +6,11 @@ output:
 editor_options:
   chunk_output_type: console
 ---
+
 ```{r, include=FALSE}
 knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
 ```
+
 # Linear regression Analysis
 
 ```{r, include=FALSE, warning=FALSE,message=FALSE, echo=FALSE}
@@ -55,13 +57,13 @@ In R, `lm()` computes these estimates directly — you will never need to comput
 
 Simple and multiple linear regression share the same four assumptions, conveniently remembered by the acronym **LINE**:
 
--   **L — Linear relationship:** the true relationship between $x$ and $y$ is a straight line
--   **I — Independence:** the error terms (and hence residuals) are independent of one another; violated most often when observations are correlated over time (autocorrelation) or clustered within subjects
--   **N — Normality:** the error terms are normally distributed with mean 0
--   **E — Equal variances (homoscedasticity):** the error terms have constant variance across all levels of $x$
+-   **L : Linear relationship:** the true relationship between $x$ and $y$ is a straight line
+-   **I : Independence:** the error terms (and hence residuals) are independent of one another; violated most often when observations are correlated over time (autocorrelation) or clustered within subjects
+-   **N : Normality:** the error terms are normally distributed with mean 0
+-   **E : Equal variances (homoscedasticity):** the error terms have constant variance across all levels of $x$
 
 ::: callout-caution
-If any of these assumptions are seriously violated, the resulting p-values, confidence intervals, and predictions may be unreliable or misleading. Assumptions should always be checked *before* interpreting the model output — see the diagnostics section below.
+If any of these assumptions are seriously violated, the resulting p-values, confidence intervals, and predictions may be unreliable or misleading. Assumptions should always be checked *before* interpreting the model output. See the diagnostics section below.
 :::
 
 ### Worked Example: Fitting and Interpreting an SLR Model
@@ -74,7 +76,7 @@ summary(model1)
 sjPlot::tab_model(model1) # Generate sleek table out of the model
 ```
 
-**Interpretation of $\hat\beta_1$:** for every one mmHg increase in systolic blood pressure, average cholesterol increases by $\hat\beta_1$ units (read directly from `summary(model1)`), provided the p-value for `sbp` is below 0.05 — an estimate is only meaningful as a real association once it clears the significance threshold.
+**Interpretation of** $\hat\beta_1$: for every one mmHg increase in systolic blood pressure, average cholesterol increases by $\hat\beta_1$ units (read directly from `summary(model1)`), provided the p-value for `sbp` is below 0.05 — an estimate is only meaningful as a real association once it clears the significance threshold.
 
 ### Testing the Slope: Is There a Linear Relationship at All?
 
@@ -99,11 +101,11 @@ Just as with one-way ANOVA (Section 5), the total variability in $y$ can be part
 
 $$ SS_{Total} = SS_{Model} + SS_{Error}, \qquad SS_{Total}=\sum(y_i-\bar y)^2,\; SS_{Model}=\sum(\hat y_i-\bar y)^2,\; SS_{Error}=\sum(y_i-\hat y_i)^2 $$
 
-| Source | df | SS | MS | F |
-|:---|:---:|:---:|:---:|:---:|
-| Model | 1 | $SS_{Model}$ | $SS_{Model}/1$ | $F_0 = MS_{Model}/MS_{Error}$ |
-| Error | $n-2$ | $SS_{Error}$ | $SS_{Error}/(n-2)$ |  |
-| Total | $n-1$ | $SS_{Total}$ |  |  |
+| Source |  df   |      SS      |         MS         |               F               |
+|:-------|:-----:|:------------:|:------------------:|:-----------------------------:|
+| Model  |   1   | $SS_{Model}$ |   $SS_{Model}/1$   | $F_0 = MS_{Model}/MS_{Error}$ |
+| Error  | $n-2$ | $SS_{Error}$ | $SS_{Error}/(n-2)$ |                               |
+| Total  | $n-1$ | $SS_{Total}$ |                    |                               |
 
 The **coefficient of determination**, $R^2 = SS_{Model}/SS_{Total}$, measures the proportion of the total variation in $y$ explained by the model — for SLR only, $R^2$ equals the square of the Pearson correlation coefficient between $x$ and $y$. A larger $R^2$ indicates a better-fitting model, though $R^2$ alone should never be used to judge whether a model is adequate (see the diagnostics and model-building chapters).
 
@@ -115,7 +117,7 @@ performance::model_performance(model1) # AIC, BIC, R2, RMSE
 
 Once a model is fit, it can be used to predict $y$ at a new value of $x$. Two different intervals answer two different questions:
 
--   **Confidence interval for the mean of $y$:** how precisely do we know the *average* $y$ for all subjects with this $x$?
+-   **Confidence interval for the mean of** $y$: how precisely do we know the *average* $y$ for all subjects with this $x$?
 -   **Prediction interval:** how precisely can we predict *one individual's* $y$ at this $x$?
 
 The prediction interval is always **wider** than the confidence interval for the same $x$ and confidence level, because predicting a single future observation carries more uncertainty (both the uncertainty in estimating the mean, *and* the individual's own random deviation $\varepsilon$ from that mean) than estimating the mean itself.
@@ -173,8 +175,7 @@ gtsummary::tbl_regression(model2)
 
 With more than one predictor, the **overall F-test** and the **individual partial t-tests** answer different questions and generally give different p-values:
 
-$$ \text{Overall: } H_0: \beta_1=\beta_2=\dots=\beta_k=0 \;\text{ vs. }\; H_1: \text{at least one } \beta_i \ne 0 $$
-$$ \text{Partial (per predictor): } H_0: \beta_i=0 \;\text{ vs. }\; H_1: \beta_i \ne 0, \qquad df = n-k-1 $$
+$$ \text{Overall: } H_0: \beta_1=\beta_2=\dots=\beta_k=0 \;\text{ vs. }\; H_1: \text{at least one } \beta_i \ne 0 $$ $$ \text{Partial (per predictor): } H_0: \beta_i=0 \;\text{ vs. }\; H_1: \beta_i \ne 0, \qquad df = n-k-1 $$
 
 The overall F-test asks whether the predictors *as a set* explain a significant amount of variation in $y$; each partial t-test asks whether that *specific* predictor contributes significantly **after adjusting for (holding constant) all the other predictors already in the model**. A predictor can be significant on its own (in an SLR) but not in a partial test once other, correlated predictors are added — this is the regression analogue of confounding and is explored fully in the Interaction and Confounding chapter.
 
@@ -336,7 +337,7 @@ $$ \%\ \text{change} = \frac{\hat\beta_{1,\,adjusted} - \hat\beta_{1,\,crude}}{\
 Two versions of this formula circulate — an "epidemiological" version (dividing by the **adjusted** coefficient, shown above) and a "statistical" version (dividing by the **crude** coefficient). They can give different percentages when the crude and adjusted estimates differ substantially. This book follows the epidemiological convention (divide by the adjusted coefficient), consistent with standard epidemiology practice.
 :::
 
-If the crude and adjusted coefficients for $x$ differ by **more than 10%**, $z$ is considered a confounder and should be retained in the model, *regardless of whether $z$'s own coefficient is statistically significant* — confounding is a property of how much $z$ changes the $x$ estimate, not whether $z$ itself is "significant."
+If the crude and adjusted coefficients for $x$ differ by **more than 10%**, $z$ is considered a confounder and should be retained in the model, *regardless of whether* $z$'s own coefficient is statistically significant — confounding is a property of how much $z$ changes the $x$ estimate, not whether $z$ itself is "significant."
 
 ### Worked Example: Testing for Confounding
 
@@ -409,7 +410,7 @@ When the goal is pure prediction, it is reasonable to include as many candidate 
 
 ### Step 1: Initial Screening
 
-Fit a separate simple regression of $y$ on each candidate predictor, and retain any predictor with p < 0.5 (a deliberately **generous** threshold for this first pass, wider than the usual 0.05, so that predictors with only weak individual associations are not prematurely excluded before the multivariable selection step gets a chance to evaluate them jointly).
+Fit a separate simple regression of $y$ on each candidate predictor, and retain any predictor with p \< 0.5 (a deliberately **generous** threshold for this first pass, wider than the usual 0.05, so that predictors with only weak individual associations are not prematurely excluded before the multivariable selection step gets a chance to evaluate them jointly).
 
 ```{r}
 candidates <- c("sbp", "agec", "bmi", "smoke", "dibpat", "ncigs")
@@ -481,11 +482,11 @@ reduced <- lm(chol ~ sbp + agec, data = data)
 anova(reduced, full)   # R's anova() on two nested lm objects performs exactly this partial F-test
 ```
 
-**Interpretation:** the `anova(reduced, full)` output reports $F_0$, its degrees of freedom, and a p-value directly. A p-value below 0.05 supports keeping the full model (the added predictors — `bmi` and `smoke` here — jointly improve the fit significantly); a p-value above 0.05 supports the simpler, reduced model.
+**Interpretation:** the `anova(reduced, full)` output reports $F_0$, its degrees of freedom, and a p-value directly. A p-value below 0.05 supports keeping the full model (the added predictors — `bmi` and `smoke` here, jointly improve the fit significantly); a p-value above 0.05 supports the simpler, reduced model.
 
 ## Model Assumption Violations: Collinearity
 
-**Collinearity** occurs when one predictor is (nearly) a linear combination of one or more other predictors in the model; with two or more such relationships, this is called **multicollinearity**. Collinearity does not bias the coefficient estimates, but it inflates their standard errors — coefficients become unstable, sometimes flipping sign or losing significance simply because the model cannot distinguish the separate contributions of highly correlated predictors.
+**Collinearity** occurs when one predictor is (nearly) a linear combination of one or more other predictors in the model; with two or more such relationships, this is called **multicollinearity**. Collinearity does not bias the coefficient estimates, but it inflates their standard errors which makes coefficients unstable, sometimes flipping sign or losing significance simply because the model cannot distinguish the separate contributions of highly correlated predictors.
 
 ### Detecting Collinearity: The Variance Inflation Factor (VIF)
 
@@ -500,7 +501,7 @@ vif_model <- lm(chol ~ sbp + agec + bmi + ncigs + height + weight, data = data)
 performance::check_collinearity(vif_model)
 ```
 
-**Remediation:** when a variable's VIF exceeds the chosen threshold, drop the variable with the **largest** VIF, re-fit, and recompute VIFs for the remaining predictors — collinearity is often driven by one or two clearly redundant variables (e.g., both `height` and `weight` when `bmi`, derived from both, is also in the model), and removing the worst offender is often enough to bring all remaining VIFs below the cutoff.
+**Remediation:** when a variable's VIF exceeds the chosen threshold, drop the variable with the **largest** VIF, re-fit, and recompute VIFs for the remaining predictors, collinearity is often driven by one or two clearly redundant variables (e.g., both `height` and `weight` when `bmi`, derived from both, is also in the model), and removing the worst offender is often enough to bring all remaining VIFs below the cutoff.
 
 ```{r}
 # Example remediation: drop the variable with the highest VIF (often weight, if highly correlated with bmi/height)
@@ -510,7 +511,7 @@ performance::check_collinearity(vif_model2)
 
 ## Balancing Fit, Bias, and Parsimony
 
-When different selection techniques or criteria disagree, remember the goal is not the single largest $R^2$, but a model that balances: (1) a good fit to the data, (2) low bias, and (3) **parsimony** — preferring the simpler model when two models fit comparably well, since a simpler model is easier to interpret, less prone to overfitting, and more likely to generalize to new data.
+When different selection techniques or criteria disagree, remember the goal is not the single largest $R^2$, but a model that balances: (1) a good fit to the data, (2) low bias, and (3) **parsimony**, preferring the simpler model when two models fit comparably well, since a simpler model is easier to interpret, less prone to overfitting, and more likely to generalize to new data.
 
 ## Practice Questions
 
@@ -520,14 +521,14 @@ When different selection techniques or criteria disagree, remember the goal is n
 4.  A model has three predictors with Type II tolerances of 0.0117, 0.0301, and 0.0010. Compute the VIF for the variable with tolerance 0.0301, and state whether it exceeds the conservative cutoff of 10.
 5.  Explain why plain $R^2$ is a poor criterion for choosing among models with different numbers of predictors, and name two criteria that correct for this problem.
 
-::: {.callout-note collapse="true"}
+::::: {.callout-note collapse="true"}
 ## Answer Key
 
-1.  No — this is an Aim 1 (association) study with a single primary exposure. The correct approach is to keep physical activity in the model always, then individually screen age, BMI, and smoking for interaction with physical activity, and (for those without significant interaction) check each for confounding using the 10% rule — not to run an automated stepwise algorithm that could drop the exposure of interest itself based on statistical significance.
+1.  No. This is an Aim 1 (association) study with a single primary exposure. The correct approach is to keep physical activity in the model always, then individually screen age, BMI, and smoking for interaction with physical activity, and (for those without significant interaction) check each for confounding using the 10% rule — not to run an automated stepwise algorithm that could drop the exposure of interest itself based on statistical significance.
 2.  Add `age`, since it produces the highest adjusted $R^2$ (0.814) among the candidates evaluated at this step; forward selection adds the variable that most improves the model at each iteration.
 3.  The full model should be preferred: $p=0.0004 < 0.05$, so we reject $H_0:R^2_{full}-R^2_{reduced}=0$, meaning the two additional predictors in the full model explain significantly more variation than the reduced model accounts for.
 4.  $VIF = 1/\text{tolerance} = 1/0.0301 \approx 33.2$. This exceeds the conservative cutoff of 10, indicating a collinearity problem for this variable.
-5.  Plain $R^2$ can never decrease when an additional predictor is added to a model, even a completely irrelevant one — so it will always favor the largest available model regardless of whether the added predictors are meaningful, making it unsuitable for comparing models of different sizes. Adjusted $R^2$ and AIC/BIC both correct for this by explicitly penalizing the number of predictors in the model.
+5.  Plain $R^2$ can never decrease when an additional predictor is added to a model, even a completely irrelevant one, so it will always favor the largest available model regardless of whether the added predictors are meaningful, making it unsuitable for comparing models of different sizes. Adjusted $R^2$ and AIC/BIC both correct for this by explicitly penalizing the number of predictors in the model.
 
 ## Practice Questions
 
@@ -535,21 +536,17 @@ When different selection techniques or criteria disagree, remember the goal is n
 2.  In a model $CI = 1 + 2\,MCVP + 3\,MCT + 4\,(MCT\times MCVP) + 5\,BSI$, what is the correct interpretation of the MCT coefficient when $MCVP=10$?
 3.  You fit a model with an interaction term and find the interaction p-value is 0.97. What should you do next, and why?
 4.  Explain, in your own words, why a confounder must be checked for association with *both* the exposure and the outcome, and why a mediator (an intermediate step on the causal pathway) should not be treated as a confounder even if it satisfies those two associations.
-5.  True or false: if a potential confounder's own regression coefficient is not statistically significant (p > 0.05), it cannot be a confounder and should be dropped from the model. Justify your answer.
+5.  True or false: if a potential confounder's own regression coefficient is not statistically significant (p \> 0.05), it cannot be a confounder and should be dropped from the model. Justify your answer.
 
 ::: {.callout-note collapse="true"}
-
-
 ## Answer Key
 
 1.  $\%\ \text{change} = (1.5-2)/1.5 \times 100\% = -33\%$. Since $|{-33\%}| > 10\%$, age is a confounder of the exercise–blood pressure relationship and should be retained in the model.
 2.  Plugging $MCVP=10$ into the model: $CI = 1+2(10)+3\,MCT+4\,MCT(10)+5\,BSI = 21 + 43\,MCT+5\,BSI$. So when $MCVP=10$, for every one-unit increase in MCT, average CI increases by 43, after adjusting for BSI (BSI's own coefficient, 5, is unaffected by the interaction and remains in the model as an adjustment term).
-3.  With interaction p = 0.97, fail to reject $H_0:\beta_3=0$ — the interaction term is not significant. Remove the interaction term from the model, re-fit with only the main effects, and then (if relevant) proceed to check the same variable for confounding using the 10% rule.
-4.  A confounder must be associated with both the exposure and the outcome because that dual association is exactly the mechanism by which it can create a spurious (or masked) exposure–outcome relationship — if it were unrelated to either, adjusting for it could not change the exposure coefficient. A mediator, by contrast, lies *on the causal pathway* (exposure → mediator → outcome); adjusting for a mediator would remove part of the exposure's true causal effect rather than removing bias, so mediators should not be adjusted for as if they were confounders even though they are statistically associated with both variables.
-5.  False. Confounding is judged by how much the *exposure's* coefficient changes when the third variable is added (the 10% rule), not by whether the third variable's own coefficient is statistically significant. A variable can meaningfully confound an estimate (shift it by >10%) while itself having a large p-value, especially in smaller samples, so significance of the confounder itself is not the correct criterion for retaining or dropping it.
+3.  With interaction p = 0.97, fail to reject $H_0:\beta_3=0$, the interaction term is not significant. Remove the interaction term from the model, re-fit with only the main effects, and then (if relevant) proceed to check the same variable for confounding using the 10% rule.
+4.  A confounder must be associated with both the exposure and the outcome because that dual association is exactly the mechanism by which it can create a spurious (or masked) exposure–outcome relationship, if it were unrelated to either, adjusting for it could not change the exposure coefficient. A mediator, by contrast, lies *on the causal pathway* (exposure → mediator → outcome); adjusting for a mediator would remove part of the exposure's true causal effect rather than removing bias, so mediators should not be adjusted for as if they were confounders even though they are statistically associated with both variables.
+5.  False. Confounding is judged by how much the *exposure's* coefficient changes when the third variable is added (the 10% rule), not by whether the third variable's own coefficient is statistically significant. A variable can meaningfully confound an estimate (shift it by \>10%) while itself having a large p-value, especially in smaller samples, so significance of the confounder itself is not the correct criterion for retaining or dropping it.
 :::
-
-
 
 ## Practice Questions
 
@@ -568,3 +565,4 @@ When different selection techniques or criteria disagree, remember the goal is n
 4.  With one predictor, "the effect of all X's" (overall F-test) and "the effect of the one X" (partial t-test) are the same question, so they agree exactly. With two or more predictors, the overall F-test asks about the joint contribution of all predictors while each partial t-test asks about one predictor's contribution *after adjusting for the others* — these are different questions and generally give different p-values.
 5.  R creates 3 dummy variables (Northeast vs. West, Midwest vs. West, South vs. West). The overall association is tested with a joint (Type III / overall F) test of all three dummy-variable coefficients simultaneously, i.e., $H_0:\beta_{NE}=\beta_{MW}=\beta_{S}=0$, rather than three separate pairwise t-tests.
 :::
+:::::

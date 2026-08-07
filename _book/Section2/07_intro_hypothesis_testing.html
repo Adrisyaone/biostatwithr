@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -528,13 +563,16 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
   <li><a href="#general-formula" id="toc-general-formula" class="nav-link" data-scroll-target="#general-formula">General Formula</a></li>
-  <li><a href="#confidence-interval-for-a-mean-sigma-unknown-using-t" id="toc-confidence-interval-for-a-mean-sigma-unknown-using-t" class="nav-link" data-scroll-target="#confidence-interval-for-a-mean-sigma-unknown-using-t">Confidence Interval for a Mean (<span class="math inline">\(\sigma\)</span> unknown, using <span class="math inline">\(t\)</span>)</a></li>
+  <li><a href="#confidence-interval-for-a-mean" id="toc-confidence-interval-for-a-mean" class="nav-link" data-scroll-target="#confidence-interval-for-a-mean">Confidence Interval for a Mean</a></li>
   <li><a href="#confidence-interval-for-a-proportion" id="toc-confidence-interval-for-a-proportion" class="nav-link" data-scroll-target="#confidence-interval-for-a-proportion">Confidence Interval for a Proportion</a></li>
   </ul></li>
   <li><a href="#margin-of-error" id="toc-margin-of-error" class="nav-link" data-scroll-target="#margin-of-error">Margin of Error</a></li>
   <li><a href="#confidence-level-and-its-interpretation" id="toc-confidence-level-and-its-interpretation" class="nav-link" data-scroll-target="#confidence-level-and-its-interpretation">Confidence Level and Its Interpretation</a></li>
   <li><a href="#worked-example-confidence-interval-for-a-mean" id="toc-worked-example-confidence-interval-for-a-mean" class="nav-link" data-scroll-target="#worked-example-confidence-interval-for-a-mean">Worked Example (Confidence interval for a mean)</a></li>
-  <li><a href="#worked-example-confidence-interval-for-a-proportion" id="toc-worked-example-confidence-interval-for-a-proportion" class="nav-link" data-scroll-target="#worked-example-confidence-interval-for-a-proportion">Worked Example: Confidence Interval for a Proportion</a></li>
+  <li><a href="#determine-the-confidence-interval-around-mean-in-r" id="toc-determine-the-confidence-interval-around-mean-in-r" class="nav-link" data-scroll-target="#determine-the-confidence-interval-around-mean-in-r">Determine the confidence interval around mean in R</a></li>
+  <li><a href="#worked-example-confidence-interval-for-proportion" id="toc-worked-example-confidence-interval-for-proportion" class="nav-link" data-scroll-target="#worked-example-confidence-interval-for-proportion">Worked Example: Confidence Interval for Proportion</a></li>
+  <li><a href="#determine-the-confidence-interval-around-proportion-in-r" id="toc-determine-the-confidence-interval-around-proportion-in-r" class="nav-link" data-scroll-target="#determine-the-confidence-interval-around-proportion-in-r">Determine the confidence interval around proportion in R</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
   <li><a href="#confidence-interval-vs.-prediction-interval" id="toc-confidence-interval-vs.-prediction-interval" class="nav-link" data-scroll-target="#confidence-interval-vs.-prediction-interval">Confidence Interval vs.&nbsp;Prediction Interval</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -668,13 +706,13 @@ window.Quarto = {
 <td><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/right_tailed_test.png" class="img-fluid figure-img" width="521"></p>
-<figcaption>Fig: Right-tailed hypothesis test</figcaption>
+<figcaption>Figure: Right-tailed hypothesis test</figcaption>
 </figure>
 </div></td>
 <td><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/left_tailed_test.png" class="img-fluid figure-img" width="518"></p>
-<figcaption>Fig: Left-tailed hypothesis test</figcaption>
+<figcaption>Figure: Left-tailed hypothesis test</figcaption>
 </figure>
 </div></td>
 </tr>
@@ -828,7 +866,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>A point estimate alone gives <strong>no information about its precision or reliability</strong>. A sample mean of <span class="math inline">\(\bar{x}=126\)</span> mmHg conveys nothing about how much uncertainty surrounds that estimate — was it based on 10 patients or 10,000? <strong>Interval estimation</strong> solves this problem.</p>
+<p>A point estimate alone gives <strong>no information about its precision or reliability</strong>. A sample mean of <span class="math inline">\(\bar{x}=126\)</span> mmHg conveys nothing about how much uncertainty surrounds that estimate. Was it based on 10 patients or 10,000? <strong>Interval estimation</strong> solves this problem.</p>
 </div>
 </div>
 </div>
@@ -859,8 +897,9 @@ window.Quarto = {
 <p><span class="math display">\[\text{Point estimate} \pm (\text{Critical value}) \times (\text{Standard error})\]</span> where,</p>
 <p><span class="math inline">\(Margin.of.error(ME)=critical.value \times standard.error\)</span></p>
 </section>
-<section id="confidence-interval-for-a-mean-sigma-unknown-using-t" class="level3">
-<h3 class="anchored" data-anchor-id="confidence-interval-for-a-mean-sigma-unknown-using-t">Confidence Interval for a Mean (<span class="math inline">\(\sigma\)</span> unknown, using <span class="math inline">\(t\)</span>)</h3>
+<section id="confidence-interval-for-a-mean" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-interval-for-a-mean">Confidence Interval for a Mean</h3>
+<p>When <span class="math inline">\(\sigma\)</span> is unknown, we use <span class="math inline">\(t\)</span> statistics,</p>
 <p><span class="math display">\[\bar{x} \pm t_{\alpha/2, n-1} \times \frac{s}{\sqrt{n}}\]</span></p>
 </section>
 <section id="confidence-interval-for-a-proportion" class="level3">
@@ -923,8 +962,39 @@ window.Quarto = {
 <p><strong>Step 4:</strong> Construct the interval: <span class="math display">\[126 \pm 4.06 = (121.9,\ 130.1) \text{ mmHg}\]</span></p>
 <p><strong>Interpretation:</strong> We are 95% confident that the true mean blood pressure of the population from which this sample was drawn lies between 121.9 and 130.1 mmHg. Note this interval <strong>includes</strong> 130 mmHg, the value tested in Section 9’s hypothesis test — consistent with that test’s borderline result (p = 0.046, just below 0.05, so technically still significant, illustrating that CIs and hypothesis tests can appear to be right at the boundary of agreement/disagreement when a result is only marginally significant).</p>
 </section>
-<section id="worked-example-confidence-interval-for-a-proportion" class="level2">
-<h2 class="anchored" data-anchor-id="worked-example-confidence-interval-for-a-proportion">Worked Example: Confidence Interval for a Proportion</h2>
+<section id="determine-the-confidence-interval-around-mean-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="determine-the-confidence-interval-around-mean-in-r">Determine the confidence interval around mean in R</h2>
+<p>We can use <code>meanCI()</code> from <strong>DescTools</strong> to calculate CI around mean in R.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CI around mean for problem above</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mean_sbp <span class="ot">&lt;-</span> <span class="dv">126</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sd_sbp <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">36</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> sd_sbp <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> mean_sbp <span class="sc">-</span> t_crit <span class="sc">*</span> se</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> mean_sbp <span class="sc">+</span> t_crit <span class="sc">*</span> se</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Confidence interval around"</span>, mean_sbp, <span class="st">"is"</span>, <span class="fu">c</span>(lower, upper)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Confidence interval around 126 is 121.939784143499"
+#&gt; [2] "Confidence interval around 126 is 130.060215856501"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CI around mean for dataset</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"Section2/Categorical data analysis/Datasets/wcgs.xls"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#CI around mean  for data</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>DescTools<span class="sc">::</span><span class="fu">MeanCI</span>(<span class="at">x =</span> data<span class="sc">$</span>bmi, <span class="at">sd =</span> <span class="fu">sd</span>(data<span class="sc">$</span>bmi), <span class="at">conf.level =</span> <span class="fl">0.95</span>,<span class="at">sides =</span> <span class="st">"two.sided"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     mean   lwr.ci   upr.ci 
+#&gt; 24.51837 24.42877 24.60798</code></pre>
+</div>
+</div>
+</section>
+<section id="worked-example-confidence-interval-for-proportion" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example-confidence-interval-for-proportion">Worked Example: Confidence Interval for Proportion</h2>
 <p>In a survey of <span class="math inline">\(n=400\)</span> adults, 92 report having been vaccinated against influenza this season. Construct a 95% CI for the true population proportion vaccinated.</p>
 <p><strong>Step 1:</strong> <span class="math inline">\(\hat{p} = 92/400 = 0.23\)</span>.</p>
 <p><strong>Step 2:</strong> <span class="math inline">\(SE(\hat{p}) = \sqrt{\dfrac{0.23(1-0.23)}{400}} = \sqrt{\dfrac{0.1771}{400}} = \sqrt{0.000443}=0.02104\)</span></p>
@@ -932,13 +1002,58 @@ window.Quarto = {
 <p><strong>Step 4:</strong> <span class="math display">\[0.23 \pm 0.0412 = (0.189,\ 0.271) \text{ or } (18.9\%,\ 27.1\%)\]</span></p>
 <p><strong>Interpretation:</strong> We are 95% confident that the true influenza vaccination rate in the population is between 18.9% and 27.1%.</p>
 </section>
+<section id="determine-the-confidence-interval-around-proportion-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="determine-the-confidence-interval-around-proportion-in-r">Determine the confidence interval around proportion in R</h2>
+<p>Confidence intervals can be produced for either binomial or multinomial proportions.</p>
+<p>The <em><code>binom.test()</code></em> function in the native <em>stats</em> package will provide the Clopper-Pearson confidence interval for a binomial proportion. Other methods for a binomial proportion are provided by the <em><code>BinomCI()</code></em> function in the <em>DescTools</em> package, as well as by various functions in the <em>PropCIs</em> package. Different methods available for calculating CI around binary variable include : <code>"wilson", "wald", "agresti-coull", "jeffreys", "modified wilson", "modified jeffreys","clopper-pearson", "arcsine", "logit", "witting", "pratt"</code></p>
+<p>Confidence intervals for multinomial proportions can be produced with the <em><code>MultinomCI()</code></em> function in the <em>DescTools</em> package.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CI for proportion calculation manually for problem above</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">60</span> <span class="sc">/</span> <span class="dv">200</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p) <span class="sc">/</span> <span class="dv">200</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"The confidence interval around proportion"</span>, p, <span class="st">"is"</span>, <span class="fu">round</span>(k[<span class="dv">1</span>],<span class="dv">2</span>), <span class="st">"and "</span>, <span class="fu">round</span>(k[<span class="dv">2</span>],<span class="dv">2</span>) ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "The confidence interval around proportion 0.3 is 0.24 and  0.36"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # CI for proportion calculation for dataset</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"Section2/Categorical data analysis/Datasets/wcgs.xls"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Confidence interval for binary variable  </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span> <span class="fu">addmargins</span>(<span class="fu">table</span>(data<span class="sc">$</span>chd69))  </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># In the above table No is 2897 and yes is 257 and total of 3154 </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>DescTools<span class="sc">::</span><span class="fu">BinomCI</span>(<span class="at">x =</span> a[<span class="dv">2</span>],<span class="at">n =</span> a[<span class="dv">3</span>], <span class="at">method =</span> <span class="st">"clopper"</span>)<span class="sc">*</span><span class="dv">100</span> <span class="co"># we can select different methods depending on need  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;           est   lwr.ci   upr.ci
+#&gt; [1,] 8.148383 7.216913 9.158305</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Confidence interval around multinomial variable </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>b<span class="ot">&lt;-</span> <span class="fu">addmargins</span>(<span class="fu">table</span>(data<span class="sc">$</span>agec))  </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># In the above table for each categories 35-40, 41-45, 46-50, 51-55 and 56-60, number of observations are 543, 1091, 750, 528, and 242 respectively</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>DescTools<span class="sc">::</span><span class="fu">MultinomCI</span>( <span class="at">x =</span> b, <span class="at">method =</span> <span class="st">"goodman"</span>)<span class="sc">*</span><span class="dv">100</span> <span class="co"># we can select different methods depending on need  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;             est    lwr.ci    upr.ci
+#&gt; 35-40  8.608117  7.721429  9.586049
+#&gt; 41-45 17.295498 16.075394 18.587696
+#&gt; 46-50 11.889664 10.856290 13.007049
+#&gt; 51-55  8.370323  7.495629  9.336787
+#&gt; 56-60  3.836398  3.247579  4.526981
+#&gt; Sum   50.000000 48.340024 51.659976</code></pre>
+</div>
+</div>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+</section>
 <section id="confidence-interval-vs.-prediction-interval" class="level2">
 <h2 class="anchored" data-anchor-id="confidence-interval-vs.-prediction-interval">Confidence Interval vs.&nbsp;Prediction Interval</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
+<col style="width: 8%">
 <col style="width: 42%">
-<col style="width: 46%">
+<col style="width: 47%">
 </colgroup>
 <thead>
 <tr class="header">

@@ -1,5 +1,5 @@
 ---
-title: "Descriptive Statistics and Probability Foundations"
+title: "Continuous Probability Distributions"
 output:
   pdf_document:
     number_sections: yes
@@ -16,7 +16,6 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align =
 library(ggplot2)
 ```
 
-# Continuous Probability Distributions
 
 ## Probability Density Function (PDF)
 

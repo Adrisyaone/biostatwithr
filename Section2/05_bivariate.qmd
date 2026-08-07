@@ -108,24 +108,110 @@ Before having some practical insights on using R for basic statistical analysis,
 
 -   `arcus` Corneal arcus: 0 = none; 1 = yes
 
-## Checking Assumptions: Normality and Equal Variance
+## Checking Assumptions
 
-Nearly every test in this chapter comes in two flavors — a **parametric** version (assumes normally distributed data, usually more powerful when its assumptions hold) and a **non-parametric** version (works on ranks instead of raw values, valid under much weaker assumptions, but somewhat less powerful when the data really are normal). Before choosing between them, it helps to check the two assumptions that drive that choice: **normality** and **equal variance (homogeneity of variance)**.
+Nearly every test in this chapter comes in two ways: a **parametric** version (assumes normally distributed data, usually more powerful when its assumptions hold) and a **non-parametric** version (works on ranks instead of raw values, valid under much weaker assumptions, but somewhat less powerful when the data really are normal). Before choosing between them, it helps to check the two assumptions that drive that choice: **normality** and **equal variance (homogeneity of variance)**.
 
-### Normality
+### Skewness, Kurtosis and Normality
 
-Visual checks (histogram, Q-Q plot — used already in Section 1) are the first step, but a formal test is often reported alongside them:
+#### Skewness and Kurtosis
 
--   **Shapiro-Wilk test** (`shapiro.test()`): tests $H_0:$ the data are drawn from a normal distribution, vs. $H_1:$ they are not. A small p-value (\<0.05) is evidence *against* normality.
+-   **Skewness:** Skewness measures the asymmetry of a distribution. It indicates whether the data is skewed to the left (negatively skewed) or to the right (positively skewed). A skewness value close to 0 suggest a roughly symmetric distribution. Negative skewness indicates a tail to the left while positive skewness indicates a tail to the right
+-   **Kurtosis:** Kurtosis measures the "tailedness" of a distribution. It reflects how much data is in the tails and how sharp or flat the peak is. A kurtosis value around 0 is associated to normal distribution. Positive kurtosis indicates heavier tails while negative kurtosis indicates lighter tails.
+
+We can calculate skewness and kurtosis using **moments** package. Lets calculate skewness and kurtosis in our dataset.
+
+Function used: `skewness ()` and `kurtosis()`
 
 ```{r}
+# install.packages("moments")
+library(moments)
+
+# skewness
+skewness(data$age) # Interpretation: slight right ward skew
+
+kurtosis(data$age) # Interpretation: it is higher than 3 (this indicates heavier tails)
+```
+
+![](images/clipboard-69093760.png)
+
+#### Testing normality of numeric variables
+
+Normality is an important assumption in many statistical tests, such as **t-tests, ANOVA, linear regression, and parametric tests**. Ensuring that data is normally distributed helps validate the results of these tests and ensures the reliability of statistical inferences. In the figure below, only middle one is normally distributed whereas other two are not.
+
+![](/Section1/Chapter5/Pictures/skewed%20data.png)
+
+Normality testing can be conducted using several methods:
+
+1.  Statistical test
+    1.  Shapiro-Wilk test
+    2.  Kolmogorov-Smirnov (KS) test
+2.  Graphical
+    1.  Q-Q plot
+    2.  Histogram
+
+##### Shapiro-Wilk Test
+
+The Shapiro-Wilk test is a widely used statistical test for normality. It evaluates the null hypothesis that a sample comes from a normally distributed population. It is particularly effective for small to moderate sample sizes (typically \< 50).
+
+**Shapiro-Wilk test** (`shapiro.test()`) tests $H_0:$ the data are drawn from a normal distribution, vs. $H_1:$ they are not. The test statistic, W, compares the observed data to what would be expected under normality. A p-value \< 0.05 often leads to rejecting the null hypothesis, indicating non-normality.
+
+```{r}
+
+dt <- rnorm(1000)
+
+# Shapiro wilk test (works for sample <5000)
+shapiro.test(dt)
+
 shapiro.test(data$height)   # roughly symmetric, bell-shaped variable
 shapiro.test(data$ncigs)    # heavily right-skewed (many non-smokers -> many zeros)
 ```
 
 ::: callout-caution
-Shapiro-Wilk (like most goodness-of-fit tests) becomes extremely sensitive with large samples — in a cohort of `r nrow(data)` like `wcgs`, even trivial, practically unimportant deviations from normality will produce a significant (p \< 0.05) result. For large $n$, weigh the Q-Q plot and histogram more heavily than the p-value alone, and rely on the Central Limit Theorem (sample means are approximately normal for large $n$ even when the raw data are not) when deciding whether a t-test/ANOVA is still reasonable.
+Shapiro-Wilk (like most goodness-of-fit tests) becomes extremely sensitive with large samples in a cohort of `r nrow(data)` like `wcgs`, even trivial, practically unimportant deviations from normality will produce a significant (p \< 0.05) result. For large $n$, weigh the Q-Q plot and histogram more heavily than the p-value alone, and rely on the Central Limit Theorem (sample means are approximately normal for large $n$ even when the raw data are not) when deciding whether a t-test/ANOVA is still reasonable.
 :::
+
+**Interpretation:** The test statistic (W) is 0.99786, and the p-value is 0.7844. With a high p-value, there is no significant evidence to reject the null hypothesis, suggesting that the data is reasonably consistent with a normal distribution.
+
+##### Kolmogorov-Smirnov (KS) test
+
+The Kolmogorov-Smirnov test is a non-parametric test used to compare a sample distribution to a reference distribution (e.g., normal distribution). It measures the maximum distance between the empirical distribution function of the sample and the cumulative distribution function of the reference distribution. While it can be used for normality testing, it is less powerful than the Shapiro-Wilk test for this purpose, especially for small samples.
+
+```{r}
+# KS test
+ks.test(dt,"pnorm", exact = T)
+```
+
+**Interpretation:** The test statistic (D) is 0.017067, and the p-value is 0.9982. With a high p-value, there is no significant evidence to reject the null hypothesis, indicating that the data does not significantly differ from the assumed distribution in a two-sided test.
+
+##### Q-Q plot
+
+A Q-Q plot is a graphical tool to assess whether a dataset follows a particular distribution, such as the normal distribution. It plots the quantiles of the sample data against the quantiles of the theoretical distribution. If the points fall approximately along a straight line, the data is likely normally distributed. Deviations from the line (e.g., curves or outliers) suggest departures from normality.
+
+```{r}
+# QQ plot
+qqnorm(data$age)
+```
+
+**Interpretation:** In the first chart, the points do not deviate significantly from the line, indicating that the data, `dt`, is normally distributed. However, in the second chart, the points deviate from the line, forming an S-shaped curve, which suggests that the data is not normally distributed.
+
+##### Histogram
+
+A histogram is a visual representation of the distribution of a dataset. It divides the data into bins and displays the frequency of observations in each bin.For normality testing, the shape of the histogram is compared to the bell-shaped curve of a normal distribution. Symmetry, peak at the mean, and tapering tails are indicators of normality. While useful for a quick visual check, histograms can be subjective and less reliable for small sample sizes.
+
+```{r}
+# Histogram
+sequence <- seq(min(data$age), max(data$age), 1)
+fun <- dnorm(sequence, mean = mean(data$age), sd = sd(data$age))
+hist(data$age,
+     main = "data",
+     ylab = "Frequency",
+     xlab="dt",
+     col="skyblue", probability = T)
+lines(sequence, fun, col="blue", lwd=2)
+```
+
+**Interpretation:** Since, the chart seems to be asymmetric which indicates that the data is not normally distributed.
 
 ### Equal Variance (Homogeneity of Variance)
 
@@ -143,19 +229,28 @@ car::leveneTest(chol ~ factor(agec), data = data)        # >= 2 groups, robust t
 
 For all three, $H_0:$ the group variances are equal, vs. $H_1:$ they are not. A significant result (p \< 0.05) means the equal-variance assumption is violated, and a variance-robust version of the downstream test (Welch's t-test, Welch's ANOVA — both covered below) should be used instead of the classic (equal-variance) version.
 
-### Decision Summary
+## Decision Summary
 
 | Question | Test to use if assumption holds | Test to use if normality assumption is violated |
 |:-----------------------|:-----------------------|:-----------------------|
+| Association between two numeric variables | Pearson correlation coefficient | Spearman rank correlation coefficient |
 | Compare 1 sample mean to a fixed value | One-sample t-test (or z-test if $\sigma$ known) | Wilcoxon signed-rank test |
 | Compare 2 independent group means | Student's t-test (equal variance) | Welch's t-test (unequal variance) or Mann-Whitney U (non-normal) |
 | Compare paired/matched measurements | Paired t-test | Wilcoxon signed-rank test |
 | Compare 3+ independent group means | One-way ANOVA | Welch's ANOVA (unequal variance) or Kruskal-Wallis (non-normal) |
 | Compare 3+ repeated/matched measurements | Repeated-measures ANOVA | Friedman test |
+| Association between two independent categorical variables |  | Chi-square test |
+| Association between two dependent categorical variables |  | McNemar Chi-square test |
 
-### Correlation
+## **Association between two numeric variables**
 
-To determine scale free association between two numerical variables correlation is used. If both the numerical variables are parametric, we use pearson's correlation and if any of the two numerical variables is non-parametric, we use spearman correlation
+## Correlation
+
+Correlation is used to measure the **strength and direction of association between two numerical variables**. A **scatter plot** ideally comes immediately before correlation tests because it helps readers visually understand what correlation is measuring.The correlation coefficient is scale-free, meaning that it does not depend on the measurement units of the variables. It can be **Pearson correlation coefficient** or **Spearman rank correlation coefficient**.
+
+The **Pearson correlation coefficient** is commonly used when both variables are continuous and the relationship between them is approximately linear, with no substantial influence from extreme outliers. The **Spearman rank correlation coefficient** is a nonparametric measure that is appropriate when the assumptions required for Pearson correlation are not satisfied, particularly when the variables are ordinal, substantially skewed, affected by outliers, or when the relationship is monotonic but not necessarily linear.
+
+Therefore, the choice between Pearson and Spearman correlation is based on the characteristics of the data and the assumptions of the analysis rather than simply labeling a variable as parametric or nonparametric.
 
 In WCGS dataset, lets determine association between age and systolic blood pressure
 
@@ -173,11 +268,13 @@ shapiro.test(data$sbp) # formal normality test
 cor.test(data$age, data$sbp,method="spearman") # if they were parametric you would have write "pearson" instead of "spearman"
 ```
 
-## One-Sample Tests
+## Compare one sample mean with fixed value
+
+### One-Sample Tests
 
 A one-sample test compares a single sample's central tendency to a fixed, hypothesized value.
 
-### One-Sample Z-test vs. One-Sample T-test
+**One-Sample Z-test vs. One-Sample T-test**
 
 $$ Z_{stat}=\frac{\bar x-\mu_0}{\sigma/\sqrt n} \qquad\qquad t_{stat}=\frac{\bar x-\mu_0}{s/\sqrt n},\; df=n-1 $$
 
@@ -196,18 +293,38 @@ c(z = z_stat, p_value = p_val)
 ```
 
 ::: callout-note
-**Five-step hypothesis-testing format:** (1) $H_0:\mu=220$ vs. $H_1:\mu\ne220$; (2) $\alpha=0.05$; (3) obtain the t- (or z-) statistic and df from `t.test()`; (4) read off the p-value; (5) reject or fail to reject $H_0$ and state the conclusion in context.
+**Five-step hypothesis-testing format:**
+
+**Step 1:** State hypothesis
+
+$H_0:\mu=220$ vs. $H_1:\mu\ne220$;
+
+**Step-2:** Level of significance
+
+$\alpha=0.05$
+
+**Step-3:** Determine test statistics
+
+Obtain the t- (or z-) statistic and df from `t.test()`
+
+Step-4: Read off the p-value or critical value
+
+**Step-5:** Decision and conclusion
+
+If p-value is less than 0.05 reject $H_0$ and else accept $H_0$. Finally state the conclusion in context.
 :::
 
 ### One-Sample Wilcoxon Signed-Rank Test (Non-Parametric Alternative)
 
-When the one-sample data are not (even approximately) normally distributed and the sample is small, the **Wilcoxon signed-rank test** replaces the one-sample t-test. Rather than working with the raw values, it ranks the absolute deviations from the hypothesized value $\mu_0$ and tests whether the signed ranks are symmetric around zero — it tests the **median**, not the mean.
+When the one-sample data are not (even approximately) normally distributed and the sample is small, the **Wilcoxon signed-rank test** replaces the one-sample t-test. Rather than working with the raw values, it ranks the absolute deviations from the hypothesized value $\mu_0$ and tests whether the signed ranks are symmetric around zero, it tests the **median**, not the mean.
 
 ```{r}
 wilcox.test(data$ncigs, mu = 5)   # ncigs is heavily skewed -- median-based test is more appropriate
 ```
 
-## Two-Sample (Independent Groups) Tests
+## Compare two means
+
+### Two-Independent Sample tests (Parametric test)
 
 This setting compares a continuous outcome between two *unrelated* groups — for example, cholesterol between participants with and without coronary heart disease.
 
@@ -293,6 +410,8 @@ When the differences are not normally distributed, the **Wilcoxon signed-rank te
 ```{r}
 wilcox.test(paired_df$post, paired_df$pre, paired = TRUE)
 ```
+
+## Compare 3+ independent sample means
 
 ## One-Way ANOVA
 
@@ -419,7 +538,7 @@ car::Anova(lm(bmi ~ smoke * dibpat, data = data), type = "III")
 TukeyHSD(k3, which = "smoke")
 ```
 
-## Repeated-Measures ANOVA and the Friedman Test
+## Repeated-Measures ANOVA 
 
 **Repeated-measures ANOVA** is the appropriate design when a normally distributed continuous outcome is measured on the *same* subjects three or more times (e.g., three follow-up visits), rather than on three independent groups. Because repeated observations on the same subject are correlated, treating them as independent groups (ordinary one-way ANOVA) understates the standard errors and inflates Type I error — exactly the problem described in detail in the dedicated Repeated Measures Analysis chapter, which covers the full mixed-model machinery (`nlme::gls()`/`lme()`) needed for unbalanced or more complex repeated-measures designs.
 
@@ -467,34 +586,6 @@ chisq.test(tbl1,correct = T) # use correct=T for yates contingency correction
 When more than 20% of expected cell counts fall below 5, switch to **Fisher's exact test**; for paired categorical data (e.g., the same subjects classified twice), use **McNemar's test** instead of the chi-square test. Both are covered in full, with worked examples, in the Categorical Data Analysis chapter.
 :::
 
-## Determine the confidence interval around the proportion
-
-Confidence intervals can be produced for either binomial or multinomial proportions.
-
-The *`binom.test()`* function in the native *stats* package will provide the Clopper-Pearson confidence interval for a binomial proportion. Other methods for a binomial proportion are provided by the *`BinomCI()`* function in the *DescTools* package, as well as by various functions in the *PropCIs* package. Different methods available for calculating CI around binary variable include : `"wilson", "wald", "agresti-coull", "jeffreys", "modified wilson", "modified jeffreys","clopper-pearson", "arcsine", "logit", "witting", "pratt"`
-
-Confidence intervals for multinomial proportions can be produced with the *`MultinomCI()`* function in the *DescTools* package.
-
-We can use `meanCI()` from **DescTools** to calculate CI around mean.
-
-```{r}
-# Confidence interval for binary variable
-
-a<- addmargins(table(data$chd69))
-
-# In the above table No is 2897 and yes is 257 and total of 3154
-DescTools::BinomCI(x = a[2],n = a[3], method = "clopper")*100 # we can select different methods depending on need
-
-# Confidence interval around multinomial variable
-b<- addmargins(table(data$agec))
-
-# In the above table No is 2897 and yes is 257 and total of 3154
-DescTools::MultinomCI( x = a,method = "goodman")*100 # we can select different methods depending on need
-
-#CI around mean
-DescTools::MeanCI(x = data$bmi, sd = sd(data$bmi), conf.level = 0.95,sides = "two.sided")
-
-```
 
 ## Summary Table: Choosing the Right Test
 
@@ -525,14 +616,14 @@ DescTools::MeanCI(x = data$bmi, sd = sd(data$bmi), conf.level = 0.95,sides = "tw
 ::: {.callout-note collapse="true"}
 ## Answer Key
 
-1.  Welch's t-test (unequal-variance version) should be used. Yes — R's `t.test()` defaults to Welch's version (`var.equal = FALSE`) unless `var.equal = TRUE` is explicitly specified, so the default call already handles unequal variances correctly.
+1.  Welch's t-test (unequal-variance version) should be used. Yes, R's `t.test()` defaults to Welch's version (`var.equal = FALSE`) unless `var.equal = TRUE` is explicitly specified, so the default call already handles unequal variances correctly.
 2.  The paired t-test is mathematically identical to a one-sample t-test performed on the within-subject differences $d_i$; its normality assumption therefore applies to the distribution of those differences, not to the two raw variables individually — two non-normal variables can still produce approximately normal differences (or vice versa), so checking the raw values would check the wrong thing.
 3.  Not valid. A significant overall F-test only establishes that *at least one* group mean differs from the others somewhere among the four groups; it does not identify which specific pair(s) differ, and it does not imply every pair differs. A post-hoc test (e.g., Tukey's HSD or Bonferroni-adjusted pairwise comparisons) is needed to determine which specific age-group pairs are significantly different.
 4.  The Kruskal-Wallis test. Unlike one-way ANOVA (which compares group *means*), Kruskal-Wallis compares the *ranks* of observations across groups and effectively tests whether the groups' distributions (and hence, roughly, their medians) differ, without assuming normality or being unduly influenced by extreme outliers.
-5.  The Friedman test is most appropriate — the non-parametric analogue of repeated-measures ANOVA for this exact design (same subjects, multiple time points, non-normal outcome). It differs from Kruskal-Wallis conceptually because Friedman accounts for the fact that the same 25 subjects are measured repeatedly (ranking *within* each subject across time points), whereas Kruskal-Wallis assumes the groups being compared are independent, unrelated samples.
+5.  The Friedman test is most appropriate, the non-parametric analogue of repeated-measures ANOVA for this exact design (same subjects, multiple time points, non-normal outcome). It differs from Kruskal-Wallis conceptually because Friedman accounts for the fact that the same 25 subjects are measured repeatedly (ranking *within* each subject across time points), whereas Kruskal-Wallis assumes the groups being compared are independent, unrelated samples.
 6.  One-way ANOVA (four independent groups, one continuous outcome) — or, if the four groups are being defined by two separate binary interventions, this is equivalently a two-way ANOVA with intervention 1 and intervention 2 as the two factors, which additionally allows testing whether the two interventions interact.
 7.  In R, a variable used as a categorical predictor in `aov()`/`lm()` should be converted to a factor first (e.g., `ferdata$fertilizer <- as.factor(ferdata$fertilizer)`), analogous to declaring it in a `class` statement in SAS; otherwise R may treat a numerically coded categorical variable as continuous, which fits an incorrect (linear-trend) model rather than estimating a separate mean for each level.
-8.  Since p = 0.97 is far above 0.05, fail to reject $H_0$ for the interaction — it is not significant. Remove the interaction term from the model and re-fit with only the main effects (`smoke` and `gender`) before interpreting either main effect.
+8.  Since p = 0.97 is far above 0.05, fail to reject $H_0$ for the interaction, it is not significant. Remove the interaction term from the model and re-fit with only the main effects (`smoke` and `gender`) before interpreting either main effect.
 9.  False. A significant overall F-test only tells us that *at least one* group mean differs from the others somewhere among the groups; it does not identify which specific pair(s) differ. Determining which groups differ requires a post-hoc test such as Tukey's HSD or Bonferroni-adjusted pairwise comparisons.
 10. Type I (sequential) sums of squares depend on the order predictors are entered into the formula and only give an unambiguous, order-independent answer when the design is balanced (equal group sizes in every factor combination); `wcgs` and most observational data are unbalanced. `car::Anova(model, type = "III")` (with sum-to-zero contrasts set via `options(contrasts = c("contr.sum","contr.poly"))`) computes Type III sums of squares, which evaluate each term after adjusting for all others regardless of entry order, and is the appropriate choice for unbalanced designs.
 :::

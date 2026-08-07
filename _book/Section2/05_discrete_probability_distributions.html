@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Descriptive Statistics and Probability Foundations – Biostatistics with R</title>
+<title>Discrete Probability Distributions – Biostatistics with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -317,7 +317,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/05_discrete_probability_distributions.html"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/05_discrete_probability_distributions.html"><span class="chapter-title">Discrete Probability Distributions</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -461,12 +461,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Discrete Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -533,9 +533,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#discrete-probability-distributions" id="toc-discrete-probability-distributions" class="nav-link active" data-scroll-target="#discrete-probability-distributions">Discrete Probability Distributions</a>
-  <ul class="collapse">
-  <li><a href="#random-variables" id="toc-random-variables" class="nav-link" data-scroll-target="#random-variables">Random Variables</a></li>
+  <li><a href="#random-variables" id="toc-random-variables" class="nav-link active" data-scroll-target="#random-variables">Random Variables</a></li>
   <li><a href="#probability-mass-function-pmf" id="toc-probability-mass-function-pmf" class="nav-link" data-scroll-target="#probability-mass-function-pmf">Probability Mass Function (PMF)</a></li>
   <li><a href="#expected-value" id="toc-expected-value" class="nav-link" data-scroll-target="#expected-value">Expected Value</a></li>
   <li><a href="#variance" id="toc-variance" class="nav-link" data-scroll-target="#variance">Variance</a></li>
@@ -603,7 +601,6 @@ window.Quarto = {
   <li><a href="#comparison-table-discrete-distributions" id="toc-comparison-table-discrete-distributions" class="nav-link" data-scroll-target="#comparison-table-discrete-distributions">Comparison Table — Discrete Distributions</a></li>
   <li><a href="#decision-guide-which-distribution-should-i-use" id="toc-decision-guide-which-distribution-should-i-use" class="nav-link" data-scroll-target="#decision-guide-which-distribution-should-i-use">Decision Guide: Which Distribution Should I Use?</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
-  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/edit/main/Section2/05_discrete_probability_distributions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -611,10 +608,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/05_discrete_probability_distributions.html"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/05_discrete_probability_distributions.html"><span class="chapter-title">Discrete Probability Distributions</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></h1>
-<p class="subtitle lead">Section 7: Discrete Probability Distributions</p>
+<h1 class="title"><span class="chapter-title">Discrete Probability Distributions</span></h1>
 </div>
 
 
@@ -631,8 +627,6 @@ window.Quarto = {
 </header>
 
 
-<section id="discrete-probability-distributions" class="level1">
-<h1>Discrete Probability Distributions</h1>
 <section id="random-variables" class="level2">
 <h2 class="anchored" data-anchor-id="random-variables">Random Variables</h2>
 <p>A <strong>random variable</strong> is a numeric variable whose value is determined by the outcome of a random experiment. Random variables are denoted with capital letters (<span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>) and their specific realized values with lowercase letters (<span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>).</p>
@@ -1307,7 +1301,6 @@ window.Quarto = {
 
 
 </section>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1729,8 +1722,8 @@ window.Quarto = {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Section2/06_continuous_probability_distributions.html" class="pagination-link" aria-label="Descriptive Statistics and Probability Foundations">
-        <span class="nav-page-text"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Section2/06_continuous_probability_distributions.html" class="pagination-link" aria-label="Continuous Probability Distributions">
+        <span class="nav-page-text"><span class="chapter-title">Continuous Probability Distributions</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

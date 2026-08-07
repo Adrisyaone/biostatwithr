@@ -461,12 +461,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -594,7 +594,7 @@ window.Quarto = {
   <li><a href="#worked-example-full-manual-calculation" id="toc-worked-example-full-manual-calculation" class="nav-link" data-scroll-target="#worked-example-full-manual-calculation">Worked Example: Full Manual Calculation</a>
   <ul class="collapse">
   <li><a href="#interpretation-1" id="toc-interpretation-1" class="nav-link" data-scroll-target="#interpretation-1">Interpretation</a></li>
-  <li><a href="#likelihood-ratios-worked-calculation" id="toc-likelihood-ratios-worked-calculation" class="nav-link" data-scroll-target="#likelihood-ratios-worked-calculation">Likelihood Ratios — Worked Calculation</a></li>
+  <li><a href="#likelihood-ratios-worked-calculation" id="toc-likelihood-ratios-worked-calculation" class="nav-link" data-scroll-target="#likelihood-ratios-worked-calculation">Likelihood Ratios (Worked Calculation)</a></li>
   </ul></li>
   <li><a href="#bayes-theorem-flowchart-diagnostic-testing" id="toc-bayes-theorem-flowchart-diagnostic-testing" class="nav-link" data-scroll-target="#bayes-theorem-flowchart-diagnostic-testing">Bayes’ Theorem Flowchart (Diagnostic Testing)</a></li>
   <li><a href="#additional-worked-example-public-health-screening-program-comparison" id="toc-additional-worked-example-public-health-screening-program-comparison" class="nav-link" data-scroll-target="#additional-worked-example-public-health-screening-program-comparison">Additional Worked Example: Public Health Screening Program Comparison</a></li>
@@ -727,87 +727,17 @@ window.Quarto = {
 <p>Venn diagrams visually represent relationships between events (sets) within a sample space. Below, regions are labeled to show set relationships; overlapping regions represent intersections.</p>
 <section id="general-two-event-venn-diagram" class="level3">
 <h3 class="anchored" data-anchor-id="general-two-event-venn-diagram">General Two-Event Venn Diagram</h3>
-<div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    subgraph S["Sample Space S"]</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    direction LR</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        A_only["A only&lt;br/&gt;P(A ∩ Bᶜ)"] --- AB["A ∩ B&lt;br/&gt;(both A and B)"] --- B_only["B only&lt;br/&gt;P(Aᶜ ∩ B)"]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        Neither["Neither A nor B&lt;br/&gt;P(Aᶜ ∩ Bᶜ)"]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    end</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph S["Sample Space S"]
-    direction LR
-        A_only["A only&lt;br/&gt;P(A ∩ Bᶜ)"] --- AB["A ∩ B&lt;br/&gt;(both A and B)"] --- B_only["B only&lt;br/&gt;P(Aᶜ ∩ B)"]
-        Neither["Neither A nor B&lt;br/&gt;P(Aᶜ ∩ Bᶜ)"]
-    end
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<p><img src="images/7f2f6957-e099-4d7a-af82-90f5eae0a750.png" class="img-fluid" width="502"></p>
 </section>
 <section id="mutually-exclusive-events-no-overlap" class="level3">
 <h3 class="anchored" data-anchor-id="mutually-exclusive-events-no-overlap">Mutually Exclusive Events (No Overlap)</h3>
-<div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    subgraph S["Sample Space S"]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    direction LR</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        A["Event A"]</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        B["Event B"]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        Gap[" "]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        A --- Gap --- B</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    end</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph S["Sample Space S"]
-    direction LR
-        A["Event A"]
-        B["Event B"]
-        Gap[" "]
-        A --- Gap --- B
-    end
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<p><img src="images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png" class="img-fluid"></p>
 <p>Because <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> share no outcomes, there is no overlapping region — this is the defining feature of mutually exclusive events.</p>
 </section>
 <section id="clinical-example-venn-diagram" class="level3">
 <h3 class="anchored" data-anchor-id="clinical-example-venn-diagram">Clinical Example Venn Diagram</h3>
 <p>Let <span class="math inline">\(A\)</span> = “patient has diabetes” and <span class="math inline">\(B\)</span> = “patient has hypertension” in a clinic population of 200 patients: 60 have diabetes only, 50 have hypertension only, 40 have both, and 50 have neither.</p>
-<div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    subgraph S["Clinic Population, n = 200"]</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    direction LR</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        A["Diabetes only&lt;br/&gt;n = 60"] --- AB["Both&lt;br/&gt;n = 40"] --- B["Hypertension only&lt;br/&gt;n = 50"]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        N["Neither&lt;br/&gt;n = 50"]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    end</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-    subgraph S["Clinic Population, n = 200"]
-    direction LR
-        A["Diabetes only&lt;br/&gt;n = 60"] --- AB["Both&lt;br/&gt;n = 40"] --- B["Hypertension only&lt;br/&gt;n = 50"]
-        N["Neither&lt;br/&gt;n = 50"]
-    end
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<p><img src="images/b21f6b39-cfca-428f-88a9-8e717cadce66.png" class="img-fluid" width="654"></p>
 <p>From this diagram:</p>
 <p><span class="math inline">\(P(\text{diabetes}) = (60+40)/200 = 0.50\)</span>;</p>
 <p><span class="math inline">\(P(\text{hypertension}) = (50+40)/200=0.45\)</span>;</p>
@@ -892,13 +822,13 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="tree-diagrams">Tree Diagrams</h2>
 <p>Tree diagrams visually organize sequential/conditional probabilities and are especially useful for multi-stage experiments (they will be used again for diagnostic testing in Section 5).</p>
 <div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    Start(("Select&lt;br/&gt;Vial 1")) --&gt;|"P = 0.20&lt;br/&gt;Defective"| D1["1st Defective"]</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P = 0.80&lt;br/&gt;Not Defective"| ND1["1st OK"]</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 1/9&lt;br/&gt;Defective"| D1D2["Both Defective&lt;br/&gt;P = 0.20 × 0.111 = 0.022"]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 8/9&lt;br/&gt;Not Defective"| D1ND2["1st Def, 2nd OK&lt;br/&gt;P = 0.20 × 0.889 = 0.178"]</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 2/9&lt;br/&gt;Defective"| ND1D2["1st OK, 2nd Def&lt;br/&gt;P = 0.80 × 0.222 = 0.178"]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 7/9&lt;br/&gt;Not Defective"| ND1ND2["Neither Defective&lt;br/&gt;P = 0.80 × 0.778 = 0.622"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    Start(("Select&lt;br/&gt;Vial 1")) --&gt;|"P = 0.20&lt;br/&gt;Defective"| D1["1st Defective"]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P = 0.80&lt;br/&gt;Not Defective"| ND1["1st OK"]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 1/9&lt;br/&gt;Defective"| D1D2["Both Defective&lt;br/&gt;P = 0.20 × 0.111 = 0.022"]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 8/9&lt;br/&gt;Not Defective"| D1ND2["1st Def, 2nd OK&lt;br/&gt;P = 0.20 × 0.889 = 0.178"]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 2/9&lt;br/&gt;Defective"| ND1D2["1st OK, 2nd Def&lt;br/&gt;P = 0.80 × 0.222 = 0.178"]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 7/9&lt;br/&gt;Not Defective"| ND1ND2["Neither Defective&lt;br/&gt;P = 0.80 × 0.778 = 0.622"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
@@ -922,13 +852,13 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="worked-example-combining-multiple-rules-clinical">Worked Example Combining Multiple Rules (Clinical)</h2>
 <p>In a population, 10% of people have a certain risk gene (<span class="math inline">\(G\)</span>). Among those with the gene, 40% develop the disease (<span class="math inline">\(D\)</span>) by age 60; among those without the gene, only 5% develop the disease. Find the overall probability a randomly selected person develops the disease (this previews the <strong>Law of Total Probability</strong>, essential for Bayes’ Theorem in Section 5).</p>
 <div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    Start(("Population")) --&gt;|"P(G) = 0.10"| G["Has Gene"]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P(Gᶜ) = 0.90"| Gc["No Gene"]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(D|G) = 0.40"| GD["Gene &amp; Disease&lt;br/&gt;P = 0.10×0.40 = 0.04"]</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(Dᶜ|G) = 0.60"| GDc["Gene, No Disease&lt;br/&gt;P = 0.10×0.60 = 0.06"]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(D|Gᶜ) = 0.05"| GcD["No Gene, Disease&lt;br/&gt;P = 0.90×0.05 = 0.045"]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(Dᶜ|Gᶜ) = 0.95"| GcDc["No Gene, No Disease&lt;br/&gt;P = 0.90×0.95 = 0.855"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    Start(("Population")) --&gt;|"P(G) = 0.10"| G["Has Gene"]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P(Gᶜ) = 0.90"| Gc["No Gene"]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(D|G) = 0.40"| GD["Gene &amp; Disease&lt;br/&gt;P = 0.10×0.40 = 0.04"]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(Dᶜ|G) = 0.60"| GDc["Gene, No Disease&lt;br/&gt;P = 0.10×0.60 = 0.06"]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(D|Gᶜ) = 0.05"| GcD["No Gene, Disease&lt;br/&gt;P = 0.90×0.05 = 0.045"]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(Dᶜ|Gᶜ) = 0.95"| GcDc["No Gene, No Disease&lt;br/&gt;P = 0.90×0.95 = 0.855"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
@@ -983,10 +913,10 @@ window.Quarto = {
 <p>Diagnostic test performance is organized in a <strong>2×2 confusion matrix (contingency table)</strong>, cross-classifying the true disease status against the test result:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 28%">
-<col style="width: 27%">
-<col style="width: 11%">
+<col style="width: 26%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 24%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1124,7 +1054,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p><strong>Step 5: Calculate PPV using Bayes’ Theorem:</strong> <span class="math display">\[PPV = P(D+|T+) = \frac{P(T+|D+)P(D+)}{P(T+|D+)P(D+)+P(T+|D-)P(D-)} = \frac{(0.90)(0.01)}{(0.90)(0.01)+(0.05)(0.99)}\]</span> <span class="math display">\[PPV = \frac{0.009}{0.009+0.0495} = \frac{0.009}{0.0585} = 0.1538 \approx 15.4\%\]</span></p>
+<p><strong>Step 5: Calculate PPV using Bayes’ Theorem:</strong> <span class="math display">\[PPV = P(D+|T+) = \frac{P(T+|D+)P(D+)}{P(T+|D+)P(D+)+P(T+|D-)P(D-)} \]</span> <span class="math display">\[= \frac{(0.90)(0.01)}{(0.90)(0.01)+(0.05)(0.99)}\]</span> <span class="math display">\[PPV = \frac{0.009}{0.009+0.0495} = \frac{0.009}{0.0585} = 0.1538 \approx 15.4\%\]</span></p>
 <p><strong>Verification from the confusion matrix:</strong> <span class="math inline">\(PPV = TP/(TP+FP) = 90/585 = 0.1538\)</span></p>
 <p><strong>Step 6: Calculate NPV:</strong> <span class="math display">\[NPV = \frac{TN}{TN+FN} = \frac{9405}{9415} = 0.9989 \approx 99.9\%\]</span></p>
 <section id="interpretation-1" class="level3">
@@ -1132,7 +1062,7 @@ window.Quarto = {
 <p>Even with a “good” test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about <strong>15.4%</strong> of people who test positive actually have TB — the majority of positives (84.6%) are <strong>false positives</strong>. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes’ Theorem: <strong>low prevalence sharply lowers PPV</strong>, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.</p>
 </section>
 <section id="likelihood-ratios-worked-calculation" class="level3">
-<h3 class="anchored" data-anchor-id="likelihood-ratios-worked-calculation">Likelihood Ratios — Worked Calculation</h3>
+<h3 class="anchored" data-anchor-id="likelihood-ratios-worked-calculation">Likelihood Ratios (Worked Calculation)</h3>
 <p><span class="math display">\[LR+ = \frac{\text{Sensitivity}}{1-\text{Specificity}} = \frac{0.90}{1-0.95} = \frac{0.90}{0.05} = 18\]</span> <span class="math display">\[LR- = \frac{1-\text{Sensitivity}}{\text{Specificity}} = \frac{1-0.90}{0.95} = \frac{0.10}{0.95} = 0.105\]</span></p>
 <p><strong>Interpretation:</strong> A positive result is 18 times more likely in a person with TB than without — a strong LR+ (values &gt; 10 are considered to provide strong evidence). A negative result’s LR− of 0.105 substantially reduces the likelihood of disease (values &lt; 0.1 are considered strong evidence against disease).</p>
 </section>
@@ -1140,17 +1070,17 @@ window.Quarto = {
 <section id="bayes-theorem-flowchart-diagnostic-testing" class="level2">
 <h2 class="anchored" data-anchor-id="bayes-theorem-flowchart-diagnostic-testing">Bayes’ Theorem Flowchart (Diagnostic Testing)</h2>
 <div class="cell" data-layout-align="default">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    Pop(("Population&lt;br/&gt;N = 10,000&lt;br/&gt;Prevalence = 1%")) --&gt; D["Diseased&lt;br/&gt;n = 100"]</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    Pop --&gt; ND["Not Diseased&lt;br/&gt;n = 9,900"]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"Sensitivity = 90%"| TP["True Positive&lt;br/&gt;n = 90"]</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"1 - Sensitivity = 10%"| FN["False Negative&lt;br/&gt;n = 10"]</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"1 - Specificity = 5%"| FP["False Positive&lt;br/&gt;n = 495"]</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"Specificity = 95%"| TN["True Negative&lt;br/&gt;n = 9,405"]</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    TP --&gt; PPV["PPV = 90 / (90+495) = 15.4%"]</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    FP --&gt; PPV</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    TN --&gt; NPV["NPV = 9405 / (9405+10) = 99.9%"]</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    FN --&gt; NPV</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    Pop(("Population&lt;br/&gt;N = 10,000&lt;br/&gt;Prevalence = 1%")) --&gt; D["Diseased&lt;br/&gt;n = 100"]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    Pop --&gt; ND["Not Diseased&lt;br/&gt;n = 9,900"]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"Sensitivity = 90%"| TP["True Positive&lt;br/&gt;n = 90"]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"1 - Sensitivity = 10%"| FN["False Negative&lt;br/&gt;n = 10"]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"1 - Specificity = 5%"| FP["False Positive&lt;br/&gt;n = 495"]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"Specificity = 95%"| TN["True Negative&lt;br/&gt;n = 9,405"]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    TP --&gt; PPV["PPV = 90 / (90+495) = 15.4%"]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    FP --&gt; PPV</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    TN --&gt; NPV["NPV = 9405 / (9405+10) = 99.9%"]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    FN --&gt; NPV</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <p></p><figure class="figure"><p></p>
@@ -1211,7 +1141,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>This is why public health screening programs <strong>target high-risk subgroups</strong> rather than screening entire low-prevalence populations indiscriminately — PPV improves dramatically as prevalence rises, even with an unchanged test.</p>
+<p>This is why public health screening programs <strong>target high-risk subgroups</strong> rather than screening entire low-prevalence populations indiscriminately, PPV improves dramatically as prevalence rises, even with an unchanged test.</p>
 </div>
 </div>
 </div>
@@ -1769,8 +1699,8 @@ window.Quarto = {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../Section2/05_discrete_probability_distributions.html" class="pagination-link" aria-label="Descriptive Statistics and Probability Foundations">
-        <span class="nav-page-text"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../Section2/05_discrete_probability_distributions.html" class="pagination-link" aria-label="Discrete Probability Distributions">
+        <span class="nav-page-text"><span class="chapter-title">Discrete Probability Distributions</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

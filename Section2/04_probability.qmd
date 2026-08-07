@@ -93,27 +93,11 @@ Venn diagrams visually represent relationships between events (sets) within a sa
 
 ### General Two-Event Venn Diagram
 
-```{mermaid}
-flowchart LR
-    subgraph S["Sample Space S"]
-    direction LR
-        A_only["A only<br/>P(A ∩ Bᶜ)"] --- AB["A ∩ B<br/>(both A and B)"] --- B_only["B only<br/>P(Aᶜ ∩ B)"]
-        Neither["Neither A nor B<br/>P(Aᶜ ∩ Bᶜ)"]
-    end
-```
+![](images/7f2f6957-e099-4d7a-af82-90f5eae0a750.png){width="502"}
 
 ### Mutually Exclusive Events (No Overlap)
 
-```{mermaid}
-flowchart LR
-    subgraph S["Sample Space S"]
-    direction LR
-        A["Event A"]
-        B["Event B"]
-        Gap[" "]
-        A --- Gap --- B
-    end
-```
+![](images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png)
 
 Because $A$ and $B$ share no outcomes, there is no overlapping region — this is the defining feature of mutually exclusive events.
 
@@ -121,14 +105,7 @@ Because $A$ and $B$ share no outcomes, there is no overlapping region — this i
 
 Let $A$ = "patient has diabetes" and $B$ = "patient has hypertension" in a clinic population of 200 patients: 60 have diabetes only, 50 have hypertension only, 40 have both, and 50 have neither.
 
-```{mermaid}
-flowchart LR
-    subgraph S["Clinic Population, n = 200"]
-    direction LR
-        A["Diabetes only<br/>n = 60"] --- AB["Both<br/>n = 40"] --- B["Hypertension only<br/>n = 50"]
-        N["Neither<br/>n = 50"]
-    end
-```
+![](images/b21f6b39-cfca-428f-88a9-8e717cadce66.png){width="654"}
 
 From this diagram:
 
@@ -298,7 +275,7 @@ Bayes' Theorem is the mathematical backbone of **diagnostic testing** in medicin
 Diagnostic test performance is organized in a **2×2 confusion matrix (contingency table)**, cross-classifying the true disease status against the test result:
 
 |                        | Disease Present (D+) | Disease Absent (D−) | Total   |
-|------------------------|----------------------|---------------------|---------|
+|-------------------|------------------|------------------|------------------|
 | **Test Positive (T+)** | True Positive (TP)   | False Positive (FP) | TP + FP |
 | **Test Negative (T−)** | False Negative (FN)  | True Negative (TN)  | FN + TN |
 | **Total**              | TP + FN              | FP + TN             | $N$     |
@@ -309,7 +286,7 @@ Diagnostic test performance is organized in a **2×2 confusion matrix (contingen
 ### Key Diagnostic Test Measures
 
 | Measure | Formula | Meaning |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | **Sensitivity** (True Positive Rate) | $\dfrac{TP}{TP+FN}$ | Among those **with** disease, proportion correctly identified as positive |
 | **Specificity** (True Negative Rate) | $\dfrac{TN}{TN+FP}$ | Among those **without** disease, proportion correctly identified as negative |
 | **Positive Predictive Value (PPV)** | $\dfrac{TP}{TP+FP}$ | Among those who **test positive**, proportion who truly have disease |
@@ -340,7 +317,7 @@ A tuberculosis (TB) screening test has **sensitivity = 90%** and **specificity =
 | T−    | 10  | 9405 | 9415   |
 | Total | 100 | 9900 | 10,000 |
 
-**Step 5: Calculate PPV using Bayes' Theorem:** $$PPV = P(D+|T+) = \frac{P(T+|D+)P(D+)}{P(T+|D+)P(D+)+P(T+|D-)P(D-)} = \frac{(0.90)(0.01)}{(0.90)(0.01)+(0.05)(0.99)}$$ $$PPV = \frac{0.009}{0.009+0.0495} = \frac{0.009}{0.0585} = 0.1538 \approx 15.4\%$$
+**Step 5: Calculate PPV using Bayes' Theorem:** $$PPV = P(D+|T+) = \frac{P(T+|D+)P(D+)}{P(T+|D+)P(D+)+P(T+|D-)P(D-)} $$ $$= \frac{(0.90)(0.01)}{(0.90)(0.01)+(0.05)(0.99)}$$ $$PPV = \frac{0.009}{0.009+0.0495} = \frac{0.009}{0.0585} = 0.1538 \approx 15.4\%$$
 
 **Verification from the confusion matrix:** $PPV = TP/(TP+FP) = 90/585 = 0.1538$
 
@@ -350,7 +327,7 @@ A tuberculosis (TB) screening test has **sensitivity = 90%** and **specificity =
 
 Even with a "good" test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about **15.4%** of people who test positive actually have TB — the majority of positives (84.6%) are **false positives**. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes' Theorem: **low prevalence sharply lowers PPV**, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.
 
-### Likelihood Ratios — Worked Calculation
+### Likelihood Ratios (Worked Calculation)
 
 $$LR+ = \frac{\text{Sensitivity}}{1-\text{Specificity}} = \frac{0.90}{1-0.95} = \frac{0.90}{0.05} = 18$$ $$LR- = \frac{1-\text{Sensitivity}}{\text{Specificity}} = \frac{1-0.90}{0.95} = \frac{0.10}{0.95} = 0.105$$
 
@@ -392,7 +369,7 @@ Compare the same test (sensitivity 90%, specificity 95%) used in two settings: (
 | High-risk clinic    | 20%        | 81.8% | 97.4% (calc: $7600/7800$) |
 
 ::: callout-tip
-This is why public health screening programs **target high-risk subgroups** rather than screening entire low-prevalence populations indiscriminately — PPV improves dramatically as prevalence rises, even with an unchanged test.
+This is why public health screening programs **target high-risk subgroups** rather than screening entire low-prevalence populations indiscriminately, PPV improves dramatically as prevalence rises, even with an unchanged test.
 :::
 
 # Bayesian Inference
@@ -442,7 +419,7 @@ A sample of $n = 50$ villagers is tested, and $x = 8$ test positive (this is the
 ## Frequentist vs. Bayesian Comparison
 
 | Aspect | Frequentist | Bayesian |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | View of parameters | Fixed, unknown constants | Random variables with a probability distribution |
 | Uses prior information? | No | Yes, explicitly via the prior distribution |
 | Key output | Point estimate + confidence interval + p-value | Posterior distribution (full distribution of belief) |
