@@ -1,0 +1,522 @@
+---
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+---
+
+# Sample Size estimation
+
+### **Introduction**
+
+Sample size estimation is a important step in the design of any research study. It determines how many participants or data points are needed to draw reliable conclusions from the study. An adequately sized sample ensures that the study has sufficient power to detect a true effect if one exists, avoids wastage of resources, and protects against ethical concerns about using either too many or too few research subjects.
+
+### Characteristics of Sample
+
+### **1. Representative**
+
+A representative sample accurately reflects the demographics, behaviors, or characteristics of the larger population from which it is drawn. This characteristic is essential to generalize the findings from the sample to the population. A sample that is not representative may lead to biased results if the participants have different characteristics from the general population.
+
+**Methods to Achieve Representativeness:**
+
+-   **Random Sampling:** Every member of the population has an equal chance of being selected.
+
+-   **Stratified Sampling:** The population is divided into subgroups (strata) that are known to exist, and random samples are drawn from each stratum.
+
+-   **Cluster Sampling:** Randomly selecting entire clusters or groups from a population, where each cluster reflects the characteristics of the whole.
+
+### **2. Sufficiently Large**
+
+The sample must be large enough to provide reliable, statistically valid results. The size needed depends on the expected effect size, the variability in the data, the desired power of the study (i.e., the probability of detecting an effect if one exists), and the acceptable level of type I and type II errors.
+
+**Benefits of Adequate Sample Size:**
+
+-   **Increased Precision:** Larger samples tend to yield more precise estimates of the population parameters.
+
+-   **Reduced Sampling Error:** The error between the sample statistic and the population parameter is likely to be smaller.
+
+### **3. Efficient**
+
+An efficient sample is one that provides the maximum amount of information needed for the study while using the least amount of resources (time, money, effort). Efficiency is particularly important in studies with limited resources or when the study involves hard-to-reach populations.
+
+**Strategies for Efficiency:**
+
+-   **Optimal Allocation in Stratified Sampling:** Dividing resources in a way that maximizes the variability captured by each part of the sample.
+
+-   **Multistage Sampling:** Combining several sampling methods can be more resource-efficient than a simple random sample, especially for large, geographically dispersed populations.
+
+### **4. Easy to Draw**
+
+The sample should be such that it can be drawn without undue difficulty. This means considering logistical aspects of sampling, such as the ease of accessing the population, the availability of contact information, and the willingness of individuals to participate.
+
+**Considerations for Easy Sampling:**
+
+-   **Accessibility of the Population:** Choosing a population that is readily accessible and willing to participate can significantly simplify the process of sample collection.
+
+-   **Practicality of Sampling Methods:** Employing sampling methods that are practical and feasible under the circumstances of the study, like using existing databases or online platforms for surveys when face-to-face interaction is not possible.
+
+### How large sample size should be?
+
+Determining the appropriate sample size for a study is crucial because both excessively small and overly large sample sizes can lead to significant drawbacks. Let's explore these conditions in more detail:
+
+#### **When the Sample Size is Too Small**
+
+1.  **Failure to Detect Clinically Important Associations or Differences:** A small sample size has limited statistical power, which means the study might not be able to detect significant effects or differences that are clinically meaningful. This inability to observe a true effect can lead to false negatives (Type II errors).
+
+2.  **Imprecise Estimation of Associations or Differences:** With fewer data points, the estimates of parameters such as means, proportions, or correlations become less precise. This lack of precision is reflected in wider confidence intervals, making it difficult to draw firm conclusions from the data.
+
+3.  **Failure to Answer Research Questions:** If the sample size is insufficient to provide clear, reliable results, the primary research questions may remain unanswered. This ambiguity can render the research inconclusive and, in many cases, necessitates further study, delaying potential advancements in the field.
+
+4.  **Waste of Participant Input:** Participants who contribute their time and information to a study that is too small may feel their effort is wasted if the study fails to provide meaningful results. This can affect participant morale and willingness to engage in future research.
+
+#### **When the Sample Size is Too Large**
+
+1.  **Waste of Resources:** Excessively large samples involve more logistical arrangements, more staff time, and potentially more equipment and materials than are actually needed to achieve the objectives of the study.
+
+2.  **Waste of Money:** The costs associated with data collection, data management, and analysis increase with the size of the sample. Over-recruitment can lead to unnecessary expenditure that could have been allocated to other important aspects of the study or other research projects.
+
+3.  **Waste of Time:** Managing a larger sample size often requires additional time for data collection, entry, and analysis. This not only extends the timeline of the current project but may also delay the initiation of subsequent studies.
+
+4.  **Difficulty in Maintaining Quality of Data:** As sample sizes increase, maintaining consistency and accuracy in data collection across many subjects and settings can become challenging. Larger datasets can introduce more opportunities for errors in data entry, loss of data fidelity, and complications in data management.
+
+Thus sample size should be optimum. Optimum sample size can be identified through sample size calculation. The importance of sample size calculation are :
+
+1.  Allow appropriate analysis'
+2.  Provide desired level of accuracy
+3.  Allow validity of significance test
+4.  Required for ethical approval
+
+### **Fundamentals of Sample Size Estimation**
+
+#### **1. Objective of the Study**
+
+The purpose of the study heavily influences sample size. Objectives can vary from estimating a parameter (like an average or proportion) with a specified precision, to detecting a difference between groups, or to establishing a correlation between variables.
+
+#### **2. Significance Level (α)**
+
+The significance level is the probability of rejecting the null hypothesis when it is actually true (Type I error). A common value used is 0.05, implying a 5% risk of a Type I error.
+
+#### **3. Power (1 - β)**
+
+Power is the probability of correctly rejecting the null hypothesis when it is false, essentially avoiding a Type II error. A typical power used in studies is 80% or 90%, depending on the importance of the outcome being studied.
+
+#### **4. Effect Size**
+
+Effect size is a quantitative measure of the magnitude of the experimental effect that the researcher seeks to detect. The larger the effect size, the smaller the sample size required to detect it.
+
+Sample size calculation for different scenarios
+
+## Sample size calculation for Cross-section study estimating simple prevalence
+
+### Using precision based approach
+
+#### When population is finite and anticipated population proportion is not known.
+
+In this scenario, we can use Yamane formula
+
+$$ n = \frac{1}{1 + N.d^2} $$ where N is total count of finite population and d is the absolute error
+
+Lets create a function to calculate sample size by Yamane formula
+
+```{r}
+# lets generate a function for yamane formula
+yamane<-function(N, abs.err){
+  n=N/(1+N*abs.err^2)
+  cat("Sample size is :", "\n", ceiling(n))
+}
+```
+
+**Example:** Let us consider, you are interested in carrying a prevalence study using simple random sampling from a population of over 12000 university students. There were no previous studies to anticipate prevalence. What is the required sample size to estimate prevalence within 5% point of the true prevalence.
+
+**Solution:**
+
+Here, N=12000; d=0.05
+
+```{r}
+# Calculate sample size using our own function
+yamane(12000, 0.05)
+```
+
+#### When anticipated population proportion is known and population is not finite.
+
+To calculate sample size for this scenario, we require anticipated population proportion (p), confidence level (1-alpha) and absolute precision (d). The required formula is chchrane formula as follow:
+
+$$ n = \frac{Z^2. p(1-p)}{d^2} $$ where Z=1.96 at 95% confidence level, p=anticipated population proportion and d is absolute precision.
+
+To calculated sample size for this situation, we can use `epi.sssimpleestb()` function from `epiR` package or we can use the following function.
+
+```{r}
+# Lets generate our own function to calculate sample size when anticipated population proportion is known and population is not finite
+
+sscal_oneprop_precision_based<-function(P, error, error_type=c("absolute", "relative"), conf.int=0.95, N=NA){
+  alpha=1-conf.int
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  if(error_type=="relative"){
+  n=Za^2*(1-P)/(P*error^2)
+  n <- ifelse(is.na(N), n, (n * N)/(n + (N - 1)))
+  }
+  else{
+    n=Za^2*(P*(1-P)/error^2)
+    n <- ifelse(is.na(N), n, (n * N)/(n + (N - 1)))
+    }
+  
+  cat("Sample size is:", "\n", ceiling(n))
+}
+
+```
+
+**Example:** Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old. How many adults should be included in the study so that the estimated prevalence is within 2% point of the true value with 95% confidence level and it is estimated from the previous study that prevalence is 10%.
+
+**Solution:**
+
+Here, p=10%; 1-alpha =95%; d=2%
+
+```{r}
+# install.packages("epiR")
+library(epiR)
+
+# Error: package or namespace load failed for ‘epiR’ in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
+#  there is no package called ‘gfonts’
+# In addition: Warning message:
+# package ‘epiR’ was built under R version 4.4.2
+
+# I got error due to absenence of 'gfonts' so i'm installing it.
+
+# install.packages('gfonts')
+
+# use epi.sssimpleestb() function from epiR package
+epi.sssimpleestb(Py = 0.10, epsilon = 0.02,error = "absolute",conf.level = 0.95, se =1, sp = 1)
+
+
+# using created function
+sscal_oneprop_precision_based(P = 0.10, error = 0.02, error_type = "absolute", conf.int = 0.95)
+```
+
+#### When anticipated population proportion is known and population is finite
+
+When population is finite, we have to correct our sample size which can be carried out by using following formula
+
+$$ n = \frac{n_0.N}{n_0 +(N-1)} $$ where n0 is the calculated sample size from the previous formula.
+
+We can calculate sample size using `epi.sssimpleestb()` from epiR package or function created before.
+
+**Example:** Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old in the hotel of population 1500. How many adults should be included in the study so that the estimated prevalence is within 20% relative error and 95% confidence level and it is estimated from the previous study that prevalence is 10%.
+
+**Solution:**
+
+p=10%; 1-alpha =95%; d=2%; N=1500
+
+Now lets calculate sample size using R
+
+```{r}
+
+# Using epiR package
+epi.sssimpleestb(Py = 0.10, epsilon = 0.2,error = "relative",conf.level = 0.95, se =1, sp = 1, N = 1500)
+
+
+# using own function
+sscal_oneprop_precision_based(P = 0.10, error = 0.2, error_type = "relative", conf.int = 0.95, N=1500)
+```
+
+### Using power based approach)
+
+When studies are designed to test hypothesis that the anticipated prevalence of condition is less than, greater than or equal to the hypothesized value. To calculate prevalence through this approach, we require prevalence under null hypothesis , test prevalence, level of significance, power of the test and type of alternative hypothesis (one-sided or both sided).
+
+#### One Sample proportion with hypothesis testing
+
+For the study conducting asymptotic z-test for a single proportion (one sample test), the sample size can be calculated using the formula that uses normal approximation to the distribution of the test statistic. The formula is as follow:
+
+$$
+n=\frac{\left( Z_a \sqrt{P_0 (1 - P_0)} + Z_b \sqrt{P (1 - P)} \right)^2}{(P_0 - P)^2}
+$$
+
+where,
+
+P0 is population proportion under null hypothesis
+
+Pa is anticipated value of the population proportion (proportion under alternative hypothesis)
+
+Za is Z value at x% CI (one sided or two sided)
+
+Zb is Z value at y% power
+
+```{r}
+# Function
+sscal_oneprop_power_based<-function(P0, P, sided.test=c("one sided", "two sided"), conf.int=0.95, power=0.80){
+  alpha=1-conf.int
+  if(sided.test=="two sided"){
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  } else{Za=qnorm(p=1-alpha, mean=0, sd=1)}
+  
+  beta=1-power
+  Zb=qnorm(p=1-beta, mean=0, sd=1)
+  
+  n=({Za*sqrt(P0*(1-P0))+Zb*sqrt(P*(1-P))}^2)/(P0-P)^2
+  
+  cat("Sample size is:", "\n", ceiling(n))
+}
+
+# Calculation
+sscal_oneprop_power_based(P0 =0.25, P = 0.2,sided.test = "two sided", power = 0.9,conf.int = 0.95 )
+```
+
+**Example:** The success rate for a surgical treatment of a particular heart condition is widely reported in the literature to be 70%. A new medical treatment has been proposed that is alleged to offer equivalent treatment success. A hospital without the necessary facilities or staff to provide the surgical treatment has decided to use the new medical treatment for all new patients presenting with this condition. How many patients must be studied to test the hypothesis that the success rate of the new method of treatment is 70% against an alternative hypothesis that it is not 70% at the 5% level of significance? The investigators wish to have a 90% power of detecting a difference between the success rates of 10 percentage points or more in either direction.
+
+**Solution:**
+
+test success rate (p0)= 0.7
+
+anticipated success rate (p)=0.8 or 0.6
+
+alpha=0.05
+
+power =0.9
+
+sided test = two sided
+
+```{r}
+# install.packages("pwrss")
+library(pwrss)
+
+pwrss.z.prop(p = 0.8, p0 = 0.7, alpha = 0.05, power = 0.90,
+      ,
+             arcsin.trans = FALSE)
+```
+
+## Sample size calculation for study estimating difference in two proportions
+
+This can be done by two approach:
+
+a\) precision based approach
+
+b\) power based approach
+
+### Using precision based approach
+
+In this approach, we required anticipated population proportions for two groups, confidence level, precision level. The formula to calculate sample size is as follows: $$
+n= \frac{Z_a^2 *V^2}{d^2}
+$$
+
+Where\
+$$
+V=P_1 *(1-P_1)+P_2*(1-P_2)
+$$
+
+**Example:** What sample size should be selected from each of two groups in order to estimate the risk difference within 5 percentage points of the true difference, with 95% confidence, when no reliable estimates of P1 and P2 are available?
+
+**Solution:**
+
+precision = 5% (0.05)
+
+P1, P2 are unknown so lets take 50% each
+
+confidence level =95%
+
+```{r}
+# Using own function
+sscal_twoprop_precision_based<-function(P1, P2, abs.error, conf.int=0.95, N=NA){
+  alpha=1-conf.int
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  
+  V=P1*(1-P1)+P2*(1-P2)
+  
+  n=Za^2*V/(abs.error^2)
+  
+  cat("Sample size required \n group1: ", ceiling(n), "\n", "group2:", ceiling(n))
+}
+
+
+sscal_twoprop_precision_based(P1 = 0.5, P2 = 0.5,abs.error = 0.05,conf.int = 0.95)
+
+```
+
+### Using power based approach
+
+In power based approach, we required anticipated population proportions (p1 and p2) , level of significance, power of test and type of test (one sided or two sided).
+
+**Example:** An investigator wants to compare the complication rates between two types of surgery: one with a 15% complication rate and the other with a 25% complication rate. How large should the sample size be in each group to detect, with 80% power and a significance level of 5%, whether the complication rate of the second surgery is significantly higher than that of the first?
+
+**Solution:**
+
+complication rate for the one group (p1)=5%
+
+complication rate for the another group (p2)=15%
+
+power: 90%
+
+Confidence level=95%
+
+sided test= one sided
+
+```{r}
+sscal_twoprop_power_based<-function(P1, P2, sided.test=c("one.sided", "two.sided"), conf.int=0.95, power=0.80){
+  P=(P1+P2)/2
+  alpha=1-conf.int
+  if(sided.test=="two.sided"){
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  } else{Za=qnorm(p=1-alpha, mean=0, sd=1)}
+  
+  beta=1-power
+  Zb=qnorm(p=1-beta, mean=0, sd=1)
+  
+  n=({Za*sqrt(2*P*(1-P))+Zb*sqrt(P1*(1-P1)+P2*(1-P2))}^2)/(P1-P2)^2
+  
+  cat("Sample size required \n group1: ", ceiling(n), "\n", "group2:", ceiling(n))
+}
+
+# Calculation
+sscal_twoprop_power_based(P1 =0.15, P2 = 0.25,sided.test = "one.sided", power = 0.8,conf.int = 0.95 )
+
+
+# function from package 
+power.prop.test(p1 = 0.15, p2 = 0.25, sig.level = 0.05, power = 0.8,alternative = "one.sided")
+```
+
+Thus, Th
+
+## Sample size calculation for study estimating single group mean
+
+### Using precision based approach
+
+Formula:
+
+$$
+n=\frac{Z_{\alpha/2}* s^2}{d^2}
+$$
+
+where
+
+s is standard deviation obtained from the previous study or pilot study
+
+d is the estimated absolute margin of error
+
+Zα/2 is the normal deviate for 2-tailed test
+
+```{r}
+# function from package
+epiR::epi.sssimpleestc(sigma = 0.2,epsilon = 0.02,error = "absolute",xbar = 2)
+
+# own function
+sscal_onemean_precision_based<-function(mean,sd, err, err.type=c("asolute", "relative"), conf.int=0.95){
+  alpha=1-conf.int
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  
+  if(err.type=="absolute"){
+   error=err
+  } else{
+   error=err*mean
+  }
+  
+  n=({Za*sd}^2)/(error)^2
+  
+  cat("Sample size is:", "\n", ceiling(n))
+}
+
+sscal_onemean_precision_based(mean = 1500 * 0.05,sd =(300 * 0.05),err = 0.20, err.type = "absolute",conf.int = 0.95 )
+```
+
+### 
+
+## Sample size calculation for two independent mean situation
+
+The formula to calculate sample size are taken from the Book of Bernard\[@rosner2011. The formula to caculate sample size in two groups are not equal (r\>1) is as follows:
+
+$$n1=\frac{(\sigma_1^2+\frac{\sigma_2^2}{r})(Z_{\alpha/2}+Z_\beta)^2* \sigma}{(u_1-u_2)}
+$$
+
+$$n2=\frac{(r*\sigma_1^2+\sigma_2^2)*(Z_{\alpha/2}+Z_\beta)^2}{(u_1-u_2)^2}
+$$
+
+The formula to caculate sample size in two groups are equal (r=1) is as follows:
+
+$$n=\frac{(\sigma_1^2+\sigma_2^2)*(Z_{\alpha/2}+Z_\beta)^2}{(u_1-u_2)^2}
+$$
+
+The function to calculate sample size for the given condition is as follows:
+
+```{r}
+sscal_twoimean<-function(u1, u2,sd1=NA, sd2=NA, sided.test=c("one.sided", "two.sided"), conf.int=0.95, power=0.80, nratio=1){
+  
+  
+  
+  alpha=1-conf.int
+  if(sided.test=="two.sided"){
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  } else{Za=qnorm(p=1-alpha, mean=0, sd=1)}
+  
+  beta=1-power
+  Zb=qnorm(p=1-beta, mean=0, sd=1)
+  
+  n= (sd1^2+sd2^2)*(Za+Zb)^2/(u1-u2)^2
+  
+ n2= (sd1^2+sd2^2/nratio)*(Za+Zb)^2/(u1-u2)^2
+  n1= (nratio*sd1^2+sd2^2)*(Za+Zb)^2/(u1-u2)^2
+  if(nratio==1){
+  cat("Sample size required \n group1: ", ceiling(n), "\n", "group2:", ceiling(n), "\n\n")
+  } else{
+    cat("Sample size required \n group1: ", ceiling(n1), "\n", "group2:", ceiling(n2), "\n\n")
+  }
+}
+
+```
+
+**Example:** How many non-OC users and OC users are required in a study to compare mean between them. The anticipated mean for group 1 is 132.86 (SD=15.34) and for group 2 is 127.44 (SD=18.23), power of 80% and 95% confidence level. Assume that you chose ratio of sample size is 1:1, 2:1 and 1:3.
+
+(This example is taken from [@rosner2011].)
+
+**Solution:**
+
+u1=132.86; u2=15.34 ; sd1=15.34; sd2=18.23, nratio=1:1, 2:1 or 3:1
+
+power=80%
+
+Confidence level= 95%
+
+```{r}
+
+# when nratio=1:1
+sscal_twoimean(u1=132.86, u2=127.44, sd1=15.34, sd2=18.23,sided.test = "two.sided", power = 0.8,conf.int = 0.95,nratio =1  )
+
+# when nratio=2:1
+sscal_twoimean(u1=132.86, u2=127.44, sd1=15.34, sd2=18.23,sided.test = "two.sided", power = 0.8,conf.int = 0.95,nratio =2  )
+
+# when nratio=1:3
+sscal_twoimean(u1=132.86, u2=127.44, sd1=15.34, sd2=18.23,sided.test = "two.sided", power = 0.8,conf.int = 0.95,nratio =0.3333)
+
+```
+
+Sample size for estimating minimum detectable odds ratio
+
+ 
+
+```{r}
+sscal_odds_precision_based<-function(P1, P2=NA,OR=NA, rel.error, conf.int=0.95, power=0.80){
+  if(OR>=1){
+  if(is.na(P2)){
+  P2=P1/(OR*(1-P1)+P1)}
+  else{
+    P2=P2
+  }
+  }else {
+    if(is.na(P1)){
+  "must enter value of P1"}
+  else{
+    OR=1/OR
+  }
+    
+  }
+    
+ 
+  
+  alpha=1-conf.int
+  
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  
+  n=Za^2*((1/(P1*(1-P1))+ 1/(P2*(1-P2))))/(log(1-rel.error))^2
+  
+  cat("Sample size required \n n: ", ceiling(n))
+}
+
+# Calculation
+sscal_odds_precision_based(P1 =0.3, P2 = NA, OR=2, rel.error = 0.25,conf.int = 0.95 )
+```

@@ -1,0 +1,608 @@
+---
+title: "Measures of Central Tendency"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Introduction
+
+A **measure of central tendency** is a single value that attempts to describe a data set by identifying the "center" or "typical" value of the distribution.
+The three classical measures are the **mean**, **median**, and **mode**; we also cover **quartiles**, **percentiles**, and **deciles**, which are measures of *position* closely related to the median.
+
+Throughout this section we will use three running data sets so every formula can be demonstrated with a full, step-by-step manual calculation:
+
+-   **Dataset A (raw/ungrouped data):** Fasting blood glucose (mg/dL) of 11 patients attending a diabetes clinic:
+
+    `88, 92, 95, 98, 101, 104, 108, 112, 118, 125, 250`
+
+-   **Dataset B (frequency table / discrete data):** Number of children in 40 households in a village survey.
+
+    | Number of children ($x$) | Frequency ($f$) |
+    |--------------------------|-----------------|
+    | 0                        | 6               |
+    | 1                        | 10              |
+    | 2                        | 14              |
+    | 3                        | 7               |
+    | 4                        | 3               |
+    | **Total**                | 40              |
+
+-   **Data Set C (grouped frequency distribution):** Age (in years) of 50 patients admitted with hypertension, grouped into class intervals.
+
+    | Class interval | Frequency ($f$) |
+    |----------------|-----------------|
+    | 30–39          | 4               |
+    | 40–49          | 9               |
+    | 50–59          | 15              |
+    | 60–69          | 13              |
+    | 70–79          | 7               |
+    | 80–89          | 2               |
+    | **Total**      | 50              |
+
+## The Arithmetic Mean
+
+### Definition
+
+The **arithmetic mean** (commonly just called "the mean" or "average") is the sum of all observations divided by the number of observations.
+
+### Formula
+
+For a population of size $N$: $$\mu = \frac{\sum_{i=1}^{N} X_i}{N}$$
+
+For a sample of size $n$: $$\bar{x} = \frac{\sum_{i=1}^{n} x_i}{n}$$
+
+### Manual Calculation
+
+#### A. Raw (Ungrouped) Data
+
+Using Data Set A (fasting glucose, mg/dL): 88, 92, 95, 98, 101, 104, 108, 112, 118, 125, 250 ($n = 11$)
+
+**Step 1.** Sum all observations: $$\sum x_i = 88+92+95+98+101+104+108+112+118+125+250 = 1291$$
+
+**Step 2.** Divide by $n$: $$\bar{x} = \frac{1291}{11} = 117.4 \text{ mg/dL}$$
+
+Notice that the single extreme value (250 mg/dL, representing an undiagnosed diabetic outlier) pulls the mean upward — this illustrates the mean's **sensitivity to outliers**, discussed further below.
+
+#### B. Frequency Table (Ungrouped, Discrete Data)
+
+Data Set B — number of children ($x$) per household, surveyed in 40 households:
+
+| Number of children ($x$) | Frequency ($f$)   | $f \times x$   |
+|--------------------------|-------------------|----------------|
+| 0                        | 6                 | 0              |
+| 1                        | 10                | 10             |
+| 2                        | 14                | 28             |
+| 3                        | 7                 | 21             |
+| 4                        | 3                 | 12             |
+| **Total**                | $n = \sum f = 40$ | $\sum fx = 71$ |
+
+**Formula:** $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$
+
+**Step 1.** Compute $f \times x$ for each row (shown above).
+
+**Step 2.** Sum the $fx$ column: $\sum fx = 0+10+28+21+12 = 71$.
+
+**Step 3.** Sum the frequency column: $\sum f = 6+10+14+7+3 = 40$.
+
+**Step 4.** Divide: $$\bar{x} = \frac{71}{40} = 1.775 \approx 1.8 \text{ children per household}$$
+
+### C. Grouped Frequency Distribution
+
+Data Set C is a age (in years) of 50 hypertension patients:
+
+| Class interval | Midpoint ($m$) | Frequency ($f$) | $f \times m$       |
+|----------------|----------------|-----------------|--------------------|
+| 30–39          | 34.5           | 4               | 138.0              |
+| 40–49          | 44.5           | 9               | 400.5              |
+| 50–59          | 54.5           | 15              | 817.5              |
+| 60–69          | 64.5           | 13              | 838.5              |
+| 70–79          | 74.5           | 7               | 521.5              |
+| 80–89          | 84.5           | 2               | 169.0              |
+| **Total**      | \-             | $n = 50$        | $\sum fm = 2885.0$ |
+
+**Formula:** $\bar{x} = \dfrac{\sum f_i m_i}{\sum f_i}$, where $m_i$ is the midpoint of each class.
+
+**Step 1.** Find the midpoint of each class: $m = \dfrac{\text{lower limit} + \text{upper limit}}{2}$.
+For 30–39: $m = (30+39)/2 = 34.5$ (using continuous class boundaries 29.5–39.5 is also acceptable and gives the same midpoint here).
+**Step 2.** Multiply each midpoint by its frequency ($f \times m$), shown above.
+**Step 3.** Sum the $fm$ column: $2885.0$.
+**Step 4.** Divide by total frequency: $$\bar{x} = \frac{2885.0}{50} = 57.7 \text{ years}$$
+
+::: callout-important
+The grouped mean is an **approximation** because individual raw values inside each class are unknown; we assume every observation in a class is located at the midpoint.
+This assumption introduces a small amount of **grouping error**.
+:::
+
+### Interpretation
+
+The arithmetic mean represents the "balance point" of the data.
+If the data were weights on a see-saw, the mean is where it would balance.
+
+### Advantages
+
+-   Uses every observation in the data set.
+-   Algebraically tractable (has well-defined mathematical properties, e.g., $\sum (x_i - \bar{x}) = 0$), making it the basis for further statistics (variance, regression, etc.).
+-   Familiar and easy to interpret.
+-   Stable from sample to sample (least sampling variability among the three central tendency measures, under normality).
+
+### Disadvantages
+
+-   Highly sensitive to **outliers and skewed data** (as shown above, one value of 250 pulled the mean far above where most data points lie).
+-   Cannot be computed for open-ended class intervals or for nominal/ordinal data.
+-   Can produce a value that does not correspond to any actual observation (e.g., "1.8 children"), which may seem unnatural.
+
+### Appropriate Use
+
+The mean is most appropriate when data are **symmetric (approximately normally distributed)** and free of major outliers, and when the variable is measured on an **interval or ratio scale**.
+
+### Public Health Example
+
+The mean is used to report the **average birth weight** of newborns in a hospital, the **mean systolic blood pressure** in a screened population, or the **mean length of hospital stay** for a given diagnosis.
+
+## Weighted Mean
+
+### Definition
+
+The **weighted mean** is a generalization of the arithmetic mean in which each observation is multiplied by a weight reflecting its relative importance, rather than being treated equally.
+
+### Formula
+
+$$\bar{x}_w = \frac{\sum_{i=1}^{k} w_i x_i}{\sum_{i=1}^{k} w_i}$$
+
+where $w_i$ is the weight assigned to value $x_i$.
+
+### Worked Example (Public Health)
+
+A district's overall infant mortality rate (IMR) is calculated by combining IMRs from three sub-districts, weighted by the number of live births in each (not by simply averaging the three rates):
+
+| Sub-district | IMR per 1000 live births ($x$) | Live births (weight $w$) | $w \times x$ |
+|----|----|----|----|
+| A | 25 | 2000 | 50,000 |
+| B | 40 | 500 | 20,000 |
+| C | 18 | 3500 | 63,000 |
+| **Total** |  | $\sum w = 6000$ | $\sum wx = 133{,}000$ |
+
+**Step 1.** Multiply each rate by its weight (live births): shown above.
+**Step 2.** Sum the weighted values: $133{,}000$.
+**Step 3.** Sum the weights: $6000$.
+**Step 4.** Divide: $$\bar{x}_w = \frac{133{,}000}{6000} = 22.17 \text{ per } 1000 \text{ live births}$$
+
+Notice that the naive (unweighted) average of 25, 40, and 18 would be $27.7$ — quite different, and misleading, because it ignores that sub-district B has far fewer births and should count less toward the district total.
+
+### Interpretation
+
+The weighted mean reflects the true overall rate/value when subgroups contribute unequally to the total.
+
+### Advantages
+
+-   Accounts for differing sample sizes or importance across subgroups.
+-   Prevents small subgroups from distorting the overall estimate.
+
+### Disadvantages
+
+-   Requires accurate and appropriate weights; incorrect weights produce a misleading result.
+-   More complex to compute and explain than the simple mean.
+
+### Appropriate Use
+
+Used whenever combining rates or averages from groups of unequal size.
+Standardized mortality/morbidity rates, meta-analysis of study results (weighted by sample size or inverse variance), grade point averages (weighted by credit hours).
+
+### Public Health Example
+
+**Age-standardized mortality rates**, which combine age-specific death rates using a standard population's age distribution as weights, so that mortality rates can be fairly compared across populations with different age structures.
+
+## Geometric Mean
+
+### Definition
+
+The **geometric mean (GM)** is the $n$-th root of the product of $n$ observations.
+It is used for data that grow **multiplicatively** (e.g., rates of change, ratios, or log-normally distributed data such as antibody titers).
+
+### Formula
+
+$$GM = \sqrt[n]{x_1 \times x_2 \times \cdots \times x_n} = \left( \prod_{i=1}^n x_i \right)^{1/n}$$
+
+Equivalently, using logarithms (easier for manual calculation with many observations): $$GM = \exp\left( \frac{\sum_{i=1}^{n} \ln(x_i)}{n} \right)$$
+
+### Manual Calculation
+
+Suppose antibody titers (reciprocal dilution) from 4 patients after vaccination are: 8, 16, 32, 128.
+
+**Step 1.** Multiply all values: $8 \times 16 \times 32 \times 128 = 524{,}288$.
+**Step 2.** Take the $n$-th root ($n = 4$): $$GM = \sqrt[4]{524{,}288} = 26.9$$
+
+**Verification using logarithms:** $\ln 8 = 2.079$, $\ln 16 = 2.773$, $\ln 32 = 3.466$, $\ln 128 = 4.852$.
+Sum $= 13.17$.
+Mean of logs $= 13.17/4 = 3.29$.
+$GM = e^{3.29} = 26.9$ ✓.
+
+Compare this to the arithmetic mean of the same data: $\bar{x} = (8+16+32+128)/4 = 46$.
+The geometric mean (26.9) is always $\le$ the arithmetic mean (46) for positive data, and is much less influenced by the largest value (128).
+
+### Interpretation
+
+The geometric mean represents the central tendency of **multiplicative or exponential** processes; it is the appropriate "average" when data are ratios, growth rates, or span several orders of magnitude.
+
+### Advantages
+
+-   Less affected by extreme high values than the arithmetic mean (dampens the effect of outliers because it operates on a log scale).
+-   Appropriate for **log-normally distributed** data (very common in laboratory/biological measurements such as titers, viral loads, and PCR cycle thresholds).
+-   Useful for averaging ratios, rates of growth, or index numbers.
+
+### Disadvantages
+
+-   Undefined if any observation is zero or negative.
+-   More difficult to compute manually and less intuitive to interpret than the arithmetic mean.
+-   Not appropriate for additive data.
+
+### Appropriate Use
+
+Used for **serial dilution titers**, **viral load and antibody data**, growth rates of populations or bacterial cultures, and any positively skewed, log-normal biological data.
+
+### Public Health Example
+
+Reporting the **geometric mean antibody titer** post-vaccination in a clinical trial, or the **geometric mean viral load** in an HIV cohort, standard practice in immunology and virology because titers are log-normally distributed.
+
+## Harmonic Mean
+
+### Definition
+
+The **harmonic mean (HM)** is the reciprocal of the arithmetic mean of the reciprocals of the observations.
+It is most appropriate for averaging **rates** (e.g., speeds, rates per unit time) when the numerator is fixed.
+
+### Formula
+
+$$HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}$$
+
+### Manual Calculation
+
+Suppose three health workers screen patients at rates of 20, 30, and 60 patients per hour, and each worked for the **same total number of patients screened** (not the same amount of time).
+Find the average screening rate.
+
+**Step 1.** Take the reciprocal of each rate: $1/20 = 0.0500$, $1/30 = 0.0333$, $1/60 = 0.0167$.
+
+**Step 2.** Sum the reciprocals: $0.0500+0.0333+0.0167 = 0.1000$.
+
+**Step 3.** Divide $n$ by this sum: $$HM = \frac{3}{0.1000} = 30 \text{ patients/hour}$$
+
+Note that the arithmetic mean of the same three rates would be $(20+30+60)/3 = 36.7$, which would **overstate** the true average rate when the underlying quantity (patients screened) is fixed, not the time.
+
+### Interpretation
+
+The harmonic mean gives the correct "average rate" when combining rates that share a common numerator (e.g., a fixed distance, fixed number of patients, or fixed dose).
+
+### Advantages
+
+-   Correct choice for averaging rates and ratios where the denominator varies.
+-   Strongly dampens the influence of large values — most conservative of the three Pythagorean means ($HM \le GM \le AM$).
+
+### Disadvantages
+
+-   Undefined if any value is zero.
+-   Rarely used and often misunderstood; easy to apply incorrectly.
+-   Heavily influenced by small values.
+
+### Appropriate Use
+
+Used when averaging **rates** such as speed, dose per kilogram, or performance rates, particularly when the events being counted (not the time) are held constant.
+
+### Public Health Example
+
+Calculating the average **turnaround time rate** for laboratory tests processed at different rates by different technicians, or combining rates in **person-time incidence** calculations.
+
+## Relationship Among the Three Means
+
+For any set of positive numbers that are not all identical: $$HM \le GM \le AM$$
+
+The three means are equal only when all observations are identical.
+
+## The Median
+
+### Definition
+
+The **median** is the middle value of a data set when the observations are arranged in ascending (or descending) order.
+It divides the data into two equal halves: 50% of observations lie at or below the median, and 50% lie at or above it.
+
+### Formula
+
+For raw/ungrouped data with $n$ observations sorted in order:
+
+-   If $n$ is **odd**: Median $= x_{\left(\frac{n+1}{2}\right)}$
+-   If $n$ is **even**: Median $= \dfrac{x_{(n/2)} + x_{(n/2+1)}}{2}$
+
+For grouped data: $$\text{Median} = L + \left( \frac{\frac{n}{2} - CF}{f} \right) \times h$$
+
+where $L$ = lower boundary of the median class, $n$ = total frequency, $CF$ = cumulative frequency before the median class, $f$ = frequency of the median class, $h$ = class width.
+
+### Manual Calculation
+
+### A. Raw Data
+
+Dataset A sorted: 88, 92, 95, 98, 101, 104, 108, 112, 118, 125, 250 ($n = 11$, odd)
+
+**Step 1.** Confirm data are sorted (already sorted above).
+
+**Step 2.** Since $n = 11$ is odd, the median is the $\left(\frac{11+1}{2}\right) = 6^{th}$ value.
+
+**Step 3.** Count to the 6th value: 88(1), 92(2), 95(3), 98(4), 101(5), **104(6)**.
+$$\text{Median} = 104 \text{ mg/dL}$$
+
+Notice the median (104) is much closer to where most of the data lie than the mean (117.4).
+Here, the median is **not** pulled by the outlier of 250.
+
+### B. Frequency Table
+
+Data Set B (number of children per household):
+
+| $x$ | $f$ | Cumulative frequency ($CF$) |
+|-----|-----|-----------------------------|
+| 0   | 6   | 6                           |
+| 1   | 10  | 16                          |
+| 2   | 14  | 30                          |
+| 3   | 7   | 37                          |
+| 4   | 3   | 40                          |
+
+**Step 1.** Build the cumulative frequency column (shown above).
+
+**Step 2.** With $n = 40$ (even), the median position is the average of the $20^{th}$ and $21^{st}$ values.
+
+**Step 3.** Locate these positions using $CF$: the $17^{th}$–$30^{th}$ values all equal 2 (since $CF$ jumps from 16 to 30 at $x=2$).
+Both the $20^{th}$ and $21^{st}$ values fall in this range.
+
+**Step 4.** Calculation $$\text{Median} = \frac{2+2}{2} = 2 \text{ children}$$
+
+### C. Grouped Frequency Distribution
+
+Data Set C (age of 50 hypertension patients):
+
+| Class | $f$ | $CF$ |
+|-------|-----|------|
+| 30–39 | 4   | 4    |
+| 40–49 | 9   | 13   |
+| 50–59 | 15  | 28   |
+| 60–69 | 13  | 41   |
+| 70–79 | 7   | 48   |
+| 80–89 | 2   | 50   |
+
+**Step 1.** $n/2 = 50/2 = 25$.
+
+**Step 2.** Find the median class: the class where the cumulative frequency first reaches/exceeds 25.
+That is the **50–59** class ($CF$ jumps from 13 to 28).
+
+**Step 3.** Identify: $L = 49.5$ (lower boundary), $CF = 13$ (cumulative frequency *before* median class), $f = 15$ (frequency of median class), $h = 10$ (class width).
+
+**Step 4.** Apply the formula: $$\text{Median} = 49.5 + \left( \frac{25 - 13}{15} \right) \times 10 = 49.5 + \left(\frac{12}{15}\right)\times 10 = 49.5 + 8.0 = 57.5 \text{ years}$$
+
+### Interpretation
+
+The median is the value at the 50th percentile — half the observations fall below it, half above.
+
+### Advantages
+
+-   **Robust to outliers and skewed distributions** (unaffected by extreme values, as shown above).
+-   Can be computed for ordinal data (does not require interval/ratio scale).
+-   Not distorted by open-ended class intervals.
+
+### Disadvantages
+
+-   Does not use the actual value of every observation (only their rank/position), so it "wastes" information present in the data.
+-   Less amenable to further algebraic/statistical manipulation than the mean.
+-   Can be less stable (more sampling variability) than the mean for perfectly normal data.
+
+### Appropriate Use
+
+Preferred over the mean for **skewed distributions** (e.g., income, hospital charges, length of stay) or when outliers are present, and for **ordinal data**.
+
+### Public Health Example
+
+**Median household income**, **median survival time** in a cancer study (widely reported instead of mean survival because survival time is typically right-skewed and subject to censoring), **median age at diagnosis**.
+
+## The Mode
+
+### Definition
+
+The **mode** is the value (or category) that occurs most frequently in a data set.
+Unlike the mean and median, the mode can be identified for **nominal data**, and a data set can have zero, one (unimodal), two (bimodal), or more (multimodal) modes.
+
+### Formula (Grouped Data)
+
+$$\text{Mode} = L + \left( \frac{f_1 - f_0}{2f_1 - f_0 - f_2} \right) \times h$$
+
+where $L$ = lower boundary of the modal class, $f_1$ = frequency of modal class, $f_0$ = frequency of class before modal class, $f_2$ = frequency of class after modal class, $h$ = class width.
+
+### Manual Calculation
+
+### A. Raw Data
+
+Data Set A: 88, 92, 95, 98, 101, 104, 108, 112, 118, 125, 250.
+Every value occurs exactly once, So, there is **no mode** for this data set.
+
+Consider instead a small illustrative data set of patient temperatures (°F): 98.6, 99.1, 98.6, 100.2, 98.6, 99.1.
+
+**Step 1.** Tally the frequency of each distinct value:
+
+| Value | Frequency |
+|-------|-----------|
+| 98.6  | 3         |
+| 99.1  | 2         |
+| 100.2 | 1         |
+
+**Step 2.** The value with the highest frequency is the mode:
+
+$Mode = 98.6°F$
+
+### B. Frequency Table
+
+For dataset B, the highest frequency is $f = 14$, occurring at $x = 2$.
+$$\text{Mode} = 2 \text{ children}$$
+
+This simply corresponds to the category with the largest tally in the frequency table.
+
+### C. Grouped Frequency Distribution
+
+For the dataset C, mode can be estimated using following steps:
+
+**Step 1.** Identify the modal class - the class with the highest frequency: **50–59** ($f_1 = 15$).
+
+**Step 2.** Identify neighboring frequencies: $f_0 = 9$ (40–49 class, before), $f_2 = 13$ (60–69 class, after).
+
+**Step 3.** $L = 49.5$, $h = 10$.
+
+**Step 4.** Apply the formula: $$\text{Mode} = 49.5 + \left( \frac{15-9}{2(15)-9-13} \right)\times 10 = 49.5 + \left(\frac{6}{8}\right)\times 10 = 49.5+7.5 = 57.0 \text{ years}$$
+
+### Interpretation
+
+The mode identifies the most "popular" or common value/category — useful for describing the peak of a distribution or the most frequent category in nominal data.
+
+### Advantages
+
+-   Only measure of central tendency valid for **nominal data**.
+-   Not affected by extreme outliers.
+-   Easy to understand intuitively; represents an actual, commonly-occurring value.
+-   Directly identifies the most frequent category, useful for resource planning (e.g., "most common blood type needed").
+
+### Disadvantages
+
+-   May not exist, or may not be unique (bimodal/multimodal data).
+-   Ignores much of the data (based only on the frequency of the most common value(s)).
+-   Can be unstable in small samples — a small change in the data can shift the mode considerably.
+
+### Appropriate Use
+
+Best used for **categorical (nominal) data**, or to describe the peak/most common value of any distribution alongside other measures.
+
+### Public Health Example
+
+The **modal blood type** in a blood bank's donor registry (to guide blood product stocking), or the modal age group affected in an outbreak (identifying which age group to target with an intervention).
+
+## Quartiles, Percentiles, and Deciles
+
+Quartiles, percentiles, and deciles are collectively called **measures of position** (or **quantiles**) — they divide an ordered data set into equal-sized parts and are closely related to the median (which is both the 2nd quartile, the 50th percentile, and the 5th decile).
+
+### Definitions
+
+-   **Quartiles (**$Q_1, Q_2, Q_3$): Divide data into 4 equal parts. $Q_1$ = 25th percentile, $Q_2$ = median (50th percentile), $Q_3$ = 75th percentile.
+-   **Deciles (**$D_1 \ldots D_9$): Divide data into 10 equal parts. $D_5$ = median.
+-   **Percentiles (**$P_1 \ldots P_{99}$): Divide data into 100 equal parts. $P_{50}$ = median.
+
+### Formula (Grouped Data)
+
+$$Q_k = L + \left( \frac{\frac{kn}{4} - CF}{f} \right)\times h \quad (k=1,2,3)$$ $$P_k = L + \left( \frac{\frac{kn}{100} - CF}{f} \right)\times h \quad (k=1,\ldots,99)$$ $$D_k = L + \left( \frac{\frac{kn}{10} - CF}{f} \right)\times h \quad (k=1,\ldots,9)$$
+
+These all use the same logic as the median formula, simply replacing $n/2$ with the appropriate fraction of $n$.
+
+### Manual Calculation — A. Raw Data
+
+Using Data Set A (sorted): 88, 92, 95, 98, 101, 104, 108, 112, 118, 125, 250 ($n=11$)
+
+**Finding** $Q_1$ (25th percentile):
+
+**Step 1.** Compute the position: $\dfrac{n+1}{4} = \dfrac{12}{4} = 3^{rd}$ position.
+**Step 2.** The 3rd value in the ordered list is **95**.
+$$Q_1 = 95 \text{ mg/dL}$$
+
+**Finding** $Q_3$ (75th percentile):
+
+**Step 1.** Compute the position: $\dfrac{3(n+1)}{4} = \dfrac{3 \times 12}{4} = 9^{th}$ position.
+**Step 2.** The 9th value is **118**.
+$$Q_3 = 118 \text{ mg/dL}$$
+
+**Interquartile Range (a byproduct, used in Section 3):** $IQR = Q_3 - Q_1 = 118 - 95 = 23$.
+
+::: callout-tip
+Several valid methods exist for computing quantile positions with raw data (e.g., the method shown above vs. linear interpolation methods used by software like R, Excel, or SPSS).
+Minor differences between hand calculations and software output are normal and expected; always report which method/software was used.
+:::
+
+### Manual Calculation — C. Grouped Frequency Distribution
+
+Using Data Set C (age of 50 hypertension patients), find $Q_1$ and $P_{90}$.
+
+**Finding** $Q_1$:
+
+**Step 1.** Position: $\dfrac{kn}{4} = \dfrac{1 \times 50}{4} = 12.5$.
+**Step 2.** Find the class where cumulative frequency first reaches 12.5: looking at the $CF$ column (4, 13, 28, 41, 48, 50), this occurs in the **40–49** class ($CF$ jumps from 4 to 13).
+**Step 3.** $L=39.5$, $CF_{\text{before}}=4$, $f=9$, $h=10$.
+**Step 4.** $$Q_1 = 39.5 + \left(\frac{12.5-4}{9}\right)\times 10 = 39.5+9.44 = 48.9 \text{ years}$$
+
+**Finding** $P_{90}$ (90th percentile):
+
+**Step 1.** Position: $\dfrac{kn}{100} = \dfrac{90\times 50}{100}=45$.
+**Step 2.** Find the class where $CF$ first reaches 45: the **70–79** class ($CF$ jumps from 41 to 48).
+**Step 3.** $L=69.5$, $CF_{\text{before}}=41$, $f=7$, $h=10$.
+**Step 4.** $$P_{90} = 69.5 + \left(\frac{45-41}{7}\right)\times 10 = 69.5+5.71 = 75.2 \text{ years}$$
+
+### Interpretation
+
+$Q_1 = 48.9$ years means 25% of hypertension patients in this sample are younger than 48.9 years.
+$P_{90} = 75.2$ years means 90% of patients are younger than 75.2 years (only 10% are older).
+
+### Advantages
+
+-   Provide detailed information about the **shape and spread** of a distribution beyond a single center value.
+-   Robust to outliers (like the median).
+-   Useful for constructing **growth charts**, **reference ranges**, and **box plots**.
+
+### Disadvantages
+
+-   Do not summarize the data in a single number; require reporting multiple values.
+-   Can be sensitive to the choice of interpolation method, especially in small samples.
+
+### Appropriate Use
+
+Used whenever the **position** of an individual within a distribution matters — growth charts (a child's weight at the 15th percentile), setting clinical reference ranges, identifying high-risk groups (e.g., the top decile of BMI).
+
+### Public Health Example
+
+**Pediatric growth charts** (WHO/CDC) report a child's weight-for-age and height-for-age as a **percentile**, e.g., "this infant's weight is at the 25th percentile," meaning 25% of same-age, same-sex infants weigh less.
+
+## Comparing All Measures of Central Tendency
+
+| Measure | Data type | Uses all data? | Affected by outliers? | Unique? | Algebraically tractable? |
+|----|----|----|----|----|----|
+| Arithmetic mean | Interval/ratio | Yes | Highly | Yes | Yes |
+| Weighted mean | Interval/ratio | Yes | Highly | Yes | Yes |
+| Geometric mean | Ratio (positive only) | Yes | Moderately | Yes | Yes (on log scale) |
+| Harmonic mean | Ratio (positive only) | Yes | Least (of the 3 means) | Yes | Yes |
+| Median | Ordinal, interval, ratio | No (only rank used) | No (robust) | Yes | Limited |
+| Mode | Nominal, ordinal, interval, ratio | No | No (robust) | Not always | No |
+| Quartiles/Percentiles/Deciles | Ordinal, interval, ratio | No (rank-based) | No (robust) | Yes | Limited |
+
+### Choosing the Right Measure — Effect of Skewness
+
+```{mermaid}
+flowchart TD
+    A[Is the variable numeric?] -->|No, categorical| B[Use Mode]
+    A -->|Yes| C{Is the distribution roughly symmetric, no major outliers?}
+    C -->|Yes| D[Use Mean]
+    C -->|No: skewed or has outliers| E[Use Median]
+    D --> F{Is the data multiplicative / ratios / log-normal, e.g. titers?}
+    F -->|Yes| G[Consider Geometric Mean]
+    F -->|No| D
+```
+
+**Relationship between mean, median, and skewness:**
+
+-   **Symmetric distribution:** Mean ≈ Median ≈ Mode.
+-   **Right-skewed (positively skewed) distribution** (e.g., income, hospital charges, our Data Set A with the outlier of 250): Mean \> Median \> Mode.
+-   **Left-skewed (negatively skewed) distribution** (e.g., age at death from a disease mostly affecting the elderly): Mean \< Median \< Mode.
+
+In Data Set A: Mean = 117.4, Median = 104 — the mean exceeds the median, correctly signaling a right-skewed distribution due to the outlier.
+
+## Summary
+
+-   The **mean** is the most commonly used and mathematically useful measure, but it is sensitive to outliers and skewness.
+-   The **weighted mean** correctly combines subgroup values with different levels of importance/sample size.
+-   The **geometric mean** and **harmonic mean** are specialized means for multiplicative data and rates, respectively; $HM \le GM \le AM$.
+-   The **median** is robust to outliers and skewness and is preferred for skewed public health data such as income or survival time.
+-   The **mode** is the only central tendency measure usable with nominal data.
+-   **Quartiles, percentiles, and deciles** describe an individual's position within a distribution and underlie growth charts and reference ranges.
+
+Section 3 builds directly on these concepts by covering **measures of dispersion**, which quantify how spread out the data are around these central values.

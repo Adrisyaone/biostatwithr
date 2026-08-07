@@ -1,0 +1,521 @@
+---
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+---
+
+# Basics in R: Part-2
+
+```{r, include=FALSE}
+library(dplyr)
+library(forcats)
+
+username="nepalcovidtracking"
+pwd="159357covid"
+
+data <- haven::read_sav("Datasets/dt.sav") 
+data <- as_factor(data, only_labelled = TRUE)
+
+```
+
+## Basic data processing in R
+
+### Generate datasets from vectors
+
+The datasets are the two dimensional array whereas vectors are the one dimensional array. The vector is the fundamental data structure used to store the data of the same types. We can convert vectors to dataframe using `data.frame( )` In order to create vectors, we can use some important functions like `c( )`, `seq( )`, and `rep( )`.
+
+Lets create 3 vectors and combine them to create dataframe.
+
+```{r}
+id <- 1:10
+age<-c(34,45,32,56,54,67,65,89,23,34)
+sex <- c(rep("Male",5), rep("Female",5))
+
+
+dt<-data.frame(id, age, sex)
+
+class(dt)
+```
+
+### Data manipulation
+
+Data manipulation in R involves various operations that transform and prepare data for analysis. The process includes tasks such as filtering rows, selecting variables, sorting, aggregating, merging, and reshaping data. In order to learn about data manipulation, lets explore mental health related data from Nepal Demographic and Health survey 2022 which is in the google drive.
+
+```{r}
+# install.packages('gsheet')
+# library(gsheet)
+
+data<-gsheet::gsheet2tbl('https://docs.google.com/spreadsheets/d/1Sdp2kz0BD5x3nXTk8KlK6LtVy1MWnb_hcWuo67mrWgs')
+```
+
+1.  **Filtering:** Filtering data in R is a common operation where you select a subset of rows based on certain conditions. Here's how you can filter data:
+
+```{r}
+# Filters dataset by Sex and only includes the data of females (Using base commands)
+dtF <- data[data$Sex == "Female", ] 
+
+# Filters dataset by sex and PHQ9 and includes data of females and who had PHQ-9 score greater than 10 (Using base commands)
+dtFn <- data[data$Sex == "Female"  & data$PHQ9_Score > 10, ] 
+
+# Filters dataset by Sex and only includes the data of females (Using dplyr and without piping)
+
+dtF <- dplyr::filter(.data = data,data$Sex == "Female")
+
+# Filters dataset by sex and PHQ9 and includes data of females and who had PHQ-9 score greater than 10 (Using dplyr and with piping)
+dtFn <- data |> 
+  filter(Sex == "Female" & PHQ9_Score > 10)
+```
+
+2.  **Selecting variables:** Variables selection from the pool of variables is important to work efficiently.
+
+```{r, eval=FALSE}
+# Selecting variables (age, sex and PHQ9_scores) (Using base commands and variable names)
+sel_dt<- data[, c("Age","Sex","PHQ9_Score")] 
+
+# Selecting variables (age, sex and PHQ9_scores) (Using base commands and using index)
+sel_dt<- data[, c(6,7:10)] 
+
+# Selecting variables (age, sex and PHQ9_scores) (Using dplyr package and variable names)
+sel_dt <- data |> 
+  dplyr::select(Age, Sex, PHQ9_Score)
+
+# Selecting variables (age, sex and PHQ9_scores) (Using dplyr package and variable names)
+sel_dt <- data |> 
+  dplyr::select(6,7:10)
+
+# Selecting variables that contains "score" in variable names (Using dplyr package)
+sel_dt2 <- data |> 
+  dplyr::select(contains("score"))
+
+# Selecting all variables between two variables (Using dplyr package)
+sel_dt3 <- data |> 
+  dplyr::select(Education:disability)
+```
+
+**3. Sorting :** Dataset can be sorted in ascending and descending order using functions like `order( )` from base R or `arrange( )` from dplyr.
+
+```{r}
+    sel_dt<- data[, c("Age","Sex","PHQ9_Score")] 
+    # sorting using base R (descending order)
+    sel_dt[order(sel_dt$Age,decreasing = T),] # decreasing= F if to be sorted in ascending order
+
+
+    # sorting using dplyr (descending order)
+    sel_dt %>% 
+      dplyr::arrange(-Age) # remove -ve sign before Age for ascending order
+
+     
+```
+
+**4. Grouping:** Another common operation in R is grouping. Grouping is where you split the data into groups based on one or more variables. Functions or summaries can then be applied to each group.
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+# Using base commands
+lapply(split(data$PHQ9_Score, data$Sex), mean) # The split function groups the PHQ-9 score by sex and the lapply function is applied to calculate the mean PHQ-9 score for each sex
+
+# Using dplyr
+library(dplyr)
+data |> 
+  group_by(Sex) |> 
+  summarise(AvgPHQ9 = mean(PHQ9_Score))
+
+```
+
+**5. Computing a new variable:** There are various instances during data manipulation and analysis where you might need to compute new variables and this task is always specific to need. Here's how you can compute new variables:
+
+```{r, message=FALSE, warning=FALSE}
+
+
+```
+
+**6. Conditional computing:** There are various built-in functions in R and some come with specific packages, that facilitate conditional operations in R.
+
+```{r}
+# Using base commands
+data$depression.severity <- ifelse(data$PHQ9_Score >= 10, "Moderate to Severe", "None to Mild") # Creating a depression severity variable based on the variable PHQ9_score
+table(data$depression.severity)
+data$agecat <- ifelse(data$Age < 20, "15-19",
+                      ifelse(data$Age >= 20 & data$Age <= 24, "20-24",
+                             ifelse(data$Age >= 25 & data$Age <= 29, "25-29", 
+                                    ifelse(data$Age >= 30 & data$Age <= 34, "30-34", 
+                                           ifelse(data$Age >= 35 & data$Age <= 39, "35-39",
+                                                  ifelse(data$Age >= 40 & data$Age <= 44, "40-44", "45-49"))))))
+table(data$agecat)
+```
+
+::: callout-note
+`ifelse` is a conditional function in R which takes in a certain condition and returns (or conducts a specified operations) certain values when the condition is `TRUE` or `FALSE`. In the above example, we recoded the variable Age into age categories.
+:::
+
+```{r}
+# Using dplyr
+data <- data |> 
+  mutate(depression.severity.dplyr = case_when(PHQ9_Score >= 10 ~ "Moderate to Severe",
+                                               TRUE ~ "None to Mild"))
+table(data$depression.severity.dplyr)
+data <- data |> 
+  mutate(agecat.dplyr = case_when(Age < 20 ~ "15-19",
+                                  Age >= 20 & Age <= 24 ~ "20-24",
+                                  Age >= 25 & Age <= 29 ~ "25-29",
+                                  Age >= 30 & Age <= 34 ~ "30-34",
+                                  Age >= 35 & Age <= 39 ~ "35-39",
+                                  Age >= 40 & Age <= 44 ~ "40-44",
+                                  TRUE ~ "45-49"))
+table(data$agecat.dplyr)
+```
+
+**7. Renaming columns or variables:** Some operations may require you to rename the columns or variables. Here's how you can do this in R.
+
+```{r}
+# Using base commands
+colnames(data)[17] # Printing the 17th column name
+colnames(data)[which(colnames(data) == "Wealth")] <- "Wealth.Quintile" # We want to change "Wealth" to "Wealth.Quintile"
+colnames(data)[17] # Check if the column name is changed.
+
+# Using dplyr, let's rename Health_insurance to Health.Insurance
+colnames(data)[18]
+data <- data |> 
+  rename(Health.Insurance = Health_insurance)
+colnames(data)[18]
+
+```
+
+**8. Merging dataframes:** Merging datasets is a fundamental task in data analysis, enabling res./0 earchers and analysts to combine different data sources into a single dataset for comprehensive analysis. Before diving into specific functions, it's essential to understand some key concepts: a) Types of merge and b) key columns.
+
+**Types of Merges**
+
+-   **Inner Join:** Returns only the rows with matching values in both datasets.
+
+-   **Outer Join:** Can be further classified into:
+
+    -   
+
+    -   **Full Outer Join:** Returns rows with matching values and those that do not match, filling missing matches with NA.
+
+    -   **Left Outer Join:** Returns all rows from the left dataset and the matched rows from the right dataset. Rows in the left dataset without a match in the right dataset have NA for the right dataset’s columns.
+
+    -   **Right Outer Join:** Returns all rows from the right dataset and the matched rows from the left dataset. Rows in the right dataset without a match in the left dataset have NA for the left dataset’s columns.
+
+-   **Cross Join:** Returns the Cartesian product of both datasets, combining each row of the first dataset with each row of the second dataset.
+
+**Key Columns**
+
+Key columns are the variables used to match rows between two datasets. It's crucial that these variables have the same type (e.g., both are integers or both are character) and ideally have the same name in both datasets for ease of merging.
+
+To learn about different dataset merging methods, lets create dummy data frames and practice.
+
+*Condition 1: when key variable name is same in both the datasets*
+
+```{r}
+# Create two datasets
+dt1 <- data.frame(id = c(1:10),
+                  age = c(23,34,45,56,67,78,89,34,45,43),
+                  gender = c("Male", "Female", "Female", "Female", "Male", "Male", "Male", "Female", "Female", "Male"))
+dt2 <- data.frame(id = c(3,5,7,9,11,13,17),
+                  smoke=c(1,0,0,1,0,1,1),
+                  Alcohol=c(0,0,1,0,0,0,1))
+
+
+# Inner join (Using base R)
+injndt <- merge(dt1, dt2, by = "id") 
+injndt
+
+# Outer join (Using base R)
+outjndt <- merge(dt1, dt2, by = "id", all = TRUE) 
+outjndt
+
+# Left join (Using base R)
+lefjndt <- merge(dt1, dt2, by = "id", all.x = TRUE) 
+lefjndt
+
+# Right join (Using base R)
+rigjndt <- merge(dt1, dt2, by = "id", all.y = TRUE) 
+rigjndt
+
+# Cross join (Using base R)
+crsjndt<- merge(dt1, dt2, by = NULL) 
+crsjndt
+
+# Inner join (Using dplyr)
+injndt1 <- inner_join(dt1, dt2, by = "id")
+injndt1
+
+# Outer join (Using dplyr)
+outjndt1 <- full_join(dt1, dt2, by = "id")
+outjndt1
+
+# Left join (Using dplyr) 
+lftjndt1 <- left_join(dt1, dt2, by = "id")
+lftjndt1
+
+# Right join (Using dplyr)
+rigjndt1 <- right_join(dt1, dt2, by = "id")
+rigjndt1
+
+# Cross join (Using dplyr)
+crsjndt1 <- cross_join(dt1, dt2)
+crsjndt1
+
+
+
+```
+
+*Condition 2: when key variable name is same in both the datasets*
+
+```{r}
+# Create two datasets with different name of key variable (IDs vs id)
+dt1 <- data.frame(IDs = c(1:10),
+                  age = c(23,34,45,56,67,78,89,34,45,43),
+                  gender = c("Male", "Female", "Female", "Female", "Male", "Male", "Male", "Female", "Female", "Male"))
+dt2 <- data.frame(id = c(3,5,7,9,11,13,17),
+                  smoke=c(1,0,0,1,0,1,1),
+                  Alcohol=c(0,0,1,0,0,0,1))
+
+# Inner join (Using base R)
+injndt <- merge(dt1, dt2, by.x = "IDs", by.y="id") # Inner join
+injndt
+
+# Outer join (Using base R)
+outjndt <- merge(dt1, dt2, by.x = "IDs", by.y="id", all = TRUE) # Outer join
+outjndt
+
+
+# Left join (Using dplyr)
+lftjndt1 <- left_join(dt1, dt2, c("IDs"="id"))
+lftjndt1
+
+# Right join (Using dplyr)
+rigjndt1 <- right_join(dt1, dt2, c("IDs"="id"))
+rigjndt1
+```
+
+**7. Appending rows:** Appending rows involves stacking datasets vertically, adding rows of one dataset below another. It is crucial that the datasets share the same structure, meaning they should have the same columns in the same order, and these columns should have compatible types across the datasets being combined. It requires **a) Column Matching:** The columns in the datasets must match in name and data type. If they do not match exactly, adjustments might be necessary before appending, and **b) Order of Rows:** The order in which datasets are appended can impact the analysis, especially if the data is time-sensitive.
+
+```{r}
+# Create two datasets
+dt1 <- data.frame(id = c(1:10),
+                  age = c(23,34,45,56,67,78,89,34,45,43),
+                  gender = c("Male", "Female", "Female", "Female", "Male", "Male", "Male", "Female", "Female", "Male"),
+                  smoke=c(1,1,0,0,1,0,1,0,0,0),
+                  alcohol=c(0,1,0,1,1,0,1,0,1,1))
+dt2 <- data.frame(id = c(11:20),
+                  age = c(44,45,65,67,82,23,81,34,52,34),
+                  gender = c( "Male", "Male", "Male","Male", "Female", "Female", "Female", "Female", "Female", "Male"),
+                  smoke=c(1,1,0,0,0,0,0,1,0,1),
+                  alcohol=c(0,1,1,0,1,0,1,0,1,1))
+dt1
+dt2
+
+# bind rows using base R
+dt <- rbind(dt1, dt2)
+dt
+
+# bind rows using dplyr
+library(dplyr)
+
+dt_new <- bind_rows(dt1, dt2) 
+dt_new
+
+```
+
+**8. Transforming datasets (wide to long or long to wide):** The datasets can long or wide type based on the way it was collected or on the nature/layout of the questionnaire. In a wide-format dataset, each observation is represented by a single row, and different variables are stored in separate columns. This format is often easy to read but may become impractical when dealing with a large number of variables. In a long-format dataset, each observation is represented by multiple rows, and different variables are stored in a single column indicating the variable type. This format is more flexible and is often preferred for various analyses. Let's see how they look like and practice conversions from long to wide format and vice-versa.
+
+**Wide to long transformation**
+
+```{r}
+# Using base commmands
+# Create a wide-format data frame
+wide_data <- data.frame(
+  ID = c(1, 2, 3),
+  Score_Math = c(85, 90, 78),
+  Score_English = c(75, 80, 85)
+)
+
+# Convert to long format using reshape
+long_data_base_wide_to_long <-reshape(
+  wide_data, # The wide-format dataset to be reshaped
+  direction = "long", # The direction of the reshaping, here "long"
+  varying = 2:3, # Columns to be reshaped (in this case, columns 2 and 3)
+  v.names = "Score", # The name for the new value column
+  timevar = "Subject", # The name for the new variable column
+  times = c("Math", "English")) # The values to be used in the new variable column
+long_data_base_wide_to_long
+
+# Using dplyr and tidyr
+library(dplyr)
+library(tidyr)
+
+long_data_dplyr_wide_to_long <- wide_data |> 
+  pivot_longer(cols = starts_with("Score"), # Columns to be reshaped (those starting with "Score")
+    names_to = "Subject", # The name for the new variable column
+    values_to = "Score") # The name for the new value column
+long_data_dplyr_wide_to_long
+
+# Using data.table
+library(data.table)
+
+# Create a wide-format data.table
+wide_data_dt <- data.table(
+  ID = c(1, 2, 3),
+  Score_Math = c(85, 90, 78),
+  Score_English = c(75, 80, 85)
+)
+
+long_data_dt_wide_to_long <- melt(
+  wide_data_dt, # The wide-format dataset to be melted
+  id.vars = "ID", # Columns to be retained as-is (in this case, "ID")
+  measure.vars = patterns("^Score_"), # Columns to be melted, specified using patterns (those starting with "Score_")
+  variable.name = "Subject", # The name for the new variable column in the long format
+  value.name = "Score") # The name for the new value column in the long format
+long_data_dt_wide_to_long
+```
+
+**Long to wide transformation**
+
+```{r}
+# Using base commands
+# Create a long-format data frame
+long_data <- data.frame(ID = c(1, 1, 2, 2, 3, 3),
+                        Subject = c("Math", "English", "Math", "English", "Math", "English"),
+                        Score = c(85, 75, 90, 80, 78, 85))
+
+# Convert to wide format using reshape
+wide_data_base_long_to_wide <- reshape(
+  long_data, # The long-format dataset to be reshaped
+  direction = "wide", # The direction of the reshaping, here "wide"
+  idvar = "ID", # The variable(s) to be retained as-is (in this case, "ID")
+  timevar = "Subject") # The variable to be spread into wide format
+wide_data_base_long_to_wide
+
+# Using dplyr and tidyr
+library(dplyr)
+library(tidyr)
+
+wide_data_dplyr_long_to_wide <-long_data |> 
+  pivot_wider(
+    names_from = Subject, # The variable to be spread into wide format (column names)
+    values_from = Score) # The variable to be spread into wide format (cell values)
+wide_data_dplyr_long_to_wide
+
+# Using data.table
+# Create a long-format data.table
+long_data_dt <- data.table(ID = c(1, 1, 2, 2, 3, 3),
+                           Subject = c("Math", "English", "Math", "English", "Math", "English"),
+                           Score = c(85, 75, 90, 80, 78, 85))
+
+wide_data_dt_long_to_wide <- dcast(
+  long_data_dt, # The long-format data.table to be casted
+  ID ~ Subject, # The formula specifying the columns in the wide format
+  value.var = "Score") # The variable whose values will populate the cells in the wide format
+
+wide_data_dt_long_to_wide
+```
+
+**9. Creating functions:** Creating functions is a powerful method for encapsulating a series of actions, that promotes code organization, reusability, and readability. In data-centric tasks, functions become especially valuable for speeding up repetitive procedures like filtering, summarizing, or transforming datasets. Here's a simple guide to creating functions in R and using them for data manipulations:
+
+```{r}
+# Example 1: A function to calculate the mean of a vector
+calculate_mean <- function(data) {
+  result <- mean(data)
+  return(result)
+}
+
+# Using the calculate_mean function created above
+data <- c(1, 2, 3, 4, 5)
+calculate_mean(data)
+
+# Example 2: A function with parameters
+multiply_numbers <- function(x, y) {
+  result <- x * y
+  return(result)
+}
+
+# Using the multiply_numbers function created above
+multiply_numbers(1024, 88)
+
+# Example 3: Function to filter a data frame
+filter_data <- function(df, condition) {
+  result <- df[condition, ]
+  return(result)
+}
+
+# Using the filter_data function created above
+my_data <- data.frame(ID = 1:5, Value = c(10, 15, 8, 20, 12))
+my_data
+filter_data(my_data, my_data$Value > 10)
+
+# Example 4: Function returning multiple values
+calculate_stats <- function(data) {
+  mean_val <- mean(data)
+  sd_val <- sd(data)
+  return(list(mean = mean_val, sd = sd_val))
+}
+
+# Using the calculate_stats function created above
+my_data <- c(3, 6, 8, 12, 5)
+calculate_stats(my_data)
+```
+
+**10. Using Loops:** Loops are programming structures that allow you to repeat a block of code multiple times. They are essential for automating repetitive tasks and iterating over elements like vectors, lists, or data frames. Here are two primary types of loops in R and their common uses:
+
+**For Loop:** The **`for`** loop is used when you know the number of iterations in advance. It iterates over a sequence (which can be a vector or a sequence generated by functions like **`seq()`**).
+
+```{r}
+# Example: Printing numbers from 1 to 5 using a for loop
+for (i in 1:5) {
+  print(i)
+}
+```
+
+**While Loop:** The **`while`** loop is used when you do not know the number of iterations in advance but have a condition that, when met, stops the loop.
+
+```{r}
+# Example: Printing numbers from 1 to 5 using a while loop
+i <- 1
+while (i <= 5) {
+  print(i)
+  i <- i + 1
+}
+```
+
+Loop control statements provide mechanisms to alter the flow of execution within loops. The `break` statement allows for the premature termination of a loop, while the `next` statement skips the remaining code for the current iteration and proceeds to the next iteration. These statements offer flexibility in managing loop execution based on specific conditions.
+
+```{r}
+# Example: Using break and next in a for loop
+for (i in 1:10) {
+  if (i == 5) {
+    break  # Exit the loop when i is 5
+  }
+  if (i %% 2 == 0) { # %% operator is the modulo operator. It returns the remainder of the division of one number by another.
+    next  # Skip the rest of the code for even numbers
+  }
+  print(i)
+}
+```
+
+Sometimes, a more functional programming approach is often preferred over explicit loops. Functions like **`apply`**, **`lapply`**, **`sapply`**, and **`mapply`**can be used for looping over elements more efficiently.
+
+```{r}
+# 'apply': Applies a function over the margins (rows or columns) of a matrix.
+# Example: Sum of each column in a matrix
+my_matrix <- matrix(1:9, ncol = 3)
+my_matrix
+apply(my_matrix, 2, sum)
+
+# 'lapply': Applies a function to each element of a list.
+# Example: Applying a function to each element of a list
+my_list <- list(a = 1:3, b = 4:6, c = 7:9)
+my_list
+lapply(my_list, function(x) x * 2)
+
+# 'sapply': Simplifies the result of lapply into a vector or matrix.
+# Example: Simplifying the result of lapply into a vector
+sapply(my_list, function(x) sum(x))
+
+# 'mapply': Applies a function to multiple vectors element-wise.
+# Example: Applying a function to multiple vectors element-wise
+mapply(function(x, y) x + y, c(1, 2, 3), c(4, 5, 6))
+```
+
+Having completed our exploration of data manipulation in R, we now possess a flexible range of tools for transforming and refining datasets. We have explored effective techniques for preparing our data for analysis, ranging from basic filtering and reshaping operations to the advanced functionalities offered by the tidyverse and data.table packages. Now, with a well-established foundation, we shift our focus to the domain of descriptive statistics in the upcoming chapter where we will unravel the insights concealed within our data, uncovering patterns, trends, and key measures that will guide us in making informed decisions.

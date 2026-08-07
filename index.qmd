@@ -1,0 +1,13 @@
+# Preface {.unnumbered}
+
+I'm writing this note book as a student, and I wrote it for students.
+
+When I first started working with epidemiology and biostatistics, I found plenty of resources explaining concepts, but very few showing how to actually apply them using real data. I often struggled with cleaning datasets, choosing the right methods, or understanding why my results didn’t make sense. Most explanations were either too technical or too vague. I kept wishing for a practical, clear guide written from a learner’s perspective.
+
+This book is my attempt to do exactly that.
+
+It begins with the basics such as data import, cleaning, and descriptive analysis, and gradually builds toward regression models, study design, and interpretation. The focus is on practical application using R, with clear explanations before code and simple interpretations after.
+
+This is not a theoretical textbook. It is a hands-on guide to real problems researchers face.
+
+I hope it helps you learn, apply, and grow with confidence.

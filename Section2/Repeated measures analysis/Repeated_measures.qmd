@@ -1,0 +1,152 @@
+---
+title: "Repeated Measures Analysis"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include=FALSE, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(nlme)
+library(performance)
+```
+
+Every regression model covered so far (Numerical data analysis chapters, ANOVA in Section 5) assumes each observation contributes one independent data point. That assumption breaks down when the **same subject is measured more than once** — at several time points (longitudinal data), or under several conditions (repeated experimental measurements). This chapter shows why ordinary regression is the wrong tool for that data structure, and introduces the standard fix: modeling the within-subject correlation explicitly.
+
+## Why Repeated Measures Need Special Treatment
+
+Consider a weight-loss study where 20 subjects, randomized to one of two drugs, have their weight measured at baseline and at 3, 6, and 12 months. Fitting an ordinary linear regression of weight on time and drug would treat all $20\times4=80$ observations as independent — but two measurements from the *same* person are naturally more similar to each other than two measurements from different people (a person who starts heavy tends to stay relatively heavy at every follow-up). This within-subject correlation, if ignored, does not bias the coefficient estimates much, but it badly **underestimates their standard errors**, because the model believes it has 80 independent pieces of information when it effectively has less — leading to artificially small p-values and overly narrow confidence intervals.
+
+### Notation: The Long Format
+
+Repeated-measures data is organized with one row per subject *per time point* — the **long format**. Let $y_{ij}$ denote the outcome for subject $i$ at time point $j$:
+
+```{r}
+# Simulated weight-loss example: 20 subjects, 2 drugs, 4 time points (0, 3, 6, 12 months)
+set.seed(2024)
+n_subj <- 20
+times  <- c(0, 3, 6, 12)
+
+subj_effect <- rnorm(n_subj, mean = 0, sd = 6)     # between-subject variability
+drug        <- rep(c("Drug1", "Drug2"), each = n_subj / 2)
+
+weightloss <- expand.grid(id = 1:n_subj, month = times) |>
+  dplyr::arrange(id, month) |>
+  dplyr::mutate(
+    drug   = rep(drug, each = length(times)),
+    trend  = -0.3 * month,                                   # modest true weight decline over time
+    weight = 180 + subj_effect[id] + trend + rnorm(dplyr::n(), 0, 3)
+  )
+
+head(weightloss, 8)   # each subject (id) contributes 4 rows, one per month -- this is "long format"
+```
+
+For subject $i$, the vector of repeated measurements $(y_{i1},\dots,y_{ij})$ is no longer assumed to have independent errors; instead we allow a **within-subject correlation structure**. For example, with 3 time points, the correlation matrix for one subject might be:
+
+$$ \begin{pmatrix} 1 & \rho & \rho \\ \rho & 1 & \rho \\ \rho & \rho & 1 \end{pmatrix} $$
+
+Combined with a common variance $\sigma^2$, this becomes each subject's **covariance matrix**; observations from *different* subjects remain independent of each other (the full covariance matrix is block-diagonal, one block per subject).
+
+## Common Correlation Structures
+
+Three structures cover most applications:
+
+-   **Compound symmetry (CS):** every pair of time points within a subject has the *same* correlation $\rho$, regardless of how far apart in time they are. Simplest structure; only one extra parameter ($\rho$).
+-   **Autoregressive, order 1 (AR(1)):** correlation *decays* with the distance between time points: $Corr(y_{ij},y_{ik})=\rho^{|j-k|}$. Appropriate when measurements taken closer together in time are more strongly correlated than those taken farther apart.
+-   **Unstructured (UN):** every pair of time points gets its own, freely estimated correlation, with no constraint. Most flexible (and most parameters to estimate); appropriate with few time points and adequate sample size.
+
+We typically do not know the true structure in advance, so the standard practice is to **fit the model under each structure and compare fit statistics** (AIC, AICc, BIC) — the structure with the smallest values is preferred, though when structures are close, model choice often makes little practical difference to the substantive conclusions.
+
+## The Repeated-Measures Model
+
+The **subject-specific model**, extending ordinary multiple regression by adding a subject/time index $j$:
+
+$$ y_{ij} = \beta_0 + \beta_1 t_{ij} + \beta_2\,\text{drug}_i + \varepsilon_{ij}, \qquad \boldsymbol\varepsilon_i \sim N(\mathbf 0,\, \Sigma_i) $$
+
+where $\Sigma_i$ is subject $i$'s within-subject covariance matrix, built from the chosen correlation structure and a common variance $\sigma^2$. This is a special case of the broader **generalized least squares (GLS)** / **linear mixed-effects model** framework — the R equivalent of SAS's `PROC MIXED`.
+
+### Fitting the Model: Time as Categorical
+
+Treating time (`month`) as categorical is appropriate when there are only a few, meaningfully distinct visit times (as here: 0, 3, 6, 12 months) and we want a separate estimated mean at each visit rather than assuming a straight-line trend.
+
+```{r}
+weightloss$month_f <- factor(weightloss$month)
+weightloss$id_f     <- factor(weightloss$id)
+
+# Fit under each candidate correlation structure using nlme::gls (the R analogue of PROC MIXED)
+fit_cs  <- gls(weight ~ month_f + drug, data = weightloss,
+               correlation = corCompSymm(form = ~ 1 | id_f))
+fit_ar1 <- gls(weight ~ month_f + drug, data = weightloss,
+               correlation = corAR1(form = ~ 1 | id_f))
+fit_un  <- gls(weight ~ month_f + drug, data = weightloss,
+               correlation = corSymm(form = ~ 1 | id_f),
+               weights = varIdent(form = ~ 1 | month_f))
+
+AIC(fit_cs, fit_ar1, fit_un)
+BIC(fit_cs, fit_ar1, fit_un)
+```
+
+**Choosing a structure:** compare AIC/BIC across `fit_cs`, `fit_ar1`, and `fit_un`; the smallest values identify the preferred structure. If the different structures give very similar fit statistics, it generally does not matter which is used, and the simplest (CS) is often reported for ease of interpretation.
+
+```{r}
+# Inspect the chosen model (example: unstructured)
+summary(fit_un)
+anova(fit_un)   # Type III-style F-tests for each term
+```
+
+**Interpretation, following the same five-step hypothesis-testing template used throughout this book:**
+
+-   $H_0: \beta_{drug}=0$ vs. $H_1:\beta_{drug}\ne0$ — tests whether there is an overall difference in weight between the two drug groups across time, holding time constant.
+-   $H_0: \beta_{month3}=\beta_{month6}=\beta_{month12}=0$ vs. $H_1:$ at least one differs from zero (the joint/Type-III test for `month_f`) — tests whether average weight changes significantly across time at all, holding drug constant.
+-   Individual `month3 vs. 0`, `month6 vs. 0`, `month12 vs. 0` coefficients are interpreted exactly as categorical-predictor coefficients in ordinary multiple regression (Section 6) — each represents the difference in average weight between that follow-up time and baseline (the reference level), adjusting for drug.
+
+### Fitting the Model: Time as Continuous
+
+If instead we want to model a linear trend over time rather than a separate mean at each visit (appropriate with more time points, or when a smooth trend is scientifically the quantity of interest), treat `month` as continuous and add a **random intercept** per subject to capture between-subject variability, in addition to the residual correlation structure:
+
+```{r}
+fit_cs_cont <- lme(weight ~ month + drug, random = ~ 1 | id_f,
+                    correlation = corCompSymm(form = ~ 1 | id_f), data = weightloss)
+summary(fit_cs_cont)
+```
+
+**Interpretation of the continuous-time coefficient:** $\hat\beta_{month}$ represents the average change in weight per one-month increase in time, holding drug constant — interpreted exactly like a continuous slope in ordinary multiple regression, except the standard error now correctly accounts for repeated measurements on the same subjects.
+
+::: callout-tip
+Whether to treat time as categorical or continuous depends on the research question and the number of distinct time points: with only a handful of visits (as here), categorical time lets each visit have its own freely estimated mean (more flexible, but more parameters); with many time points, or when a smooth linear (or polynomial) trend is the quantity of scientific interest, continuous time is more parsimonious and directly yields an interpretable "rate of change" coefficient.
+:::
+
+## Worked Example: Full Analysis and Interpretation
+
+Following the standard five-step template for the drug-by-time comparison (categorical-time model):
+
+1.  $H_0:\beta_{drug}=0$ vs. $H_1:\beta_{drug}\ne0$
+2.  $\alpha=0.05$
+3.  Repeated-measures model fit via `gls()` with the best-fitting correlation structure (by AIC/BIC)
+4.  Read the partial t-test (or F-test) and p-value for `drug` from `summary(fit_un)` / `anova(fit_un)`
+5.  If p > 0.05: fail to reject $H_0$ — conclude there is no significant difference in weight change between the two drugs across the follow-up period, after accounting for the within-subject correlation. If p ≤ 0.05: reject $H_0$ and conclude the drugs differ.
+
+```{r}
+summary(fit_un)$tTable
+```
+
+## Practice Questions
+
+1.  A dataset has 30 subjects, each measured at 5 time points. Why is it inappropriate to analyze this with ordinary `lm()`, ignoring subject ID?
+2.  What is the key practical difference between the compound symmetry (CS) and autoregressive AR(1) correlation structures, and when would AR(1) be more appropriate than CS?
+3.  You fit the same repeated-measures model under CS, AR(1), and UN structures and obtain AIC values of 512, 498, and 501, respectively. Which structure would you select, and why?
+4.  In a repeated-measures model with time treated as categorical (4 levels, baseline as reference), the coefficient for "month12 vs. baseline" is significant but "month3 vs. baseline" and "month6 vs. baseline" are not. How would you interpret this pattern?
+5.  Explain, in plain language, why ignoring within-subject correlation tends to produce standard errors that are too small (rather than too large), and what practical consequence this has for hypothesis testing.
+
+::: {.callout-note collapse="true"}
+## Answer Key
+
+1.  Ordinary `lm()` assumes all observations are independent. With 5 measurements per subject, observations from the same subject are correlated (a subject's repeated values tend to be more similar to each other than to another subject's values), so treating all 150 rows as independent violates the independence assumption, produces artificially small standard errors, and can yield misleadingly significant p-values.
+2.  Compound symmetry assumes the same correlation between *any* two time points, regardless of how far apart they are. AR(1) assumes correlation decays with time lag, so time points close together are more strongly correlated than those far apart. AR(1) is more appropriate when there is a clear reason to expect measurements taken closer in time to be more similar (e.g., biological measures that drift gradually), rather than a constant "family resemblance" across all visits.
+3.  Select AR(1) (AIC = 498), since it has the smallest AIC among the three candidate structures — smaller AIC indicates a better balance of fit and parsimony.
+4.  This pattern suggests weight (or the outcome) does not differ meaningfully from baseline in the short term (3 and 6 months) but does differ significantly by 12 months — i.e., the effect (or change over time) emerges gradually and becomes detectable only by the final follow-up.
+5.  Ignoring within-subject correlation causes the model to treat repeated measurements from the same subject as if they were independent, effectively inflating the apparent sample size (information content) beyond what the data actually provide. Because standard errors shrink as apparent sample size grows, ignoring the correlation makes standard errors artificially small, which in turn makes p-values artificially small and confidence intervals artificially narrow — increasing the risk of a Type I error (falsely concluding a significant effect exists).
+:::
