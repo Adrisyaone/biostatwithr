@@ -13,7 +13,7 @@ Sample size estimation is a important step in the design of any research study. 
 
 ### Characteristics of Sample
 
-### **1. Representative**
+### 1. Representative
 
 A representative sample accurately reflects the demographics, behaviors, or characteristics of the larger population from which it is drawn. This characteristic is essential to generalize the findings from the sample to the population. A sample that is not representative may lead to biased results if the participants have different characteristics from the general population.
 
@@ -25,7 +25,7 @@ A representative sample accurately reflects the demographics, behaviors, or char
 
 -   **Cluster Sampling:** Randomly selecting entire clusters or groups from a population, where each cluster reflects the characteristics of the whole.
 
-### **2. Sufficiently Large**
+### 2. Sufficiently Large
 
 The sample must be large enough to provide reliable, statistically valid results. The size needed depends on the expected effect size, the variability in the data, the desired power of the study (i.e., the probability of detecting an effect if one exists), and the acceptable level of type I and type II errors.
 
@@ -35,7 +35,7 @@ The sample must be large enough to provide reliable, statistically valid results
 
 -   **Reduced Sampling Error:** The error between the sample statistic and the population parameter is likely to be smaller.
 
-### **3. Efficient**
+### 3. Efficient
 
 An efficient sample is one that provides the maximum amount of information needed for the study while using the least amount of resources (time, money, effort). Efficiency is particularly important in studies with limited resources or when the study involves hard-to-reach populations.
 
@@ -45,7 +45,7 @@ An efficient sample is one that provides the maximum amount of information neede
 
 -   **Multistage Sampling:** Combining several sampling methods can be more resource-efficient than a simple random sample, especially for large, geographically dispersed populations.
 
-### **4. Easy to Draw**
+### 4. Easy to Draw
 
 The sample should be such that it can be drawn without undue difficulty. This means considering logistical aspects of sampling, such as the ease of accessing the population, the availability of contact information, and the willingness of individuals to participate.
 
@@ -59,7 +59,7 @@ The sample should be such that it can be drawn without undue difficulty. This me
 
 Determining the appropriate sample size for a study is crucial because both excessively small and overly large sample sizes can lead to significant drawbacks. Let's explore these conditions in more detail:
 
-#### **When the Sample Size is Too Small**
+#### When the Sample Size is Too Small
 
 1.  **Failure to Detect Clinically Important Associations or Differences:** A small sample size has limited statistical power, which means the study might not be able to detect significant effects or differences that are clinically meaningful. This inability to observe a true effect can lead to false negatives (Type II errors).
 
@@ -69,7 +69,7 @@ Determining the appropriate sample size for a study is crucial because both exce
 
 4.  **Waste of Participant Input:** Participants who contribute their time and information to a study that is too small may feel their effort is wasted if the study fails to provide meaningful results. This can affect participant morale and willingness to engage in future research.
 
-#### **When the Sample Size is Too Large**
+#### When the Sample Size is Too Large
 
 1.  **Waste of Resources:** Excessively large samples involve more logistical arrangements, more staff time, and potentially more equipment and materials than are actually needed to achieve the objectives of the study.
 

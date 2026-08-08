@@ -731,13 +731,13 @@ window.Quarto = {
 </section>
 <section id="mutually-exclusive-events-no-overlap" class="level3">
 <h3 class="anchored" data-anchor-id="mutually-exclusive-events-no-overlap">Mutually Exclusive Events (No Overlap)</h3>
-<p><img src="images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png" class="img-fluid"></p>
+<p><img src="images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png" class="img-fluid" width="504"></p>
 <p>Because <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> share no outcomes, there is no overlapping region — this is the defining feature of mutually exclusive events.</p>
 </section>
 <section id="clinical-example-venn-diagram" class="level3">
 <h3 class="anchored" data-anchor-id="clinical-example-venn-diagram">Clinical Example Venn Diagram</h3>
 <p>Let <span class="math inline">\(A\)</span> = “patient has diabetes” and <span class="math inline">\(B\)</span> = “patient has hypertension” in a clinic population of 200 patients: 60 have diabetes only, 50 have hypertension only, 40 have both, and 50 have neither.</p>
-<p><img src="images/b21f6b39-cfca-428f-88a9-8e717cadce66.png" class="img-fluid" width="654"></p>
+<p><img src="images/b21f6b39-cfca-428f-88a9-8e717cadce66.png" width="503" height="335"></p>
 <p>From this diagram:</p>
 <p><span class="math inline">\(P(\text{diabetes}) = (60+40)/200 = 0.50\)</span>;</p>
 <p><span class="math inline">\(P(\text{hypertension}) = (50+40)/200=0.45\)</span>;</p>
@@ -757,18 +757,18 @@ window.Quarto = {
 </section>
 <section id="worked-example" class="level3">
 <h3 class="anchored" data-anchor-id="worked-example">Worked Example</h3>
-<p>Using the clinic data above (<span class="math inline">\(n=200\)</span>): What is the probability a randomly selected patient has diabetes <strong>or</strong> hypertension (or both)?</p>
+<p>Using the clinic data above (<span class="math inline">\(n=200\)</span>): What is the probability a randomly selected patient has diabetes or hypertension (or both)?</p>
 <p><strong>Step 1.</strong> <span class="math inline">\(P(A) = P(\text{diabetes}) = 100/200 = 0.50\)</span> (60 diabetes-only + 40 both).</p>
 <p><strong>Step 2.</strong> <span class="math inline">\(P(B) = P(\text{hypertension}) = 90/200 = 0.45\)</span> (50 hypertension-only + 40 both).</p>
 <p><strong>Step 3.</strong> <span class="math inline">\(P(A \cap B) = 40/200 = 0.20\)</span>.</p>
 <p><strong>Step 4.</strong> Apply the addition rule: <span class="math display">\[P(A \cup B) = 0.50+0.45-0.20 = 0.75\]</span></p>
-<p><strong>Verification by direct count:</strong> <span class="math inline">\((60+50+40)/200 = 150/200 = 0.75\)</span> ✓. This confirms 75% of patients have at least one of the two conditions.</p>
+<p><strong>Verification by direct count:</strong> <span class="math inline">\((60+50+40)/200 = 150/200 = 0.75\)</span>. This confirms 75% of patients have at least one of the two conditions.</p>
 </section>
 </section>
 <section id="mutually-exclusive-events" class="level2">
 <h2 class="anchored" data-anchor-id="mutually-exclusive-events">Mutually Exclusive Events</h2>
 <p>Two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are <strong>mutually exclusive (disjoint)</strong> if they cannot both occur simultaneously: <span class="math inline">\(P(A \cap B) = 0\)</span>.</p>
-<p><strong>Clinical example:</strong> A patient’s ABO blood type result is a single test outcome — a patient cannot simultaneously be “type A” and “type B” (ignoring rare chimerism); these are mutually exclusive events.</p>
+<p><strong>Clinical example:</strong> A patient’s ABO blood type result is a single test outcome. A patient cannot simultaneously be “type A” and “type B” (ignoring rare chimerism); these are mutually exclusive events.</p>
 </section>
 <section id="independent-vs.-dependent-events" class="level2">
 <h2 class="anchored" data-anchor-id="independent-vs.-dependent-events">Independent vs.&nbsp;Dependent Events</h2>
@@ -796,7 +796,9 @@ window.Quarto = {
 <section id="worked-example-clinical" class="level3">
 <h3 class="anchored" data-anchor-id="worked-example-clinical">Worked Example (Clinical)</h3>
 <p>Using the clinic data (<span class="math inline">\(n=200\)</span>: 60 diabetes only, 50 hypertension only, 40 both, 50 neither): What is the probability a patient has hypertension, <strong>given</strong> that they have diabetes?</p>
-<p><strong>Step 1.</strong> <span class="math inline">\(P(\text{diabetes}) = 100/200 = 0.50\)</span>. <strong>Step 2.</strong> <span class="math inline">\(P(\text{diabetes} \cap \text{hypertension}) = 40/200 = 0.20\)</span>. <strong>Step 3.</strong> Apply the formula: <span class="math display">\[P(\text{hypertension}|\text{diabetes}) = \frac{0.20}{0.50} = 0.40\]</span></p>
+<p><strong>Step 1.</strong> <span class="math inline">\(P(\text{diabetes}) = 100/200 = 0.50\)</span>.</p>
+<p><strong>Step 2.</strong> <span class="math inline">\(P(\text{diabetes} \cap \text{hypertension}) = 40/200 = 0.20\)</span>.</p>
+<p><strong>Step 3.</strong> Apply the formula: <span class="math display">\[P(\text{hypertension}|\text{diabetes}) = \frac{0.20}{0.50} = 0.40\]</span></p>
 <p><strong>Interpretation:</strong> Among diabetic patients, 40% also have hypertension — noticeably higher than the overall prevalence of hypertension in the whole clinic (45%… actually let’s compare correctly: overall <span class="math inline">\(P(\text{hypertension})=0.45\)</span>). Here conditioning on diabetes gives 40%, close to but not equal to the unconditional 45%, illustrating how conditioning can shift a probability up, down, or leave it nearly unchanged depending on the strength of association between the two conditions.</p>
 </section>
 </section>
@@ -876,7 +878,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p><strong>Step 1.</strong> Multiply along each branch (multiplication rule for dependent events): <span class="math inline">\(P(G \cap D) = 0.04\)</span>, <span class="math inline">\(P(G^c \cap D) = 0.045\)</span>. <strong>Step 2.</strong> Since “has gene” and “no gene” are mutually exclusive and exhaustive, add the two paths that end in disease (addition rule): <span class="math display">\[P(D) = P(G\cap D) + P(G^c \cap D) = 0.04+0.045 = 0.085 = 8.5\%\]</span></p>
+<p><strong>Step 1.</strong> Multiply along each branch (multiplication rule for dependent events): <span class="math inline">\(P(G \cap D) = 0.04\)</span>, <span class="math inline">\(P(G^c \cap D) = 0.045\)</span>.</p>
+<p><strong>Step 2.</strong> Since “has gene” and “no gene” are mutually exclusive and exhaustive, add the two paths that end in disease (addition rule): <span class="math display">\[P(D) = P(G\cap D) + P(G^c \cap D) = 0.04+0.045 = 0.085 = 8.5\%\]</span></p>
 <p>This is the <strong>Law of Total Probability</strong>: <span class="math inline">\(P(D) = P(D|G)P(G) + P(D|G^c)P(G^c)\)</span>.</p>
 </section>
 <section id="bayes-theorem" class="level1">
@@ -913,10 +916,10 @@ window.Quarto = {
 <p>Diagnostic test performance is organized in a <strong>2×2 confusion matrix (contingency table)</strong>, cross-classifying the true disease status against the test result:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 28%">
 <col style="width: 27%">
-<col style="width: 11%">
+<col style="width: 26%">
+<col style="width: 24%">
+<col style="width: 21%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1011,7 +1014,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Sensitivity and specificity are intrinsic properties of the test</strong> and do not depend on disease prevalence. <strong>PPV and NPV, however, depend heavily on prevalence</strong> — the same test performs very differently (in terms of PPV) in a high-prevalence population (e.g., a specialist referral clinic) versus a low-prevalence population (e.g., mass community screening). This is precisely why Bayes’ Theorem is required to move from sensitivity/specificity to PPV/NPV.</p>
+<p><strong>Sensitivity and specificity are intrinsic properties of the test</strong> and do not depend on disease prevalence. <strong>PPV and NPV, however, depend heavily on prevalence</strong>, the same test performs very differently (in terms of PPV) in a high-prevalence population (e.g., a specialist referral clinic) versus a low-prevalence population (e.g., mass community screening). This is precisely why Bayes’ Theorem is required to move from sensitivity/specificity to PPV/NPV.</p>
 </div>
 </div>
 </div>
@@ -1059,12 +1062,12 @@ window.Quarto = {
 <p><strong>Step 6: Calculate NPV:</strong> <span class="math display">\[NPV = \frac{TN}{TN+FN} = \frac{9405}{9415} = 0.9989 \approx 99.9\%\]</span></p>
 <section id="interpretation-1" class="level3">
 <h3 class="anchored" data-anchor-id="interpretation-1">Interpretation</h3>
-<p>Even with a “good” test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about <strong>15.4%</strong> of people who test positive actually have TB — the majority of positives (84.6%) are <strong>false positives</strong>. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes’ Theorem: <strong>low prevalence sharply lowers PPV</strong>, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.</p>
+<p>Even with a “good” test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about <strong>15.4%</strong> of people who test positive actually have TB. The majority of positives (84.6%) are <strong>false positives</strong>. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes’ Theorem: <strong>low prevalence sharply lowers PPV</strong>, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.</p>
 </section>
 <section id="likelihood-ratios-worked-calculation" class="level3">
 <h3 class="anchored" data-anchor-id="likelihood-ratios-worked-calculation">Likelihood Ratios (Worked Calculation)</h3>
 <p><span class="math display">\[LR+ = \frac{\text{Sensitivity}}{1-\text{Specificity}} = \frac{0.90}{1-0.95} = \frac{0.90}{0.05} = 18\]</span> <span class="math display">\[LR- = \frac{1-\text{Sensitivity}}{\text{Specificity}} = \frac{1-0.90}{0.95} = \frac{0.10}{0.95} = 0.105\]</span></p>
-<p><strong>Interpretation:</strong> A positive result is 18 times more likely in a person with TB than without — a strong LR+ (values &gt; 10 are considered to provide strong evidence). A negative result’s LR− of 0.105 substantially reduces the likelihood of disease (values &lt; 0.1 are considered strong evidence against disease).</p>
+<p><strong>Interpretation:</strong> A positive result is 18 times more likely in a person with TB than without. A strong LR+ (values &gt; 10 are considered to provide strong evidence). A negative result’s LR− of 0.105 substantially reduces the likelihood of disease (values &lt; 0.1 are considered strong evidence against disease).</p>
 </section>
 </section>
 <section id="bayes-theorem-flowchart-diagnostic-testing" class="level2">

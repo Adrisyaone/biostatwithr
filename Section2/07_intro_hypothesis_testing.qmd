@@ -10,11 +10,11 @@ editor:
   markdown: 
     wrap: sentence
 ---
+
 ```{r, include=FALSE}
 knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
 data <- readxl::read_excel("D:/Epi Biostat with R/Biostat_with_R/Environment/Datasets/wcgs.xls")
 ```
-
 
 # Introduction
 
@@ -127,9 +127,9 @@ Always report and interpret **effect sizes and confidence intervals** alongside 
     The entire rejection region is in one tail.
     It can be right tailed and left tailed
 
-    +------------------------------------------------------------------------------------+----------------------------------------------------------------------------------+
-    | ![Figure: Right-tailed hypothesis test](images/right_tailed_test.png){width="521"} | ![Figure: Left-tailed hypothesis test](images/left_tailed_test.png){width="518"} |
-    +------------------------------------------------------------------------------------+----------------------------------------------------------------------------------+
+    ![Figure: Right-tailed hypothesis test](images/right_tailed_test.png){width="521"}
+
+    ![Figure: Left-tailed hypothesis test](images/left_tailed_test.png){width="518"}
 
 **Choosing a tail:** A one-tailed test should be specified **before** looking at the data and only when there is a strong a priori reason to test in only one direction (e.g., testing whether a new drug is *better than* placebo, not just *different*).
 Two-tailed tests are more conservative and are the standard default in most biomedical research.
@@ -141,13 +141,10 @@ There are two distinct ways to be wrong: **Type I error** and **Type II error**.
 
 ## The Decision Matrix
 
-+--------------------------+---------------------------------------------+---------------------------------------+
-|                          | $H_0$ is actually True                      | $H_0$ is actually False               |
-+==========================+=============================================+=======================================+
-| **Reject** $H_0$         | Type I Error (probability = $\alpha$)       | Correct decision (power = $1-\beta$)  |
-+--------------------------+---------------------------------------------+---------------------------------------+
+|   | $H_0$ is actually True | $H_0$ is actually False |
+|------------------|-----------------------------|-------------------------|
+| **Reject** $H_0$ | Type I Error (probability = $\alpha$) | Correct decision (power = $1-\beta$) |
 | **Fail to reject** $H_0$ | Correct decision (probability = $1-\alpha$) | Type II Error (probability = $\beta$) |
-+--------------------------+---------------------------------------------+---------------------------------------+
 
 ## Type I Error
 
@@ -220,15 +217,11 @@ There are two complementary approaches: **point estimation** (a single best-gues
 
 A **point estimate** is a single numeric value, calculated from sample data, that serves as the "best guess" for a population parameter.
 
-+--------------------------------------+------------------------------------+
 | Population Parameter                 | Point Estimator (Sample Statistic) |
-+======================================+====================================+
+|-------------------------------------|-----------------------------------|
 | $\mu$ (population mean)              | $\bar{x}$ (sample mean)            |
-+--------------------------------------+------------------------------------+
 | $\sigma^2$ (population variance)     | $s^2$ (sample variance)            |
-+--------------------------------------+------------------------------------+
 | $\pi$ or $P$ (population proportion) | $\hat{p}$ (sample proportion)      |
-+--------------------------------------+------------------------------------+
 
 **Desirable properties of a good point estimator:** unbiasedness (its expected value equals the true parameter, e.g., $E(\bar{x})=\mu$), consistency (it converges to the true parameter as $n\to\infty$), and efficiency (it has the smallest possible variance among unbiased estimators).
 
@@ -263,7 +256,7 @@ $$\text{Point estimate} \pm (\text{Critical value}) \times (\text{Standard error
 
 $Margin.of.error(ME)=critical.value \times standard.error$
 
-### Confidence Interval for a Mean 
+### Confidence Interval for a Mean
 
 When $\sigma$ is unknown, we use $t$ statistics,
 
@@ -390,19 +383,13 @@ DescTools::MultinomCI( x = b, method = "goodman")*100 # we can select different 
 
 ## Confidence Interval vs. Prediction Interval
 
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Feature          | Confidence Interval                                                                       | Prediction Interval                                                                                 |
-+==================+===========================================================================================+=====================================================================================================+
-| Estimates        | A **population parameter** (e.g., the true mean $\mu$)                                    | A **single future/individual observation**                                                          |
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Width            | Narrower                                                                                  | **Always wider** than the CI for the same data and confidence level                                 |
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Accounts for     | Uncertainty in estimating the parameter only                                              | Uncertainty in estimating the parameter **plus** the natural variability of individual observations |
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Formula (mean)   | $\bar{x}\pm t_{\alpha/2,n-1}\dfrac{s}{\sqrt n}$                                           | $\bar{x}\pm t_{\alpha/2,n-1}\, s\sqrt{1+\dfrac{1}{n}}$                                              |
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
-| Example question | "What is the plausible range for the *average* blood pressure of all patients like this?" | "What is the plausible range of blood pressure for *one new* patient?"                              |
-+------------------+-------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------+
+| Feature | Confidence Interval | Prediction Interval |
+|---------------|---------------------------|------------------------------|
+| Estimates | A **population parameter** (e.g., the true mean $\mu$) | A **single future/individual observation** |
+| Width | Narrower | **Always wider** than the CI for the same data and confidence level |
+| Accounts for | Uncertainty in estimating the parameter only | Uncertainty in estimating the parameter **plus** the natural variability of individual observations |
+| Formula (mean) | $\bar{x}\pm t_{\alpha/2,n-1}\dfrac{s}{\sqrt n}$ | $\bar{x}\pm t_{\alpha/2,n-1}\, s\sqrt{1+\dfrac{1}{n}}$ |
+| Example question | "What is the plausible range for the *average* blood pressure of all patients like this?" | "What is the plausible range of blood pressure for *one new* patient?" |
 
 ::: callout-tip
 A useful way to remember the distinction: a **confidence interval** narrows toward zero width as $n\to\infty$ (we can estimate the population mean with near-perfect precision given enough data), but a **prediction interval** never shrinks below the natural variability of individual observations ($s$), no matter how large $n$ becomes, individual patients will always vary, even if we know the population mean exactly.

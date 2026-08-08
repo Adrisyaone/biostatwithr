@@ -36,7 +36,8 @@ The choice of a test statistic depends on the following:
 
 5.  Independent data or paired data
 
-## ![](/Section1/Chapter1/Pictures/which_test_flowchart.png)
+
+![](/Section1/Chapter1/Pictures/which_test_flowchart.png)
 
 ## Different test statistics
 

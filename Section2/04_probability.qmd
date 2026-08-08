@@ -97,7 +97,7 @@ Venn diagrams visually represent relationships between events (sets) within a sa
 
 ### Mutually Exclusive Events (No Overlap)
 
-![](images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png)
+![](images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png){width="504"}
 
 Because $A$ and $B$ share no outcomes, there is no overlapping region — this is the defining feature of mutually exclusive events.
 
@@ -105,7 +105,7 @@ Because $A$ and $B$ share no outcomes, there is no overlapping region — this i
 
 Let $A$ = "patient has diabetes" and $B$ = "patient has hypertension" in a clinic population of 200 patients: 60 have diabetes only, 50 have hypertension only, 40 have both, and 50 have neither.
 
-![](images/b21f6b39-cfca-428f-88a9-8e717cadce66.png){width="654"}
+![](images/b21f6b39-cfca-428f-88a9-8e717cadce66.png){width="503" height="335"}
 
 From this diagram:
 
@@ -129,7 +129,7 @@ If $A$ and $B$ are mutually exclusive ($P(A \cap B) = 0$): $$P(A \cup B) = P(A) 
 
 ### Worked Example
 
-Using the clinic data above ($n=200$): What is the probability a randomly selected patient has diabetes **or** hypertension (or both)?
+Using the clinic data above ($n=200$): What is the probability a randomly selected patient has diabetes or hypertension (or both)?
 
 **Step 1.** $P(A) = P(\text{diabetes}) = 100/200 = 0.50$ (60 diabetes-only + 40 both).
 
@@ -139,13 +139,13 @@ Using the clinic data above ($n=200$): What is the probability a randomly select
 
 **Step 4.** Apply the addition rule: $$P(A \cup B) = 0.50+0.45-0.20 = 0.75$$
 
-**Verification by direct count:** $(60+50+40)/200 = 150/200 = 0.75$ ✓. This confirms 75% of patients have at least one of the two conditions.
+**Verification by direct count:** $(60+50+40)/200 = 150/200 = 0.75$. This confirms 75% of patients have at least one of the two conditions.
 
 ## Mutually Exclusive Events
 
 Two events $A$ and $B$ are **mutually exclusive (disjoint)** if they cannot both occur simultaneously: $P(A \cap B) = 0$.
 
-**Clinical example:** A patient's ABO blood type result is a single test outcome — a patient cannot simultaneously be "type A" and "type B" (ignoring rare chimerism); these are mutually exclusive events.
+**Clinical example:** A patient's ABO blood type result is a single test outcome. A patient cannot simultaneously be "type A" and "type B" (ignoring rare chimerism); these are mutually exclusive events.
 
 ## Independent vs. Dependent Events
 
@@ -175,7 +175,11 @@ $$P(B|A) = \frac{P(A \cap B)}{P(A)}, \quad \text{provided } P(A) > 0$$
 
 Using the clinic data ($n=200$: 60 diabetes only, 50 hypertension only, 40 both, 50 neither): What is the probability a patient has hypertension, **given** that they have diabetes?
 
-**Step 1.** $P(\text{diabetes}) = 100/200 = 0.50$. **Step 2.** $P(\text{diabetes} \cap \text{hypertension}) = 40/200 = 0.20$. **Step 3.** Apply the formula: $$P(\text{hypertension}|\text{diabetes}) = \frac{0.20}{0.50} = 0.40$$
+**Step 1.** $P(\text{diabetes}) = 100/200 = 0.50$.
+
+**Step 2.** $P(\text{diabetes} \cap \text{hypertension}) = 40/200 = 0.20$.
+
+**Step 3.** Apply the formula: $$P(\text{hypertension}|\text{diabetes}) = \frac{0.20}{0.50} = 0.40$$
 
 **Interpretation:** Among diabetic patients, 40% also have hypertension — noticeably higher than the overall prevalence of hypertension in the whole clinic (45%... actually let's compare correctly: overall $P(\text{hypertension})=0.45$). Here conditioning on diabetes gives 40%, close to but not equal to the unconditional 45%, illustrating how conditioning can shift a probability up, down, or leave it nearly unchanged depending on the strength of association between the two conditions.
 
@@ -229,7 +233,9 @@ flowchart LR
     Gc -->|"P(Dᶜ|Gᶜ) = 0.95"| GcDc["No Gene, No Disease<br/>P = 0.90×0.95 = 0.855"]
 ```
 
-**Step 1.** Multiply along each branch (multiplication rule for dependent events): $P(G \cap D) = 0.04$, $P(G^c \cap D) = 0.045$. **Step 2.** Since "has gene" and "no gene" are mutually exclusive and exhaustive, add the two paths that end in disease (addition rule): $$P(D) = P(G\cap D) + P(G^c \cap D) = 0.04+0.045 = 0.085 = 8.5\%$$
+**Step 1.** Multiply along each branch (multiplication rule for dependent events): $P(G \cap D) = 0.04$, $P(G^c \cap D) = 0.045$.
+
+**Step 2.** Since "has gene" and "no gene" are mutually exclusive and exhaustive, add the two paths that end in disease (addition rule): $$P(D) = P(G\cap D) + P(G^c \cap D) = 0.04+0.045 = 0.085 = 8.5\%$$
 
 This is the **Law of Total Probability**: $P(D) = P(D|G)P(G) + P(D|G^c)P(G^c)$.
 
@@ -275,7 +281,7 @@ Bayes' Theorem is the mathematical backbone of **diagnostic testing** in medicin
 Diagnostic test performance is organized in a **2×2 confusion matrix (contingency table)**, cross-classifying the true disease status against the test result:
 
 |                        | Disease Present (D+) | Disease Absent (D−) | Total   |
-|------------------------|----------------------|---------------------|---------|
+|--------------------|-------------------|------------------|----------------|
 | **Test Positive (T+)** | True Positive (TP)   | False Positive (FP) | TP + FP |
 | **Test Negative (T−)** | False Negative (FN)  | True Negative (TN)  | FN + TN |
 | **Total**              | TP + FN              | FP + TN             | $N$     |
@@ -286,7 +292,7 @@ Diagnostic test performance is organized in a **2×2 confusion matrix (contingen
 ### Key Diagnostic Test Measures
 
 | Measure | Formula | Meaning |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | **Sensitivity** (True Positive Rate) | $\dfrac{TP}{TP+FN}$ | Among those **with** disease, proportion correctly identified as positive |
 | **Specificity** (True Negative Rate) | $\dfrac{TN}{TN+FP}$ | Among those **without** disease, proportion correctly identified as negative |
 | **Positive Predictive Value (PPV)** | $\dfrac{TP}{TP+FP}$ | Among those who **test positive**, proportion who truly have disease |
@@ -296,7 +302,7 @@ Diagnostic test performance is organized in a **2×2 confusion matrix (contingen
 | **Negative Likelihood Ratio (LR−)** | $\dfrac{1-\text{Sensitivity}}{\text{Specificity}}$ | How much a negative result decreases the odds of disease |
 
 ::: callout-important
-**Sensitivity and specificity are intrinsic properties of the test** and do not depend on disease prevalence. **PPV and NPV, however, depend heavily on prevalence** — the same test performs very differently (in terms of PPV) in a high-prevalence population (e.g., a specialist referral clinic) versus a low-prevalence population (e.g., mass community screening). This is precisely why Bayes' Theorem is required to move from sensitivity/specificity to PPV/NPV.
+**Sensitivity and specificity are intrinsic properties of the test** and do not depend on disease prevalence. **PPV and NPV, however, depend heavily on prevalence**, the same test performs very differently (in terms of PPV) in a high-prevalence population (e.g., a specialist referral clinic) versus a low-prevalence population (e.g., mass community screening). This is precisely why Bayes' Theorem is required to move from sensitivity/specificity to PPV/NPV.
 :::
 
 ## Worked Example: Full Manual Calculation
@@ -325,13 +331,13 @@ A tuberculosis (TB) screening test has **sensitivity = 90%** and **specificity =
 
 ### Interpretation
 
-Even with a "good" test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about **15.4%** of people who test positive actually have TB — the majority of positives (84.6%) are **false positives**. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes' Theorem: **low prevalence sharply lowers PPV**, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.
+Even with a "good" test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about **15.4%** of people who test positive actually have TB. The majority of positives (84.6%) are **false positives**. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes' Theorem: **low prevalence sharply lowers PPV**, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.
 
 ### Likelihood Ratios (Worked Calculation)
 
 $$LR+ = \frac{\text{Sensitivity}}{1-\text{Specificity}} = \frac{0.90}{1-0.95} = \frac{0.90}{0.05} = 18$$ $$LR- = \frac{1-\text{Sensitivity}}{\text{Specificity}} = \frac{1-0.90}{0.95} = \frac{0.10}{0.95} = 0.105$$
 
-**Interpretation:** A positive result is 18 times more likely in a person with TB than without — a strong LR+ (values \> 10 are considered to provide strong evidence). A negative result's LR− of 0.105 substantially reduces the likelihood of disease (values \< 0.1 are considered strong evidence against disease).
+**Interpretation:** A positive result is 18 times more likely in a person with TB than without. A strong LR+ (values \> 10 are considered to provide strong evidence). A negative result's LR− of 0.105 substantially reduces the likelihood of disease (values \< 0.1 are considered strong evidence against disease).
 
 ## Bayes' Theorem Flowchart (Diagnostic Testing)
 
@@ -419,7 +425,7 @@ A sample of $n = 50$ villagers is tested, and $x = 8$ test positive (this is the
 ## Frequentist vs. Bayesian Comparison
 
 | Aspect | Frequentist | Bayesian |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | View of parameters | Fixed, unknown constants | Random variables with a probability distribution |
 | Uses prior information? | No | Yes, explicitly via the prior distribution |
 | Key output | Point estimate + confidence interval + p-value | Posterior distribution (full distribution of belief) |
