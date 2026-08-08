@@ -102,6 +102,7 @@ format:
     callout-appearance: simple
     fig-cap-location: bottom
     tbl-cap-location: top
+    output-dir: _book
 
   pdf:
     documentclass: scrreprt
@@ -111,6 +112,7 @@ format:
     monofont: "Courier New"
     fontsize: 12pt
     linestretch: 1.5
+    title-page: true
     geometry:
       - top=30mm
       - bottom=30mm
@@ -128,7 +130,10 @@ format:
     linkcolor: "NavyBlue"
     urlcolor: "NavyBlue"
     citecolor: "NavyBlue"
+    cover-image: cover.png
+    output-dir: _book
 
   epub:
     cover-image: cover.png
     toc: true
+    output-dir: _book

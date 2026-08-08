@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Count data – Biostatistics with R</title>
+<title>Count Data analysis – Biostatistics with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -314,7 +314,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Count data analysis/Poisson's regression.html"><span class="chapter-title">Count data</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Count data analysis/Poisson's regression.html"><span class="chapter-title">Count Data analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -458,12 +458,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -488,7 +488,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Count data analysis/Poisson's regression.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Count data</span></a>
+  <a href="../../Section2/Count data analysis/Poisson's regression.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Count Data analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -530,7 +530,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#poisson-distribution" id="toc-poisson-distribution" class="nav-link active" data-scroll-target="#poisson-distribution">Poisson Distribution</a></li>
+  <li><a href="#count-data" id="toc-count-data" class="nav-link active" data-scroll-target="#count-data">Count data</a></li>
+  <li><a href="#poisson-distribution" id="toc-poisson-distribution" class="nav-link" data-scroll-target="#poisson-distribution">Poisson Distribution</a></li>
   <li><a href="#poisson-regression" id="toc-poisson-regression" class="nav-link" data-scroll-target="#poisson-regression">Poisson Regression</a>
   <ul class="collapse">
   <li><a href="#assumptions-of-poisson-regression" id="toc-assumptions-of-poisson-regression" class="nav-link" data-scroll-target="#assumptions-of-poisson-regression">Assumptions of Poisson Regression</a></li>
@@ -585,9 +586,9 @@ window.Quarto = {
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Count data analysis/Poisson's regression.html"><span class="chapter-title">Count data</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_descriptive_statistics.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Count data analysis/Poisson's regression.html"><span class="chapter-title">Count Data analysis</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Count data</span></h1>
+<h1 class="title"><span class="chapter-title">Count Data analysis</span></h1>
 </div>
 
 
@@ -604,9 +605,12 @@ window.Quarto = {
 </header>
 
 
+<section id="count-data" class="level2">
+<h2 class="anchored" data-anchor-id="count-data">Count data</h2>
 <p>The data consisting of non-negative integers values which is the count of occurrence of events. Due to the discrete nature, the count data can’t be treated as continuous variables. The categorical analysis methods are also not appropriate. The examples of count data are:</p>
 <p>a) Number of risk factors of NCDs present in a person</p>
 <p>b) Number of people visiting doctor’s office per month</p>
+</section>
 <section id="poisson-distribution" class="level2">
 <h2 class="anchored" data-anchor-id="poisson-distribution">Poisson Distribution</h2>
 <p>It is the distribution if we want to calculate the probabilities of the number of ocurences of some phenomenon in some space or time interval, often measured as the rate (average given the measired space).</p>

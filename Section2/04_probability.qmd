@@ -275,7 +275,7 @@ Bayes' Theorem is the mathematical backbone of **diagnostic testing** in medicin
 Diagnostic test performance is organized in a **2×2 confusion matrix (contingency table)**, cross-classifying the true disease status against the test result:
 
 |                        | Disease Present (D+) | Disease Absent (D−) | Total   |
-|-------------------|------------------|------------------|------------------|
+|------------------------|----------------------|---------------------|---------|
 | **Test Positive (T+)** | True Positive (TP)   | False Positive (FP) | TP + FP |
 | **Test Negative (T−)** | False Negative (FN)  | True Negative (TN)  | FN + TN |
 | **Total**              | TP + FN              | FP + TN             | $N$     |
@@ -286,7 +286,7 @@ Diagnostic test performance is organized in a **2×2 confusion matrix (contingen
 ### Key Diagnostic Test Measures
 
 | Measure | Formula | Meaning |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | **Sensitivity** (True Positive Rate) | $\dfrac{TP}{TP+FN}$ | Among those **with** disease, proportion correctly identified as positive |
 | **Specificity** (True Negative Rate) | $\dfrac{TN}{TN+FP}$ | Among those **without** disease, proportion correctly identified as negative |
 | **Positive Predictive Value (PPV)** | $\dfrac{TP}{TP+FP}$ | Among those who **test positive**, proportion who truly have disease |
@@ -419,7 +419,7 @@ A sample of $n = 50$ villagers is tested, and $x = 8$ test positive (this is the
 ## Frequentist vs. Bayesian Comparison
 
 | Aspect | Frequentist | Bayesian |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | View of parameters | Fixed, unknown constants | Random variables with a probability distribution |
 | Uses prior information? | No | Yes, explicitly via the prior distribution |
 | Key output | Point estimate + confidence interval + p-value | Posterior distribution (full distribution of belief) |

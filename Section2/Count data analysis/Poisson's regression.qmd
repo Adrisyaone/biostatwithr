@@ -1,5 +1,5 @@
 ---
-Title: "Count Data analysis"
+title: "Count Data analysis"
 output:
   pdf_document:
     number_sections: yes
