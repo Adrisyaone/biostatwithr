@@ -1,0 +1,204 @@
+---
+title: "Sampling Technique"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+## Why Sample Rather Than Take a Census?
+
+1.  **Cost**: Studying a sample of 500 patients is far cheaper than studying every patient in the country.
+2.  **Time**: Data collection, cleaning, and analysis are faster with fewer units.
+3.  **Feasibility**: Some populations (e.g., "all people who will ever have a heart attack") are impossible to enumerate completely.
+4.  **Practicality of destructive testing**: In lab-based studies (e.g., testing blood samples to destruction), a census would eliminate the population entirely.
+5.  **Accuracy**: Smaller, well-supervised data collection can sometimes yield higher-quality data than an unwieldy census, because more resources can be devoted to training, supervision, and follow-up.
+6.  **Ethics**: Randomized sampling into study arms is often more ethical than universal exposure to an unproven intervention. The trade-off is that a sample introduces **sampling error** — the sample statistic will not exactly equal the population parameter simply because we did not measure everyone. This is unavoidable but quantifiable (e.g., via standard errors and confidence intervals), unlike **non-sampling error** (measurement error, non-response bias, data entry errors), which can occur even in a full census and is often harder to correct.
+
+## Sampling Error vs. Bias
+
+It is important to distinguish two different problems that can affect a sample-based estimate:
+
+-   **Sampling error (precision):** Random variation between the sample statistic and the true population parameter, caused purely by chance in which units were selected. It shrinks as sample size increases and can be estimated with standard errors, confidence intervals, and margins of error.
+-   **Sampling bias (accuracy):** A systematic tendency for the sample to misrepresent the population, usually because the sampling method or the sampling frame favors certain units over others (e.g., surveying only patients who visit a hospital, ignoring those who cannot afford to). Bias does **not** shrink with a larger sample size — a bigger biased sample simply gives a more precise wrong answer. The choice of sampling method is the primary tool researchers have for controlling bias; sample size calculations are the primary tool for controlling sampling error/precision.
+
+## Sampling {#sec-sampling}
+
+It is the process of selecting sample from the population.
+
+![](Pictures/sample%20and%20population.png)
+
+### Two Broad Families of Sampling Methods
+
+| Feature | Probability sampling | Non-probability sampling |
+|------------------------|------------------------|------------------------|
+| Selection basis | Random, with known, non-zero probability for every unit | Non-random, based on convenience, judgment, or quota |
+| Generalizability | Statistically generalizable to the population | Not statistically generalizable |
+| Sampling error | Can be estimated mathematically | Cannot be estimated mathematically |
+| Typical use | Surveys, clinical trials, prevalence studies | Exploratory, qualitative, pilot, or hard-to-reach population studies |
+| Cost/effort | Usually higher (needs a sampling frame) | Usually lower and faster |
+
+### Probability Sampling Methods
+
+In probability sampling, every unit in the population has a known, non-zero chance of being selected, which is what allows valid statistical inference (standard errors, confidence intervals, hypothesis tests) about the population.
+
+#### Simple Random Sampling (SRS)
+
+Every unit in the sampling frame has an equal and independent chance of selection — analogous to drawing names from a hat.
+SRS is the conceptual baseline against which other designs are compared, but it requires a complete sampling frame and can be logistically difficult when the population is spread over a large area.
+
+``` r
+# Simple Random Sampling in R
+set.seed(123)
+ 
+# Suppose we have a sampling frame of 1000 patient IDs
+patient_frame <- 1:1000
+ 
+# Draw a simple random sample of 100 patients without replacement
+srs_sample <- sample(patient_frame, size = 100, replace = FALSE)
+head(srs_sample)
+ 
+# With a data frame of patient records
+patients <- data.frame(
+  id = 1:1000,
+  age = round(rnorm(1000, mean = 45, sd = 12)),
+  bp_systolic = round(rnorm(1000, mean = 125, sd = 15))
+)
+ 
+srs_data <- patients[sample(nrow(patients), 100, replace = FALSE), ]
+head(srs_data)
+```
+
+#### Systematic Sampling
+
+Units are selected at a fixed interval (k) from an ordered sampling frame, after a random starting point.
+The sampling interval is k = N / n.
+Systematic sampling is easier to implement in the field than SRS (e.g., "select every 10th patient entering the OPD") but can introduce bias if the list has a hidden periodic pattern that coincides with k.
+
+``` r
+# Systematic Sampling in R
+set.seed(123)
+ 
+N <- nrow(patients)   # population size
+n <- 100               # desired sample size
+k <- floor(N / n)      # sampling interval
+ 
+# Random starting point between 1 and k
+start <- sample(1:k, 1)
+ 
+# Select every k-th unit starting from 'start'
+systematic_indices <- seq(from = start, to = N, by = k)
+systematic_sample <- patients[systematic_indices, ]
+nrow(systematic_sample)
+```
+
+#### Stratified Sampling
+
+The population is first divided into homogeneous, non-overlapping subgroups called **strata** (e.g., by age group, sex, district, disease severity), and an independent random sample is then drawn from each stratum.
+Stratified sampling improves precision when the stratifying variable is related to the outcome, and it guarantees adequate representation of small but important subgroups (e.g., ensuring enough elderly patients are sampled even though they are a minority).
+
+-   **Proportionate stratified sampling** : sample size in each stratum is proportional to the stratum's share of the population.
+-   **Disproportionate stratified sampling**: some strata are deliberately over-sampled (e.g., a rare disease subgroup), and sampling weights are applied during analysis to correct for this.
+
+``` r
+# Stratified Sampling in R (proportionate, using dplyr)
+library(dplyr)
+ 
+set.seed(123)
+ 
+patients_strat <- patients %>%
+  mutate(age_group = ifelse(age < 45, "Younger", "Older"))
+ 
+# Draw 10% from each stratum (proportionate allocation)
+stratified_sample <- patients_strat %>%
+  group_by(age_group) %>%
+  slice_sample(prop = 0.10) %>%
+  ungroup()
+ 
+table(stratified_sample$age_group)
+```
+
+#### Cluster Sampling
+
+The population is divided into naturally occurring groups called **clusters** (e.g., villages, schools, hospital wards), a random sample of clusters is selected, and then either every unit within each selected cluster is studied (**one-stage cluster sampling**) or a sub-sample is drawn within each selected cluster (**two-stage cluster sampling**).
+Cluster sampling is often far cheaper and logistically simpler than SRS when the population is geographically dispersed (e.g., national immunization coverage surveys), but it typically yields lower precision for a given sample size because units within a cluster tend to be more similar to each other than to units in other clusters (measured by the **design effect**, DEFF).
+
+``` r
+# Cluster Sampling in R
+set.seed(123)
+ 
+# Suppose there are 50 villages (clusters), each with a variable number of households
+villages <- data.frame(
+  village_id = 1:50,
+  n_households = sample(80:150, 50, replace = TRUE)
+)
+ 
+# Stage 1: randomly select 8 clusters (villages)
+selected_villages <- sample(villages$village_id, size = 8, replace = FALSE)
+selected_villages
+ 
+# Stage 2 (two-stage cluster sampling): within each selected village,
+# randomly sample 20 households
+two_stage_sample <- lapply(selected_villages, function(v) {
+  n_hh <- villages$n_households[villages$village_id == v]
+  data.frame(village_id = v, household_id = sample(1:n_hh, size = min(20, n_hh)))
+})
+two_stage_sample <- do.call(rbind, two_stage_sample)
+head(two_stage_sample)
+```
+
+#### Multistage Sampling
+
+An extension of cluster sampling that combines several stages, often mixing different methods at each level.
+A classic example from national health surveys (e.g., the Nepal Demographic and Health Survey, NDHS): Stage 1 — randomly select districts; Stage 2 — randomly select wards/clusters within selected districts; Stage 3 — randomly select households within selected clusters; Stage 4 — randomly select or enumerate eligible individuals within selected households.
+Multistage sampling is the standard design for large, nationally representative health surveys because it avoids the need for a single complete sampling frame of every individual in the country.
+
+### Non-Probability Sampling Methods
+
+In non-probability sampling, units are selected through a non-random process, so the probability of selection is unknown and statistical generalization to the wider population is not formally valid.
+These designs are common in exploratory research, qualitative studies, pilot testing, and studies of hard-to-reach or stigmatized populations.
+
+#### Convenience Sampling
+
+Units are selected simply because they are easy to access — for example, surveying the first 50 patients who walk into a clinic, or students in one's own classroom.
+It is fast and inexpensive but carries a high risk of selection bias, since the sample may not resemble the target population at all.
+
+#### Purposive (Judgmental) Sampling
+
+The researcher deliberately selects units believed to be information-rich or representative of specific characteristics relevant to the study question — for example, selecting only hospitals with the highest patient loads to study emergency department overcrowding, or interviewing specific "expert" clinicians.
+Common in qualitative research and case studies.
+
+#### Quota Sampling
+
+The researcher sets target numbers ("quotas") for subgroups of the population (e.g., 50 men and 50 women, or specific age bands) and then fills each quota using convenient, non-random selection within each subgroup.
+It resembles stratified sampling in structure, but because selection within each stratum is not random, it remains a non-probability method.
+
+#### Snowball Sampling
+
+Existing study participants recruit or refer future participants from among their acquaintances.
+This is especially useful for reaching populations that are rare, hidden, or stigmatized and lack a usable sampling frame — for example, people who inject drugs, sex workers, or survivors of a rare disease.
+The main limitation is that the resulting sample tends to reflect the social networks of the initial participants, which can introduce substantial bias.
+
+### Choosing Between Probability and Non-Probability Sampling
+
+| Consider | Favors probability sampling | Favors non-probability sampling |
+|------------------------|------------------------|------------------------|
+| Goal | Estimate population parameters, test hypotheses | Explore, generate hypotheses, describe a phenomenon |
+| Sampling frame available? | Yes, or can be constructed | No, or population is hidden/hard to reach |
+| Resources (time, budget, personnel) | Adequate | Limited |
+| Need for statistical generalization | Essential | Not required |
+| Population accessibility | Accessible and enumerable | Rare, mobile, or stigmatized population |
+
+### Summary
+
+-   A **population** is the full group of interest; a **sample** is the subset actually studied, drawn from a **sampling frame**.
+-   We sample instead of taking a census mainly for reasons of cost, time, feasibility, and sometimes accuracy.
+-   **Sampling error** is random and shrinks with larger samples; **sampling bias** is systematic and is controlled through the choice of sampling method, not sample size.
+-   **Probability sampling** methods (simple random, systematic, stratified, cluster, multistage) give every unit a known chance of selection and support formal statistical inference. They are the standard for surveys, trials, and prevalence studies.
+-   **Non-probability sampling** methods (convenience, purposive, quota, snowball) are faster and more flexible but do not support formal generalization to the population; they are common in exploratory, qualitative, and hard-to-reach-population research.
+-   The choice of design should match the study's objective, the availability of a sampling frame, the population's accessibility, and the resources available — and should be planned jointly with the sample size calculation.

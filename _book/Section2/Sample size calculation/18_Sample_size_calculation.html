@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Sample Size estimation and power – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../Section2/17_sampling.html" rel="prev">
+<link href="../../cover.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Sample size calculation/18_Sample_size_calculation.html"><span class="chapter-title">Sample Size estimation and power</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../../index.html" class="sidebar-logo-link">
+      <img src="../../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/06_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_1_Correlation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Association Between Two Numeric Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_2_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing a Sample Mean to a Fixed Value</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_3_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_4_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_5_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Sample Size estimation and power</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><strong>Introduction</strong></a></li>
+  <li><a href="#characteristics-of-sample" id="toc-characteristics-of-sample" class="nav-link" data-scroll-target="#characteristics-of-sample">Characteristics of Sample</a></li>
+  <li><a href="#representative" id="toc-representative" class="nav-link" data-scroll-target="#representative">1. Representative</a></li>
+  <li><a href="#sufficiently-large" id="toc-sufficiently-large" class="nav-link" data-scroll-target="#sufficiently-large">2. Sufficiently Large</a></li>
+  <li><a href="#efficient" id="toc-efficient" class="nav-link" data-scroll-target="#efficient">3. Efficient</a></li>
+  <li><a href="#easy-to-draw" id="toc-easy-to-draw" class="nav-link" data-scroll-target="#easy-to-draw">4. Easy to Draw</a></li>
+  <li><a href="#how-large-sample-size-should-be" id="toc-how-large-sample-size-should-be" class="nav-link" data-scroll-target="#how-large-sample-size-should-be">How large sample size should be?</a></li>
+  <li><a href="#fundamentals-of-sample-size-estimation" id="toc-fundamentals-of-sample-size-estimation" class="nav-link" data-scroll-target="#fundamentals-of-sample-size-estimation"><strong>Fundamentals of Sample Size Estimation</strong></a></li>
+  <li><a href="#sample-size-calculation-for-cross-section-study-estimating-simple-prevalence" id="toc-sample-size-calculation-for-cross-section-study-estimating-simple-prevalence" class="nav-link" data-scroll-target="#sample-size-calculation-for-cross-section-study-estimating-simple-prevalence">Sample size calculation for Cross-section study estimating simple prevalence</a>
+  <ul class="collapse">
+  <li><a href="#using-precision-based-approach" id="toc-using-precision-based-approach" class="nav-link" data-scroll-target="#using-precision-based-approach">Using precision based approach</a></li>
+  <li><a href="#using-power-based-approach" id="toc-using-power-based-approach" class="nav-link" data-scroll-target="#using-power-based-approach">Using power based approach</a></li>
+  </ul></li>
+  <li><a href="#sample-size-calculation-for-study-estimating-difference-in-two-proportions" id="toc-sample-size-calculation-for-study-estimating-difference-in-two-proportions" class="nav-link" data-scroll-target="#sample-size-calculation-for-study-estimating-difference-in-two-proportions">Sample size calculation for study estimating difference in two proportions</a></li>
+  <li><a href="#sample-size-calculation-for-case-control-studies-estimating-odds-ratio" id="toc-sample-size-calculation-for-case-control-studies-estimating-odds-ratio" class="nav-link" data-scroll-target="#sample-size-calculation-for-case-control-studies-estimating-odds-ratio">Sample size calculation for Case-control studies estimating odds ratio</a></li>
+  <li><a href="#sample-size-calculation-for-cohort-studies-estimating-relative-risk" id="toc-sample-size-calculation-for-cohort-studies-estimating-relative-risk" class="nav-link" data-scroll-target="#sample-size-calculation-for-cohort-studies-estimating-relative-risk">Sample size calculation for Cohort studies estimating relative risk</a></li>
+  <li><a href="#sample-size-estimation-for-incidence-rate-studies" id="toc-sample-size-estimation-for-incidence-rate-studies" class="nav-link" data-scroll-target="#sample-size-estimation-for-incidence-rate-studies">Sample size estimation for Incidence-rate studies</a></li>
+  <li><a href="#sample-size-calculation-for-study-estimating-single-group-mean" id="toc-sample-size-calculation-for-study-estimating-single-group-mean" class="nav-link" data-scroll-target="#sample-size-calculation-for-study-estimating-single-group-mean">Sample size calculation for study estimating single group mean</a>
+  <ul class="collapse">
+  <li><a href="#sample-size-calculation-for-study-estimating-two-group-mean" id="toc-sample-size-calculation-for-study-estimating-two-group-mean" class="nav-link" data-scroll-target="#sample-size-calculation-for-study-estimating-two-group-mean">Sample size calculation for study estimating two group mean</a></li>
+  </ul></li>
+  <li><a href="#sec-sse_survival" id="toc-sec-sse_survival" class="nav-link" data-scroll-target="#sec-sse_survival">Sample Size Estimation for survival studies</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/Sample size calculation/18_Sample_size_calculation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../../Section2/Sample size calculation/18_Sample_size_calculation.html"><span class="chapter-title">Sample Size estimation and power</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Sample Size estimation and power</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction"><strong>Introduction</strong></h3>
+<p>Sample size estimation is a important step in the design of any research study. It determines how many participants or data points are needed to draw reliable conclusions from the study. An adequately sized sample ensures that the study has sufficient power to detect a true effect if one exists, avoids wastage of resources, and protects against ethical concerns about using either too many or too few research subjects.</p>
+</section>
+<section id="characteristics-of-sample" class="level3">
+<h3 class="anchored" data-anchor-id="characteristics-of-sample">Characteristics of Sample</h3>
+</section>
+<section id="representative" class="level3">
+<h3 class="anchored" data-anchor-id="representative">1. Representative</h3>
+<p>A representative sample accurately reflects the demographics, behaviors, or characteristics of the larger population from which it is drawn. This characteristic is essential to generalize the findings from the sample to the population. A sample that is not representative may lead to biased results if the participants have different characteristics from the general population.</p>
+<p><strong>Methods to Achieve Representativeness:</strong></p>
+<ul>
+<li><p><strong>Random Sampling:</strong> Every member of the population has an equal chance of being selected.</p></li>
+<li><p><strong>Stratified Sampling:</strong> The population is divided into subgroups (strata) that are known to exist, and random samples are drawn from each stratum.</p></li>
+<li><p><strong>Cluster Sampling:</strong> Randomly selecting entire clusters or groups from a population, where each cluster reflects the characteristics of the whole.</p></li>
+</ul>
+</section>
+<section id="sufficiently-large" class="level3">
+<h3 class="anchored" data-anchor-id="sufficiently-large">2. Sufficiently Large</h3>
+<p>The sample must be large enough to provide reliable, statistically valid results. The size needed depends on the expected effect size, the variability in the data, the desired power of the study (i.e., the probability of detecting an effect if one exists), and the acceptable level of type I and type II errors.</p>
+<p><strong>Benefits of Adequate Sample Size:</strong></p>
+<ul>
+<li><p><strong>Increased Precision:</strong> Larger samples tend to yield more precise estimates of the population parameters.</p></li>
+<li><p><strong>Reduced Sampling Error:</strong> The error between the sample statistic and the population parameter is likely to be smaller.</p></li>
+</ul>
+</section>
+<section id="efficient" class="level3">
+<h3 class="anchored" data-anchor-id="efficient">3. Efficient</h3>
+<p>An efficient sample is one that provides the maximum amount of information needed for the study while using the least amount of resources (time, money, effort). Efficiency is particularly important in studies with limited resources or when the study involves hard-to-reach populations.</p>
+<p><strong>Strategies for Efficiency:</strong></p>
+<ul>
+<li><p><strong>Optimal Allocation in Stratified Sampling:</strong> Dividing resources in a way that maximizes the variability captured by each part of the sample.</p></li>
+<li><p><strong>Multistage Sampling:</strong> Combining several sampling methods can be more resource-efficient than a simple random sample, especially for large, geographically dispersed populations.</p></li>
+</ul>
+</section>
+<section id="easy-to-draw" class="level3">
+<h3 class="anchored" data-anchor-id="easy-to-draw">4. Easy to Draw</h3>
+<p>The sample should be such that it can be drawn without undue difficulty. This means considering logistical aspects of sampling, such as the ease of accessing the population, the availability of contact information, and the willingness of individuals to participate.</p>
+<p><strong>Considerations for Easy Sampling:</strong></p>
+<ul>
+<li><p><strong>Accessibility of the Population:</strong> Choosing a population that is readily accessible and willing to participate can significantly simplify the process of sample collection.</p></li>
+<li><p><strong>Practicality of Sampling Methods:</strong> Employing sampling methods that are practical and feasible under the circumstances of the study, like using existing databases or online platforms for surveys when face-to-face interaction is not possible.</p></li>
+</ul>
+</section>
+<section id="how-large-sample-size-should-be" class="level3">
+<h3 class="anchored" data-anchor-id="how-large-sample-size-should-be">How large sample size should be?</h3>
+<p>Determining the appropriate sample size for a study is crucial because both excessively small and overly large sample sizes can lead to significant drawbacks. Let’s explore these conditions in more detail:</p>
+<section id="when-the-sample-size-is-too-small" class="level4">
+<h4 class="anchored" data-anchor-id="when-the-sample-size-is-too-small">When the Sample Size is Too Small</h4>
+<ol type="1">
+<li><p><strong>Failure to Detect Clinically Important Associations or Differences:</strong> A small sample size has limited statistical power, which means the study might not be able to detect significant effects or differences that are clinically meaningful. This inability to observe a true effect can lead to false negatives (Type II errors).</p></li>
+<li><p><strong>Imprecise Estimation of Associations or Differences:</strong> With fewer data points, the estimates of parameters such as means, proportions, or correlations become less precise. This lack of precision is reflected in wider confidence intervals, making it difficult to draw firm conclusions from the data.</p></li>
+<li><p><strong>Failure to Answer Research Questions:</strong> If the sample size is insufficient to provide clear, reliable results, the primary research questions may remain unanswered. This ambiguity can render the research inconclusive and, in many cases, necessitates further study, delaying potential advancements in the field.</p></li>
+<li><p><strong>Waste of Participant Input:</strong> Participants who contribute their time and information to a study that is too small may feel their effort is wasted if the study fails to provide meaningful results. This can affect participant morale and willingness to engage in future research.</p></li>
+</ol>
+</section>
+<section id="when-the-sample-size-is-too-large" class="level4">
+<h4 class="anchored" data-anchor-id="when-the-sample-size-is-too-large">When the Sample Size is Too Large</h4>
+<ol type="1">
+<li><p><strong>Waste of Resources:</strong> Excessively large samples involve more logistical arrangements, more staff time, and potentially more equipment and materials than are actually needed to achieve the objectives of the study.</p></li>
+<li><p><strong>Waste of Money:</strong> The costs associated with data collection, data management, and analysis increase with the size of the sample. Over-recruitment can lead to unnecessary expenditure that could have been allocated to other important aspects of the study or other research projects.</p></li>
+<li><p><strong>Waste of Time:</strong> Managing a larger sample size often requires additional time for data collection, entry, and analysis. This not only extends the timeline of the current project but may also delay the initiation of subsequent studies.</p></li>
+<li><p><strong>Difficulty in Maintaining Quality of Data:</strong> As sample sizes increase, maintaining consistency and accuracy in data collection across many subjects and settings can become challenging. Larger datasets can introduce more opportunities for errors in data entry, loss of data fidelity, and complications in data management.</p></li>
+</ol>
+<p>Thus sample size should be optimum. Optimum sample size can be identified through sample size calculation. The importance of sample size calculation are :</p>
+<ol type="1">
+<li>Allow appropriate analysis’</li>
+<li>Provide desired level of accuracy</li>
+<li>Allow validity of significance test</li>
+<li>Required for ethical approval</li>
+</ol>
+</section>
+</section>
+<section id="fundamentals-of-sample-size-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="fundamentals-of-sample-size-estimation"><strong>Fundamentals of Sample Size Estimation</strong></h3>
+<section id="objective-of-the-study" class="level4">
+<h4 class="anchored" data-anchor-id="objective-of-the-study"><strong>1. Objective of the Study</strong></h4>
+<p>The purpose of the study heavily influences sample size. Objectives can vary from estimating a parameter (like an average or proportion) with a specified precision, to detecting a difference between groups, or to establishing a correlation between variables.</p>
+</section>
+<section id="significance-level-α" class="level4">
+<h4 class="anchored" data-anchor-id="significance-level-α"><strong>2. Significance Level (α)</strong></h4>
+<p>The significance level is the probability of rejecting the null hypothesis when it is actually true (Type I error). A common value used is 0.05, implying a 5% risk of a Type I error.</p>
+</section>
+<section id="power-1---β" class="level4">
+<h4 class="anchored" data-anchor-id="power-1---β"><strong>3. Power (1 - β)</strong></h4>
+<p>Power is the probability of correctly rejecting the null hypothesis when it is false, essentially avoiding a Type II error. A typical power used in studies is 80% or 90%, depending on the importance of the outcome being studied.</p>
+</section>
+<section id="effect-size" class="level4">
+<h4 class="anchored" data-anchor-id="effect-size"><strong>4. Effect Size</strong></h4>
+<p>Effect size is a quantitative measure of the magnitude of the experimental effect that the researcher seeks to detect. The larger the effect size, the smaller the sample size required to detect it.</p>
+<p>Some requirements for sample size calculation using R</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("presize")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("epiR")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("pwrss")</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pwrss)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># standard normal deviates used throughout this chapter</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>z_alpha <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">two.sided =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> conf.level</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(two.sided) <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha <span class="sc">/</span> <span class="dv">2</span>) <span class="cf">else</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>z_beta <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qnorm</span>(power)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sample-size-calculation-for-cross-section-study-estimating-simple-prevalence" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-calculation-for-cross-section-study-estimating-simple-prevalence">Sample size calculation for Cross-section study estimating simple prevalence</h2>
+<section id="using-precision-based-approach" class="level3">
+<h3 class="anchored" data-anchor-id="using-precision-based-approach">Using precision based approach</h3>
+<section id="when-population-is-finite-and-anticipated-population-proportion-is-not-known." class="level4">
+<h4 class="anchored" data-anchor-id="when-population-is-finite-and-anticipated-population-proportion-is-not-known.">When population is finite and anticipated population proportion is not known.</h4>
+<p>In this scenario, we can use Yamane formula</p>
+<p><span class="math display">\[ n = \frac{1}{1 + N.d^2} \]</span> where N is total count of finite population and d is the absolute error</p>
+<p>Lets create a function to calculate sample size by Yamane formula</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lets generate a function for yamane formula</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>yamane<span class="ot">&lt;-</span><span class="cf">function</span>(N, abs.err){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>N<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span>N<span class="sc">*</span>abs.err<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size is :"</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ceiling</span>(n))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Example:</strong> Let us consider, you are interested in carrying a prevalence study using simple random sampling from a population of over 12000 university students. There were no previous studies to anticipate prevalence. What is the required sample size to estimate prevalence within 5% point of the true prevalence.</p>
+<p><strong>Solution:</strong></p>
+<p>Here, N=12000; d=0.05</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate sample size using our own function</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">yamane</span>(<span class="dv">12000</span>, <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size is : 
+#&gt;  388</code></pre>
+</div>
+</div>
+</section>
+<section id="when-anticipated-population-proportion-is-known-and-population-is-not-finite." class="level4">
+<h4 class="anchored" data-anchor-id="when-anticipated-population-proportion-is-known-and-population-is-not-finite.">When anticipated population proportion is known and population is not finite.</h4>
+<p>To calculate sample size for this scenario, we require anticipated <strong>population proportion (p)</strong>, <strong>confidence level (1-alpha)</strong> and <strong>absolute precision (d)</strong>. The required cochrane formula is as follow:</p>
+<p><span class="math display">\[ n = \frac{Z^2. p(1-p)}{d^2} \]</span> where <span class="math inline">\(Z=1.96\)</span> at 95% confidence level, <code>p</code>=anticipated population proportion and <code>d</code> is absolute precision.</p>
+<p>Sample size can be estimated using own function or using functions from R packages. To calculated sample size for this situation, we can use <code>epi.sssimpleestb()</code> function from <code>epiR</code> package or we can use the following function:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lets generate our own function to calculate sample size when anticipated population proportion is known and population is not finite</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sscal_oneprop_precision_based<span class="ot">&lt;-</span><span class="cf">function</span>(P, error, <span class="at">error_type=</span><span class="fu">c</span>(<span class="st">"absolute"</span>, <span class="st">"relative"</span>), <span class="at">conf.int=</span><span class="fl">0.95</span>, <span class="at">N=</span><span class="cn">NA</span>){</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  alpha<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>conf.int</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  Za<span class="ot">=</span> <span class="fu">z_alpha</span>(<span class="at">conf.level =</span> conf.int, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(error_type<span class="sc">==</span><span class="st">"relative"</span>){</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>Za<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P)<span class="sc">/</span>(P<span class="sc">*</span>error<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(N), n, (n <span class="sc">*</span> N)<span class="sc">/</span>(n <span class="sc">+</span> (N <span class="sc">-</span> <span class="dv">1</span>)))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>{</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    n<span class="ot">=</span>Za<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>(P<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P)<span class="sc">/</span>error<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(N), n, (n <span class="sc">*</span> N)<span class="sc">/</span>(n <span class="sc">+</span> (N <span class="sc">-</span> <span class="dv">1</span>)))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size is:"</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ceiling</span>(n))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example 1:</strong> Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old. How many adults should be included in the study so that the estimated prevalence is within 2% point of the true value with 95% confidence level and it is estimated from the previous study that prevalence is 10%.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>From <strong>Example 1</strong>, we know that <span class="math inline">\(p=10%\)</span>, <span class="math inline">\(1-alpha =95%\)</span>, <span class="math inline">\(d=2%\)</span>. The calculated sample size is as follows:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("epiR")</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Error: package or namespace load failed for ‘epiR’ in loadNamespace(j &lt;- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  there is no package called ‘gfonts’</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># In addition: Warning message:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># package ‘epiR’ was built under R version 4.4.2</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># I got error due to absenence of 'gfonts' so i'm installing it.</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages('gfonts')</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># use epi.sssimpleestb() function from epiR package</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.sssimpleestb</span>(<span class="at">Py =</span> <span class="fl">0.10</span>, <span class="at">epsilon =</span> <span class="fl">0.02</span>,<span class="at">error =</span> <span class="st">"absolute"</span>,<span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">se =</span><span class="dv">1</span>, <span class="at">sp =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 865</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using created function</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_oneprop_precision_based</span>(<span class="at">P =</span> <span class="fl">0.10</span>, <span class="at">error =</span> <span class="fl">0.02</span>, <span class="at">error_type =</span> <span class="st">"absolute"</span>, <span class="at">conf.int =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size is: 
+#&gt;  865</code></pre>
+</div>
+</div>
+</section>
+<section id="when-anticipated-population-proportion-is-known-and-population-is-finite" class="level4">
+<h4 class="anchored" data-anchor-id="when-anticipated-population-proportion-is-known-and-population-is-finite">When anticipated population proportion is known and population is finite</h4>
+<p>When population is finite, we have to correct our sample size which can be carried out by using following formula</p>
+<p><span class="math display">\[ n = \frac{n_0.N}{n_0 +(N-1)} \]</span> where n0 is the calculated sample size from the previous formula.</p>
+<p>We can calculate sample size using <code>epi.sssimpleestb()</code> from epiR package <span class="citation" data-cites="stevenson2026">(<a href="#ref-stevenson2026" role="doc-biblioref">Stevenson et al. 2026</a>)</span> or function created before.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example 2:</strong> Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old in the hotel of population 1500. How many adults should be included in the study so that the estimated prevalence is within 20% relative error and 95% confidence level and it is estimated from the previous study that prevalence is 10%.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution</strong></p>
+<p>From Example 2, we know that <span class="math inline">\(p=10%\)</span>, <span class="math inline">\(1-alpha =95%\)</span>, <span class="math inline">\(d=2%\)</span> and <span class="math inline">\(N=1500\)</span>. The calculated sample size is as follows:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using epiR package</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.sssimpleestb</span>(<span class="at">Py =</span> <span class="fl">0.10</span>, <span class="at">epsilon =</span> <span class="fl">0.2</span>,<span class="at">error =</span> <span class="st">"relative"</span>,<span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">se =</span><span class="dv">1</span>, <span class="at">sp =</span> <span class="dv">1</span>, <span class="at">N =</span> <span class="dv">1500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 549</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using own function</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_oneprop_precision_based</span>(<span class="at">P =</span> <span class="fl">0.10</span>, <span class="at">error =</span> <span class="fl">0.2</span>, <span class="at">error_type =</span> <span class="st">"relative"</span>, <span class="at">conf.int =</span> <span class="fl">0.95</span>, <span class="at">N=</span><span class="dv">1500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size is: 
+#&gt;  549</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="using-power-based-approach" class="level3">
+<h3 class="anchored" data-anchor-id="using-power-based-approach">Using power based approach</h3>
+<p>When studies are designed to test hypothesis that the anticipated prevalence of condition is less than, greater than or equal to the hypothesized value. To calculate prevalence through this approach, we require following:</p>
+<ul>
+<li>prevalence under null hypothesis</li>
+<li>test prevalence</li>
+<li>level of significance</li>
+<li>power of the test, and</li>
+<li>type of alternative hypothesis (one-sided or both sided)</li>
+</ul>
+<section id="one-sample-proportion-with-hypothesis-testing" class="level4">
+<h4 class="anchored" data-anchor-id="one-sample-proportion-with-hypothesis-testing">One Sample proportion with hypothesis testing</h4>
+<p>For the study conducting asymptotic z-test for a single proportion (one sample test), the sample size can be calculated using the formula that uses normal approximation to the distribution of the test statistic. The formula is as follow:</p>
+<p><span class="math display">\[
+n=\frac{\left( Z_a \sqrt{P_0 (1 - P_0)} + Z_b \sqrt{P (1 - P)} \right)^2}{(P_0 - P)^2}
+\]</span></p>
+<p>where,</p>
+<p><span class="math inline">\(P_0\)</span> is population proportion under null hypothesis</p>
+<p><span class="math inline">\(P_a\)</span> is anticipated value of the population proportion (proportion under alternative hypothesis)</p>
+<p><span class="math inline">\(Z_a\)</span> is Z value at x% CI (one sided or two sided)</p>
+<p><span class="math inline">\(Z_b\)</span> is Z value at y% power</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example 3:</strong> A regional survey found that <strong>30%</strong> of women aged 15–49 in a district use a modern method of contraception. After a two-year family-planning outreach program, program officers want to test whether uptake has genuinely <em>increased</em> above the baseline of 30% , they are not interested in a possible decrease, only an improvement. They anticipate the true post-program rate to be around <strong>38%</strong>. How many women should be surveyed to have <strong>85% power</strong> of detecting this increase, at the <strong>5% level of significance</strong>, using a <strong>one-sided test</strong>?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>We have,</p>
+<p><span class="math inline">\(P_0=0.30\)</span></p>
+<p><span class="math inline">\(P_a=0.38%\)</span></p>
+<p><span class="math inline">\(alpha =0.05\)</span> (one sided)</p>
+<p><span class="math inline">\(power=0.85\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using own Function</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sscal_oneprop_power_based<span class="ot">&lt;-</span><span class="cf">function</span>(P0, P, <span class="at">sided.test=</span><span class="fu">c</span>(<span class="st">"one sided"</span>, <span class="st">"two sided"</span>), <span class="at">conf.int=</span><span class="fl">0.95</span>, <span class="at">power=</span><span class="fl">0.80</span>){</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  alpha<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>conf.int</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(sided.test<span class="sc">==</span><span class="st">"two sided"</span>){</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  Za<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>alpha<span class="sc">/</span><span class="dv">2</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span>{Za<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>alpha, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)}</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  beta<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>power</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  Zb<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>beta, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>({Za<span class="sc">*</span><span class="fu">sqrt</span>(P0<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P0))<span class="sc">+</span>Zb<span class="sc">*</span><span class="fu">sqrt</span>(P<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P))}<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(P0<span class="sc">-</span>P)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size is:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st"> </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_oneprop_power_based</span>(<span class="at">P0 =</span><span class="fl">0.30</span>, <span class="at">P =</span> <span class="fl">0.38</span>,<span class="at">sided.test =</span> <span class="st">"one sided"</span>, <span class="at">power =</span> <span class="fl">0.85</span>,<span class="at">conf.int =</span> <span class="fl">0.95</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size is: 247 
+#&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using R package</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pwrss.z.prop</span>(<span class="at">p =</span> <span class="fl">0.38</span>, <span class="at">p0 =</span> <span class="fl">0.30</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.85</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">alternative =</span> <span class="st">"less"</span>, <span class="at">arcsin.trans =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; +--------------------------------------------------+
+#&gt; |             SAMPLE SIZE CALCULATION              |
+#&gt; +--------------------------------------------------+
+#&gt; 
+#&gt; One Proportion
+#&gt; 
+#&gt;   Method                 : Normal Approximation
+#&gt;   Continuity Correction  : FALSE
+#&gt;   Arcsine Transformation : FALSE
+#&gt;   Standard Error         : Calculated From Null
+#&gt; 
+#&gt; ----------------------------------------------------
+#&gt; Hypotheses
+#&gt; ----------------------------------------------------
+#&gt;   H0 (Null)        : prob &lt;= null.prob
+#&gt;   H1 (Alternative) : prob  &gt; null.prob
+#&gt; 
+#&gt; ----------------------------------------------------
+#&gt; Results
+#&gt; ----------------------------------------------------
+#&gt;   Target Effect (prob) = 0.380 (vs. null.prob = 0.300)
+#&gt;   Sample Size          = 247  &lt;&lt;
+#&gt;   Type 1 Error (alpha) = 0.050
+#&gt;   Type 2 Error (beta)  = 0.150
+#&gt;   Statistical Power    = 0.850</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> The success rate for a surgical treatment of a particular heart condition is widely reported in the literature to be 70%. A new medical treatment has been proposed that is alleged to offer equivalent treatment success. A hospital without the necessary facilities or staff to provide the surgical treatment has decided to use the new medical treatment for all new patients presenting with this condition. How many patients must be studied to test the hypothesis that the success rate of the new method of treatment is 70% against an alternative hypothesis that it is not 70% at the 5% level of significance? The investigators wish to have a 90% power of detecting a difference between the success rates of 10 percentage points or more in either direction.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>test success rate (p0)= 0.7</p>
+<p>anticipated success rate (p)=0.8 or 0.6</p>
+<p>alpha=0.05</p>
+<p>power =0.9</p>
+<p>sided test = two sided</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pwrss<span class="sc">::</span><span class="fu">pwrss.z.prop</span>(<span class="at">p =</span> <span class="fl">0.8</span>, <span class="at">p0 =</span> <span class="fl">0.7</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.90</span>,<span class="at">alternative =</span> <span class="st">"not equal"</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>      ,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">arcsin.trans =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; +--------------------------------------------------+
+#&gt; |             SAMPLE SIZE CALCULATION              |
+#&gt; +--------------------------------------------------+
+#&gt; 
+#&gt; One Proportion
+#&gt; 
+#&gt;   Method                 : Normal Approximation
+#&gt;   Continuity Correction  : FALSE
+#&gt;   Arcsine Transformation : FALSE
+#&gt;   Standard Error         : Calculated From Null
+#&gt; 
+#&gt; ----------------------------------------------------
+#&gt; Hypotheses
+#&gt; ----------------------------------------------------
+#&gt;   H0 (Null)        : prob  = null.prob
+#&gt;   H1 (Alternative) : prob != null.prob
+#&gt; 
+#&gt; ----------------------------------------------------
+#&gt; Results
+#&gt; ----------------------------------------------------
+#&gt;   Target Effect (prob) = 0.800 (vs. null.prob = 0.700)
+#&gt;   Sample Size          = 200  &lt;&lt;
+#&gt;   Type 1 Error (alpha) = 0.050
+#&gt;   Type 2 Error (beta)  = 0.099
+#&gt;   Statistical Power    = 0.901</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_oneprop_power_based</span>(<span class="at">P0 =</span><span class="fl">0.70</span>, <span class="at">P =</span> <span class="fl">0.80</span>,<span class="at">sided.test =</span> <span class="st">"two sided"</span>, <span class="at">power =</span> <span class="fl">0.90</span>,<span class="at">conf.int =</span> <span class="fl">0.95</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size is: 200 
+#&gt; </code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sample-size-calculation-for-study-estimating-difference-in-two-proportions" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-calculation-for-study-estimating-difference-in-two-proportions">Sample size calculation for study estimating difference in two proportions</h2>
+<p>This can be done by two approach:</p>
+<p>a) precision based approach</p>
+<p>b) power based approach</p>
+<section id="using-precision-based-approach-1" class="level4">
+<h4 class="anchored" data-anchor-id="using-precision-based-approach-1">Using precision based approach</h4>
+<p>In this approach, we required anticipated population proportions for two groups, confidence level, precision level. The formula to calculate sample size is as follows:</p>
+<p><span class="math display">\[
+n= \frac{Z_a^2 *V^2}{d^2}
+\]</span></p>
+<p>Where<br>
+<span class="math display">\[
+V=P_1 *(1-P_1)+P_2*(1-P_2)
+\]</span></p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example 4:</strong> What sample size should be selected from each of two groups in order to estimate the risk difference within 5 percentage points of the true difference, with 95% confidence, when no reliable estimates of P1 and P2 are available?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution</strong></p>
+<p>precision = 5% (0.05)</p>
+<p>P1, P2 are unknown so lets take 50% each</p>
+<p>confidence level =95%</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using own function</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>sscal_twoprop_precision_based<span class="ot">&lt;-</span><span class="cf">function</span>(P1, P2, abs.error, <span class="at">conf.int=</span><span class="fl">0.95</span>, <span class="at">N=</span><span class="cn">NA</span>){</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  alpha<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>conf.int</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  Za<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>alpha<span class="sc">/</span><span class="dv">2</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  V<span class="ot">=</span>P1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P1)<span class="sc">+</span>P2<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P2)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>Za<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>V<span class="sc">/</span>(abs.error<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required </span><span class="sc">\n</span><span class="st"> group1: "</span>, <span class="fu">ceiling</span>(n),  <span class="st">"group2:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_twoprop_precision_based</span>(<span class="at">P1 =</span> <span class="fl">0.5</span>, <span class="at">P2 =</span> <span class="fl">0.5</span>,<span class="at">abs.error =</span> <span class="fl">0.05</span>,<span class="at">conf.int =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required 
+#&gt;  group1:  769 group2: 769</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using R package</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># P1 = 0.5, P2 = 0.5, d = 0.06 -&gt; conf.width = 2 * 0.06</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_riskdiff</span>(<span class="at">p1 =</span> <span class="fl">0.5</span>, <span class="at">p2 =</span> <span class="fl">0.5</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fl">0.05</span>,<span class="at">r =</span> <span class="dv">1</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">method =</span> <span class="st">"wald"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $p1
+#&gt; [1] 0.5
+#&gt; 
+#&gt; $p2
+#&gt; [1] 0.5
+#&gt; 
+#&gt; $n1
+#&gt; [1] 768.2918
+#&gt; 
+#&gt; $n2
+#&gt; [1] 768.2918
+#&gt; 
+#&gt; $ntot
+#&gt; [1] 1536.584
+#&gt; 
+#&gt; $r
+#&gt; [1] 1</code></pre>
+</div>
+</div>
+</section>
+<section id="using-power-based-approach-1" class="level4">
+<h4 class="anchored" data-anchor-id="using-power-based-approach-1">Using power based approach</h4>
+<p>In power based approach, we required anticipated population proportions (p1 and p2) , level of significance, power of test and type of test (one sided or two sided).</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example 5:</strong> An investigator wants to compare the complication rates between two types of surgery: one with a 15% complication rate and the other with a 25% complication rate. How large should the sample size be in each group to detect, with 80% power and a significance level of 5%, whether the complication rate of the second surgery is significantly higher than that of the first?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>complication rate for the one group (p1)=5%</p>
+<p>complication rate for the another group (p2)=15%</p>
+<p>power: 90%</p>
+<p>Confidence level=95%</p>
+<p>sided test= one sided</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sscal_twoprop_power_based<span class="ot">&lt;-</span><span class="cf">function</span>(P1, P2, <span class="at">sided.test=</span><span class="fu">c</span>(<span class="st">"one.sided"</span>, <span class="st">"two.sided"</span>), <span class="at">conf.int=</span><span class="fl">0.95</span>, <span class="at">power=</span><span class="fl">0.80</span>){</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  P<span class="ot">=</span>(P1<span class="sc">+</span>P2)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  alpha<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>conf.int</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(sided.test<span class="sc">==</span><span class="st">"two.sided"</span>){</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  Za<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>alpha<span class="sc">/</span><span class="dv">2</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span>{Za<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>alpha, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)}</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  beta<span class="ot">=</span><span class="dv">1</span><span class="sc">-</span>power</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  Zb<span class="ot">=</span><span class="fu">qnorm</span>(<span class="at">p=</span><span class="dv">1</span><span class="sc">-</span>beta, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>({Za<span class="sc">*</span><span class="fu">sqrt</span>(<span class="dv">2</span><span class="sc">*</span>P<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P))<span class="sc">+</span>Zb<span class="sc">*</span><span class="fu">sqrt</span>(P1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P1)<span class="sc">+</span>P2<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>P2))}<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span>(P1<span class="sc">-</span>P2)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required </span><span class="sc">\n</span><span class="st"> group1: "</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">"group2:"</span>, <span class="fu">ceiling</span>(n))</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sscal_twoprop_power_based</span>(<span class="at">P1 =</span><span class="fl">0.15</span>, <span class="at">P2 =</span> <span class="fl">0.25</span>,<span class="at">sided.test =</span> <span class="st">"one.sided"</span>, <span class="at">power =</span> <span class="fl">0.8</span>,<span class="at">conf.int =</span> <span class="fl">0.95</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required 
+#&gt;  group1:  197 
+#&gt;  group2: 197</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function from package </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">power.prop.test</span>(<span class="at">p1 =</span> <span class="fl">0.15</span>, <span class="at">p2 =</span> <span class="fl">0.25</span>, <span class="at">sig.level =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.8</span>,<span class="at">alternative =</span> <span class="st">"one.sided"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      Two-sample comparison of proportions power calculation 
+#&gt; 
+#&gt;               n = 196.7928
+#&gt;              p1 = 0.15
+#&gt;              p2 = 0.25
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.8
+#&gt;     alternative = one.sided
+#&gt; 
+#&gt; NOTE: n is number in *each* group</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sample-size-calculation-for-case-control-studies-estimating-odds-ratio" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-calculation-for-case-control-studies-estimating-odds-ratio">Sample size calculation for Case-control studies estimating odds ratio</h2>
+<section id="using-precision-based-approach-2" class="level4">
+<h4 class="anchored" data-anchor-id="using-precision-based-approach-2">Using precision based approach</h4>
+<p>In order to calculate sample size either <span class="math inline">\(P_1^*\)</span> (exposure probability among cases) or the anticipated odds ratio <span class="math inline">\(OR\)</span>, together with <span class="math inline">\(P_2^*\)</span> (exposure probability among controls, often approximated by the overall exposure rate), confidence level, and relative precision <span class="math inline">\(\varepsilon\)</span>.</p>
+<p>Tables 6a–h of the manual give minimum sample sizes for confidence levels of 95%/90% and relative precisions of 10%, 20%, 25% and 50%. A commonly used closed-form (Woolson et al.) approximation for a given relative precision <span class="math inline">\(\varepsilon\)</span> on the log-odds-ratio scale is:</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2\left(\dfrac{1}{P_1^*(1-P_1^*)}+\dfrac{1}{P_2^*(1-P_2^*)}\right)}{\left[\ln(1-\varepsilon)\right]^2}
+\]</span></p>
+<p>In R, sample size can be calculated using <code>presize::prec_or()</code><span class="citation" data-cites="lenz2026">(<a href="#ref-lenz2026" role="doc-biblioref">Lenz et al. 2026</a>)</span>. It computes sample size for a target odds-ratio CI width using the Gart, Woolf, or independence-smoothed-logit methods, rather than the closed-form Woolson approximation above, so results will be similar but not identical. A relative precision of <span class="math inline">\(\varepsilon\)</span> around <span class="math inline">\(OR\)</span> translates to a target <code>conf.width</code> of roughly <span class="math inline">\(2 \cdot OR \cdot \varepsilon\)</span> on the OR scale.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> In a Terai district where arsenic-contaminated groundwater is common, about 40% of the population is believed to drink from unsafe tubewells. A case–control study of skin lesions and unsafe water exposure is planned, to estimate the odds ratio (anticipated to be about 2.5) to within 20% of its true value, with 95% confidence.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(P_2^* = 0.40\)</span>; <span class="math inline">\(OR = 2.5\)</span>; confidence level <span class="math inline">\(= 95\%\)</span>; <span class="math inline">\(\varepsilon = 0.20\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using R package </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># P2* = 0.40, OR = 2.5 -&gt; implied P1* = OR*P2/(1-P2+OR*P2)</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>P1_star <span class="ot">&lt;-</span> (<span class="fl">2.5</span> <span class="sc">*</span> <span class="fl">0.40</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.40</span> <span class="sc">+</span> <span class="fl">2.5</span> <span class="sc">*</span> <span class="fl">0.40</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># epsilon = 0.20 -&gt; conf.width = 2 * OR * epsilon = 2 * 2.5 * 0.20</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_or</span>(<span class="at">p1 =</span> P1_star, <span class="at">p2 =</span> <span class="fl">0.40</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fl">2.5</span> <span class="sc">*</span> <span class="fl">0.20</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">method =</span> <span class="st">"gart"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for an odds ratio with gart confidence interval 
+#&gt; 
+#&gt;      p1  p2       n1       n2     ntot r  or      lwr      upr conf.width
+#&gt; 1 0.625 0.4 817.6354 817.6354 1635.271 1 2.5 2.046667 3.046667          1
+#&gt;   conf.level
+#&gt; 1       0.95</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using own function</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>CC_odds_ratio <span class="ot">&lt;-</span> <span class="cf">function</span>(P2, OR, epsilon, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># P2: exposure probability among controls (overall exposure rate)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># OR: anticipated odds ratio</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  P1 <span class="ot">&lt;-</span> (OR <span class="sc">*</span> P2) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> P2 <span class="sc">+</span> OR <span class="sc">*</span> P2)   <span class="co"># implied exposure probability among cases</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">/</span> (P1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P1)) <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> (P2 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P2)))) <span class="sc">/</span> (<span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> epsilon))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">CC_odds_ratio</span>(<span class="at">P2 =</span> <span class="fl">0.40</span>, <span class="at">OR =</span> <span class="fl">2.5</span>, <span class="at">epsilon =</span> <span class="fl">0.20</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 651</code></pre>
+</div>
+</div>
+</section>
+<section id="using-power-based-approach-2" class="level4">
+<h4 class="anchored" data-anchor-id="using-power-based-approach-2">Using power based approach</h4>
+<p>In order to calculate sample size, we required: test value <span class="math inline">\(OR_0 = 1\)</span>, anticipated odds ratio <span class="math inline">\(OR_a\)</span> (or <span class="math inline">\(P_1^*\)</span> directly), <span class="math inline">\(P_2^*\)</span> (exposure probability among controls), significance level <span class="math inline">\(\alpha\)</span>, power <span class="math inline">\(1-\beta\)</span>, and whether the test is one- or two-sided.</p>
+<p>Under the null hypothesis <span class="math inline">\(OR_0 = 1\)</span>, the exposure probabilities in cases and controls are equal (<span class="math inline">\(P_1^* = P_2^*\)</span>), so this reduces to exactly the same two-proportion hypothesis-test problem but applied to <em>exposure</em> probabilities instead of <em>outcome</em> probabilities. First convert the anticipated <span class="math inline">\(OR_a\)</span> and <span class="math inline">\(P_2^*\)</span> into an implied <span class="math inline">\(P_1^*\)</span>, then apply the pooled-variance Fleiss formula:</p>
+<p><span class="math display">\[
+P_1^* = \frac{OR_a \cdot P_2^*}{1 - P_2^* + OR_a \cdot P_2^*}, \qquad
+\bar P^* = \frac{P_1^*+P_2^*}{2}
+\]</span></p>
+<p><span class="math display">\[
+n = \frac{\left(Z_{1-\alpha/2}\sqrt{2\bar P^*(1-\bar P^*)} + Z_{1-\beta}\sqrt{P_1^*(1-P_1^*)+P_2^*(1-P_2^*)}\right)^2}{(P_1^*-P_2^*)^2} \text{ (per group)}
+\]</span></p>
+<p>In R, we can estimate sample size using R package <code>epiR::epi.sscc()</code><span class="citation" data-cites="stevenson2026">(<a href="#ref-stevenson2026" role="doc-biblioref">Stevenson et al. 2026</a>)</span>. It implements this exact case–control hypothesis-test situation (following Dupont 1988), taking the anticipated <span class="math inline">\(OR\)</span> and the control exposure rate (<span class="math inline">\(P_2^*\)</span>, here <code>p0</code>) directly.</p>
+<p><strong>Example:</strong> Oral submucous fibrosis (OSF) is suspected to be linked to habitual areca-nut chewing. In a planned case–control study, about 25% of controls (people without OSF) are expected to be habitual chewers, and the anticipated odds ratio for chewers versus non-chewers is 2.5. The investigators are only interested in detecting an <em>increase</em> in the odds of exposure among cases (not a decrease), so a one-sided test is appropriate. How many cases and controls are needed for 90% power at the 5% level of significance?</p>
+<p><strong>Solution:</strong> <span class="math inline">\(P_2^* = 0.25\)</span>; <span class="math inline">\(OR_a = 2.5\)</span>; <span class="math inline">\(\alpha = 0.05\)</span>; power <span class="math inline">\(= 90\%\)</span>; one-sided test</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using epiR package</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.sscc</span>(<span class="at">OR =</span> <span class="fl">2.5</span>, <span class="at">p1 =</span> <span class="cn">NA</span>, <span class="at">p0 =</span> <span class="fl">0.25</span>, <span class="at">n =</span> <span class="cn">NA</span>, <span class="at">power =</span> <span class="fl">0.90</span>, <span class="at">r =</span> <span class="dv">1</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">sided.test =</span> <span class="dv">1</span>, <span class="at">method =</span> <span class="st">"unmatched"</span>, <span class="at">fleiss =</span> <span class="cn">FALSE</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $n.total
+#&gt; [1] 184
+#&gt; 
+#&gt; $n.case
+#&gt; [1] 92
+#&gt; 
+#&gt; $n.control
+#&gt; [1] 92
+#&gt; 
+#&gt; $power
+#&gt; [1] 0.9
+#&gt; 
+#&gt; $OR
+#&gt; [1] 2.5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>CC_odds_ratio_test <span class="ot">&lt;-</span> <span class="cf">function</span>(P2, OR, <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  P1   <span class="ot">&lt;-</span> (OR <span class="sc">*</span> P2) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> P2 <span class="sc">+</span> OR <span class="sc">*</span> P2)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  Pbar <span class="ot">&lt;-</span> (P1 <span class="sc">+</span> P2) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> (sided <span class="sc">==</span> <span class="st">"two.sided"</span>))</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  Zb <span class="ot">&lt;-</span> <span class="fu">z_beta</span>(power)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> Pbar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> Pbar)) <span class="sc">+</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>         Zb <span class="sc">*</span> <span class="fu">sqrt</span>(P1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P1) <span class="sc">+</span> P2 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P2)))<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (P1 <span class="sc">-</span> P2)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="fu">CC_odds_ratio_test</span>(<span class="at">P2 =</span> <span class="fl">0.25</span>, <span class="at">OR =</span> <span class="fl">2.5</span>, <span class="at">sided =</span> <span class="st">"one.sided"</span>,</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>                     <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 92</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sample-size-calculation-for-cohort-studies-estimating-relative-risk" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-calculation-for-cohort-studies-estimating-relative-risk">Sample size calculation for Cohort studies estimating relative risk</h2>
+<section id="using-precision-based-approach-3" class="level4">
+<h4 class="anchored" data-anchor-id="using-precision-based-approach-3">Using precision based approach</h4>
+<p>To calculate sample size, either <span class="math inline">\(P_1\)</span> (disease probability among exposed) or the anticipated relative risk (<span class="math inline">\(RR\)</span>), together with <span class="math inline">\(P_2\)</span> (disease probability among unexposed), confidence level, and relative precision <span class="math inline">\(\varepsilon\)</span>, are required.</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2\left(\dfrac{1-P_1}{P_1}+\dfrac{1-P_2}{P_2}\right)}{\left[\ln(1-\varepsilon)\right]^2} \text{ (per group)}
+\]</span></p>
+<p>In R, we calculate sample size using <code>presize::prec_riskratio()</code><span class="citation" data-cites="lenz2026">(<a href="#ref-lenz2026" role="doc-biblioref">Lenz et al. 2026</a>)</span>. It is analogous precision-based sample size for a risk ratio (relative risk), using the Koopman or Katz methods. As above, a relative precision of <span class="math inline">\(\varepsilon\)</span> around <span class="math inline">\(RR\)</span> translates to a target <code>conf.width</code> of roughly <span class="math inline">\(2 \cdot RR \cdot \varepsilon\)</span>.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A cohort study will follow brick-kiln workers exposed to high silica dust and a comparable group of unexposed factory workers to investigate chronic respiratory illness. The disease is present in about 12% of unexposed workers, and the relative risk among exposed workers is anticipated to be around 3. The investigators want to estimate this relative risk to within 30% of its true value, with 95% confidence.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p><span class="math inline">\(P_2 = 0.12\)</span>; <span class="math inline">\(RR = 3\)</span>; confidence level <span class="math inline">\(= 95\%\)</span>; <span class="math inline">\(\varepsilon = 0.30\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># P2 = 0.12, RR = 3 -&gt; implied P1 = RR * P2</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>P1_rr <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fl">0.12</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># epsilon = 0.30 -&gt; conf.width = 2 * RR * epsilon = 2 * 3 * 0.30</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_riskratio</span>(<span class="at">p1 =</span> P1_rr, <span class="at">p2 =</span> <span class="fl">0.12</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fl">0.30</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">method =</span> <span class="st">"koopman"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for a relative risk with koopman confidence interval 
+#&gt; 
+#&gt;     p1   p2       n1       n2     ntot r rr      lwr      upr conf.width
+#&gt; 1 0.36 0.12 399.2782 399.2782 798.5565 1  3 2.240318 4.040318        1.8
+#&gt;   conf.level
+#&gt; 1       0.95</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>cohort_RR_SS <span class="ot">&lt;-</span> <span class="cf">function</span>(P2, RR, epsilon, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  P1 <span class="ot">&lt;-</span> P2 <span class="sc">*</span> RR</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">-</span> P1) <span class="sc">/</span> P1 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> P2) <span class="sc">/</span> P2)) <span class="sc">/</span> (<span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> epsilon))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cohort_RR_SS</span>(<span class="at">P2 =</span> <span class="fl">0.12</span>, <span class="at">RR =</span> <span class="dv">3</span>, <span class="at">epsilon =</span> <span class="fl">0.30</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 276</code></pre>
+</div>
+</div>
+</section>
+<section id="using-power-based-approach-3" class="level4">
+<h4 class="anchored" data-anchor-id="using-power-based-approach-3">Using power based approach</h4>
+<p>In order to calculate sample size using power based approach, we require : test value <span class="math inline">\(RR_0 = 1\)</span>, anticipated relative risk <span class="math inline">\(RR_a\)</span> (or <span class="math inline">\(P_1\)</span> directly), <span class="math inline">\(P_2\)</span> (disease probability among the unexposed), significance level, power, and one- or two-sided test.</p>
+<p>Under the null hypothesis <span class="math inline">\(RR_0 = 1\)</span>, the disease probabilities in the exposed and unexposed groups are equal (<span class="math inline">\(P_1 = P_2\)</span>), so exactly as with the odds ratio above, this is again the same two-proportion hypothesis-test problem, applied here to <em>disease</em> probabilities:</p>
+<p><span class="math display">\[
+P_1 = RR_a \cdot P_2, \qquad \bar P = \frac{P_1+P_2}{2}
+\]</span></p>
+<p><span class="math display">\[
+n = \frac{\left(Z_{1-\alpha/2}\sqrt{2\bar P(1-\bar P)} + Z_{1-\beta}\sqrt{P_1(1-P_1)+P_2(1-P_2)}\right)^2}{(P_1-P_2)^2} \text{ (per group)}
+\]</span></p>
+<p><strong>Using an existing R package</strong></p>
+<p>In R sample size can be estimated using <code>epiR::epi.sscohortc()</code><span class="citation" data-cites="stevenson2026">(<a href="#ref-stevenson2026" role="doc-biblioref">Stevenson et al. 2026</a>)</span>. It implements this exact cohort hypothesis-test situation for individual count (risk) data, taking the anticipated disease probabilities in the exposed (<code>irexp1</code>) and unexposed (<code>irexp0</code>) groups directly.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A cohort study will follow women who cook daily over open biomass-fuel stoves and a comparable group of women using cleaner cookstoves, to investigate chronic respiratory illness over 5 years. Chronic respiratory illness is expected in about 10% of the clean-cookstove (unexposed) group, and the relative risk for biomass-fuel users is anticipated to be around 1.8. How many women are needed in each group to detect this difference with 80% power at the 5% level of significance, two-sided?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(P_2 = 0.10\)</span>; <span class="math inline">\(RR_a = 1.8\)</span>; <span class="math inline">\(\alpha = 0.05\)</span>; power <span class="math inline">\(= 80\%\)</span>; two-sided test</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using epiR package</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.sscohortc</span>(<span class="at">irexp1 =</span> <span class="fl">0.18</span>, <span class="at">irexp0 =</span> <span class="fl">0.10</span>, <span class="at">pexp =</span> <span class="cn">NA</span>, <span class="at">n =</span> <span class="cn">NA</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">r =</span> <span class="dv">1</span>, <span class="at">N =</span> <span class="cn">NA</span>, <span class="at">design =</span> <span class="dv">1</span>, <span class="at">sided.test =</span> <span class="dv">2</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $n.total
+#&gt; [1] 590
+#&gt; 
+#&gt; $n.exp1
+#&gt; [1] 295
+#&gt; 
+#&gt; $n.exp0
+#&gt; [1] 295
+#&gt; 
+#&gt; $power
+#&gt; [1] 0.8
+#&gt; 
+#&gt; $irr
+#&gt; [1] 1.8
+#&gt; 
+#&gt; $or
+#&gt; [1] 1.97561</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>C_relative_risk_test <span class="ot">&lt;-</span> <span class="cf">function</span>(P2, RR, <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  P1   <span class="ot">&lt;-</span> RR <span class="sc">*</span> P2</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  Pbar <span class="ot">&lt;-</span> (P1 <span class="sc">+</span> P2) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> (sided <span class="sc">==</span> <span class="st">"two.sided"</span>))</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  Zb <span class="ot">&lt;-</span> <span class="fu">z_beta</span>(power)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> Pbar <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> Pbar)) <span class="sc">+</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>         Zb <span class="sc">*</span> <span class="fu">sqrt</span>(P1 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P1) <span class="sc">+</span> P2 <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P2)))<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (P1 <span class="sc">-</span> P2)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="fu">C_relative_risk_test</span>(<span class="at">P2 =</span> <span class="fl">0.10</span>, <span class="at">RR =</span> <span class="fl">1.8</span>, <span class="at">sided =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>                        <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 295</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sample-size-estimation-for-incidence-rate-studies" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-estimation-for-incidence-rate-studies">Sample size estimation for Incidence-rate studies</h2>
+<section id="using-precision-based-appraoch" class="level4">
+<h4 class="anchored" data-anchor-id="using-precision-based-appraoch">Using precision based appraoch</h4>
+<p>For this, we required relative precision <span class="math inline">\(\varepsilon\)</span> and confidence level. Assuming the number of events follows a Poisson process, the required number of <em>events</em> to observe is:</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2}{\varepsilon^2}
+\]</span></p>
+<p>In R, we can use a function <code>presize::prec_rate()</code>. It gives the number of events needed for a target rate precision. An anticipated rate must be supplied even though the final answer (number of events) does not actually depend on it. A relative precision of <span class="math inline">\(\varepsilon\)</span> around an assumed rate <span class="math inline">\(r\)</span> translates to <code>conf.width</code> <span class="math inline">\(= 2 r \varepsilon\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Usint R package</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># assume an arbitrary rate r = 1 (unit-free); epsilon = 0.15 -&gt; conf.width = 2*1*0.15</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_rate</span>(<span class="at">r =</span> <span class="dv">1</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">1</span> <span class="sc">*</span> <span class="fl">0.15</span>, <span class="at">conf.level =</span> <span class="fl">0.90</span>, <span class="at">method =</span> <span class="st">"score"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for a rate with score confidence interval 
+#&gt; 
+#&gt;   r     radj       x    time conf.width conf.level       lwr      upr
+#&gt; 1 1 1.011187 120.919 120.919        0.3        0.9 0.8611874 1.161187
+#&gt; 
+#&gt; NOTE: 'x / r' units of time are needed to accumulate 'x' events.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>who_incidence_rate <span class="ot">&lt;-</span> <span class="cf">function</span>(epsilon, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> epsilon<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Number of events (person-time observations) required:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">who_incidence_rate</span>(<span class="at">epsilon =</span> <span class="fl">0.15</span>, <span class="at">conf.level =</span> <span class="fl">0.90</span>)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A tuberculosis treatment centre wants to estimate the annual relapse incidence rate among treated patients to within 15% of its true value, with 90% confidence. How many relapse events must be observed?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(\varepsilon = 0.15\)</span>; confidence level <span class="math inline">\(= 90\%\)</span></p>
+</section>
+<section id="using-power-based-approach-4" class="level4">
+<h4 class="anchored" data-anchor-id="using-power-based-approach-4">Using power based approach</h4>
+<p>For this it required, anticipated incidence rates <span class="math inline">\(\lambda_1\)</span> and <span class="math inline">\(\lambda_2\)</span>, significance level, power, and the allocation ratio <span class="math inline">\(k = n_2/n_1\)</span> between groups. When study duration is not fixed (subjects followed until the event occurs or they are lost to follow-up), the sample size for group 1 is:</p>
+<p><span class="math display">\[
+n_1 = \frac{\left(Z_{1-\alpha/2}\sqrt{(1+1/k)\bar\lambda} + Z_{1-\beta}\sqrt{\lambda_1 + \lambda_2/k}\right)^2}{(\lambda_1-\lambda_2)^2}, \qquad \bar\lambda = \frac{\lambda_1+k\lambda_2}{1+k}
+\]</span></p>
+<p>In R, we can use <code>epiR::epi.sscohortt()</code> <span class="citation" data-cites="stevenson2026">(<a href="#ref-stevenson2026" role="doc-biblioref">Stevenson et al. 2026</a>)</span> which implements this exact situation (duration-not-fixed cohort comparison of two incidence rates), so it should reproduce the hand-calculated answer closely.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A study will compare hearing-loss incidence between garment-factory workers using new ear protection and a historical cohort using the old equipment. The old equipment is associated with an annual incidence of 18%; the new equipment is expected to bring this down to 8%. How many workers should be followed in each group (equal allocation) to have 80% power of detecting this difference at the 5% level, two-sided?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(\lambda_1 = 0.18\)</span>, <span class="math inline">\(\lambda_2 = 0.08\)</span>; <span class="math inline">\(k = 1\)</span>; <span class="math inline">\(\alpha = 0.05\)</span>; power <span class="math inline">\(= 80\%\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.sscohortt</span>(<span class="at">FT =</span> <span class="cn">NA</span>, <span class="at">irexp1 =</span> <span class="fl">0.18</span>, <span class="at">irexp0 =</span> <span class="fl">0.08</span>, <span class="at">n =</span> <span class="cn">NA</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">r =</span> <span class="dv">1</span>, <span class="at">design =</span> <span class="dv">1</span>, <span class="at">sided.test =</span> <span class="dv">2</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $n.total
+#&gt; [1] 56
+#&gt; 
+#&gt; $n.exp1
+#&gt; [1] 28
+#&gt; 
+#&gt; $n.exp0
+#&gt; [1] 28
+#&gt; 
+#&gt; $power
+#&gt; [1] 0.8
+#&gt; 
+#&gt; $irr
+#&gt; [1] 2.25</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>who_two_incidence <span class="ot">&lt;-</span> <span class="cf">function</span>(lambda1, lambda2, <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> (sided <span class="sc">==</span> <span class="st">"two.sided"</span>))</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  Zb <span class="ot">&lt;-</span> <span class="fu">z_beta</span>(power)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  lambda_bar <span class="ot">&lt;-</span> (lambda1 <span class="sc">+</span> k <span class="sc">*</span> lambda2) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> k)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  n1 <span class="ot">&lt;-</span> (Za <span class="sc">*</span> <span class="fu">sqrt</span>((<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> k) <span class="sc">*</span> lambda_bar) <span class="sc">+</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>         Zb <span class="sc">*</span> <span class="fu">sqrt</span>(lambda1 <span class="sc">+</span> lambda2 <span class="sc">/</span> k))<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (lambda1 <span class="sc">-</span> lambda2)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  n2 <span class="ot">&lt;-</span> k <span class="sc">*</span> n1</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required </span><span class="sc">\n</span><span class="st"> group1:"</span>, <span class="fu">ceiling</span>(n1), <span class="st">"</span><span class="sc">\n</span><span class="st"> group2:"</span>, <span class="fu">ceiling</span>(n2), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">list</span>(<span class="at">n1 =</span> <span class="fu">ceiling</span>(n1), <span class="at">n2 =</span> <span class="fu">ceiling</span>(n2)))</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="fu">who_two_incidence</span>(<span class="at">lambda1 =</span> <span class="fl">0.18</span>, <span class="at">lambda2 =</span> <span class="fl">0.08</span>, <span class="at">k =</span> <span class="dv">1</span>,</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sided =</span> <span class="st">"two.sided"</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required 
+#&gt;  group1: 205 
+#&gt;  group2: 205</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sample-size-calculation-for-study-estimating-single-group-mean" class="level2">
+<h2 class="anchored" data-anchor-id="sample-size-calculation-for-study-estimating-single-group-mean">Sample size calculation for study estimating single group mean</h2>
+<section id="using-precision-based-approach-4" class="level4">
+<h4 class="anchored" data-anchor-id="using-precision-based-approach-4">Using Precision based approach</h4>
+<section id="absolute-precision" class="level5">
+<h5 class="anchored" data-anchor-id="absolute-precision">Absolute precision</h5>
+<p>It required anticipated standard deviation <span class="math inline">\(\sigma\)</span>, confidence level, and absolute precision <span class="math inline">\(d\)</span> (in the same units as the outcome, on either side of the mean) to estimate sample size.</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2\,\sigma^2}{d^2}
+\]</span></p>
+<p>In R, we can use <code>presize::prec_mean()</code> to estimate sample size. It solves the same problem, using a <span class="math inline">\(t\)</span>-distribution rather than the normal approximation above (so it will need a starting guess of <span class="math inline">\(n\)</span> to compute the right degrees of freedom, but converges to essentially the same answer for the sample sizes typical of health surveys).</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A district hospital wants to estimate the mean birth weight of newborns delivered there. A small pilot chart review suggests a standard deviation of about 450 g. How many births should be reviewed so that the mean birth weight can be estimated to within 100 g of the true value, with 95% confidence?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(\sigma = 450\)</span>; confidence level <span class="math inline">\(= 95\%\)</span>; <span class="math inline">\(d = 100\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sd = 450 g, d = 100 g -&gt; conf.width = 2 * 100</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_mean</span>(<span class="at">mean =</span> <span class="dv">3000</span>, <span class="at">sd =</span> <span class="dv">450</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">100</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for mean 
+#&gt; 
+#&gt;   mean  sd        n conf.width conf.level  lwr  upr
+#&gt; 1 3000 450 80.22134        200       0.95 2900 3100</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>who_mean_absolute <span class="ot">&lt;-</span> <span class="cf">function</span>(sd, d, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sd<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> d<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="fu">who_mean_absolute</span>(<span class="at">sd =</span> <span class="dv">450</span>, <span class="at">d =</span> <span class="dv">100</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required: 78</code></pre>
+</div>
+</div>
+</section>
+<section id="relative-precision" class="level5">
+<h5 class="anchored" data-anchor-id="relative-precision">Relative precision</h5>
+<p>It required anticipated mean <span class="math inline">\(\mu\)</span>, anticipated standard deviation <span class="math inline">\(\sigma\)</span>, confidence level, and relative precision <span class="math inline">\(\varepsilon\)</span> (as a fraction of <span class="math inline">\(\mu\)</span>) to estimate sample size.</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2\,\sigma^2}{(\varepsilon\mu)^2}
+\]</span></p>
+<p>In R, we can estimate sample size using <code>presize::prec_mean()</code> function. It handles this by converting the relative precision into an absolute <code>conf.width</code> of <span class="math inline">\(2\varepsilon\mu\)</span>.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> An antenatal clinic wants to estimate the mean haemoglobin level of pregnant women attending the clinic, to within 5% of the true mean, with 95% confidence. A previous local study reported a mean of 11 g/dL with a standard deviation of 1.5 g/dL.</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p><span class="math inline">\(\mu = 11\)</span>; <span class="math inline">\(\sigma = 1.5\)</span>; confidence level <span class="math inline">\(= 95\%\)</span>; <span class="math inline">\(\varepsilon = 0.05\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mean = 11 g/dL, sd = 1.5, epsilon = 0.05 -&gt; conf.width = 2 * 0.05 * 11</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_mean</span>(<span class="at">mean =</span> <span class="dv">11</span>, <span class="at">sd =</span> <span class="fl">1.5</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fl">0.05</span> <span class="sc">*</span> <span class="dv">11</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for mean 
+#&gt; 
+#&gt;   mean  sd        n conf.width conf.level   lwr   upr
+#&gt; 1   11 1.5 31.02122        1.1       0.95 10.45 11.55</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>who_mean_relative <span class="ot">&lt;-</span> <span class="cf">function</span>(mean, sd, epsilon, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> sd<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (epsilon <span class="sc">*</span> mean)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a><span class="fu">who_mean_relative</span>(<span class="at">mean =</span> <span class="dv">11</span>, <span class="at">sd =</span> <span class="fl">1.5</span>, <span class="at">epsilon =</span> <span class="fl">0.05</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required: 29</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="using-power-based-approach-5" class="level4">
+<h4 class="anchored" data-anchor-id="using-power-based-approach-5">Using power based approach</h4>
+<p>This approach required test value under the null hypothesis <span class="math inline">\(\mu_0\)</span>, anticipated value under the alternative <span class="math inline">\(\mu_a\)</span>, anticipated standard deviation <span class="math inline">\(\sigma\)</span>, significance level, power, and one- or two-sided test.</p>
+<p><span class="math display">\[
+n = \left[\frac{(Z_{1-\alpha/2}+Z_{1-\beta})\,\sigma}{\mu_0-\mu_a}\right]^2
+\]</span></p>
+<p>(replace <span class="math inline">\(Z_{1-\alpha/2}\)</span> with <span class="math inline">\(Z_{1-\alpha}\)</span> for a one-sided test).</p>
+<p>In R, we can use Base R’s <code>stats::power.t.test()</code>. It solves this same one-sample mean hypothesis test directly (using the exact <span class="math inline">\(t\)</span>-distribution rather than the normal approximation, so its answer will typically be a shade larger than the closed-form formula above).</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A workplace wellness program reports that office workers nationally average 6,000 steps per day. Program organisers anticipate that participants who complete their 8-week walking challenge will average 7,000 steps per day, with a standard deviation of 1,800 steps (from a previous cohort). How many participants are needed to detect this difference with 90% power, at the 5% level of significance, two-sided?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong> <span class="math inline">\(\mu_0 = 6000\)</span>; <span class="math inline">\(\mu_a = 7000\)</span>; <span class="math inline">\(\sigma = 1800\)</span>; <span class="math inline">\(\alpha = 0.05\)</span>; power <span class="math inline">\(= 90\%\)</span>; two-sided</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">power.t.test</span>(<span class="at">n=</span><span class="cn">NULL</span>, <span class="at">delta =</span> <span class="dv">7000-6000</span>, <span class="at">sd =</span> <span class="dv">1800</span>, <span class="at">sig.level=</span><span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.90</span>, <span class="at">type =</span> <span class="st">"one.sample"</span>, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      One-sample t test power calculation 
+#&gt; 
+#&gt;               n = 36.01986
+#&gt;           delta = 1000
+#&gt;              sd = 1800
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.9
+#&gt;     alternative = two.sided</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function**</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>who_mean_test <span class="ot">&lt;-</span> <span class="cf">function</span>(mu0, mua, sd, <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> (sided <span class="sc">==</span> <span class="st">"two.sided"</span>))</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  Zb <span class="ot">&lt;-</span> <span class="fu">z_beta</span>(power)</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> ((Za <span class="sc">+</span> Zb) <span class="sc">*</span> sd <span class="sc">/</span> (mu0 <span class="sc">-</span> mua))<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a><span class="fu">who_mean_test</span>(<span class="at">mu0 =</span> <span class="dv">6000</span>, <span class="at">mua =</span> <span class="dv">7000</span>, <span class="at">sd =</span> <span class="dv">1800</span>, <span class="at">sided =</span> <span class="st">"two.sided"</span>,</span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required: 35</code></pre>
+</div>
+</div>
+</section>
+<section id="sample-size-calculation-for-study-estimating-two-group-mean" class="level3">
+<h3 class="anchored" data-anchor-id="sample-size-calculation-for-study-estimating-two-group-mean">Sample size calculation for study estimating two group mean</h3>
+<section id="using-precision-based-approach-5" class="level5">
+<h5 class="anchored" data-anchor-id="using-precision-based-approach-5">Using Precision based approach</h5>
+<p>It required anticipated standard deviations <span class="math inline">\(\sigma_1\)</span> and <span class="math inline">\(\sigma_2\)</span>, confidence level, and absolute precision <span class="math inline">\(d\)</span>.</p>
+<p><span class="math display">\[
+n = \frac{Z_{1-\alpha/2}^2\,(\sigma_1^2+\sigma_2^2)}{d^2} \text{ (per group, equal group sizes)}
+\]</span></p>
+<p>In R, <code>presize::prec_meandiff()</code> can be used. It computes the sample size needed to estimate a mean difference to a target CI width, allowing unequal variances between groups.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> A nutrition survey wants to estimate the difference in mean haemoglobin level between two ethnic communities in the Terai. Previous data suggest standard deviations of about 1.4 g/dL and 1.6 g/dL in the two groups. How many people are needed in each group to estimate this mean difference to within 0.5 g/dL, with 95% confidence?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p><span class="math inline">\(\sigma_1 = 1.4\)</span>; <span class="math inline">\(\sigma_2 = 1.6\)</span>; confidence level <span class="math inline">\(= 95\%\)</span>; <span class="math inline">\(d = 0.5\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(presize)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sd1 = 1.4, sd2 = 1.6, d = 0.5 -&gt; conf.width = 2 * 0.5</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="fu">prec_meandiff</span>(<span class="at">delta =</span> <span class="fl">0.5</span>, <span class="at">sd1 =</span> <span class="fl">1.4</span>, <span class="at">sd2 =</span> <span class="fl">1.6</span>, <span class="at">conf.width =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fl">0.5</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">variance =</span> <span class="st">"unequal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      sample size for mean difference with unequal variance 
+#&gt; 
+#&gt;   delta sd1 sd2       n1       n2 conf.width conf.level lwr upr
+#&gt; 1   0.5 1.4 1.6 70.69721 70.69721          1       0.95   0   1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>who_two_mean_absolute <span class="ot">&lt;-</span> <span class="cf">function</span>(sd1, sd2, d, <span class="at">conf.level =</span> <span class="fl">0.95</span>){</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  V  <span class="ot">&lt;-</span> sd1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd2<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (Za<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> V) <span class="sc">/</span> d<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a><span class="fu">who_two_mean_absolute</span>(<span class="at">sd1 =</span> <span class="fl">1.4</span>, <span class="at">sd2 =</span> <span class="fl">1.6</span>, <span class="at">d =</span> <span class="fl">0.5</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 70</code></pre>
+</div>
+</div>
+</section>
+<section id="power-based-approach" class="level5">
+<h5 class="anchored" data-anchor-id="power-based-approach">Power based approach</h5>
+<p>This approach required anticipated means <span class="math inline">\(\mu_1\)</span>, <span class="math inline">\(\mu_2\)</span>; anticipated standard deviations <span class="math inline">\(\sigma_1\)</span>, <span class="math inline">\(\sigma_2\)</span>; significance level; power; one- or two-sided test.</p>
+<p><span class="math display">\[
+n = \frac{(\sigma_1^2+\sigma_2^2)\,(Z_{1-\alpha/2}+Z_{1-\beta})^2}{(\mu_1-\mu_2)^2} \text{ (per group, equal group sizes)}
+\]</span></p>
+<p>In R, we can use Base R’s <code>stats::power.t.test()</code>. It solves the two-sample mean comparison directly (assuming equal variance and equal group sizes; for unequal group sizes or unequal variances, <code>pwr::pwr.t2n.test()</code> is a common alternative).</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Example:</strong> Two antihypertensive drugs are being compared in a trial. Drug A is expected to reduce systolic blood pressure by 8 mmHg on average, and Drug B by 5 mmHg, both with a standard deviation of about 6 mmHg (based on prior trials). How many patients are needed in each arm to detect this difference with 80% power, at the 5% level of significance, two-sided?</p>
+</div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p><span class="math inline">\(\mu_1 = 8\)</span>; <span class="math inline">\(\mu_2 = 5\)</span>; <span class="math inline">\(\sigma_1 = \sigma_2 = 6\)</span>; <span class="math inline">\(\alpha = 0.05\)</span>; power <span class="math inline">\(= 80\%\)</span>; two-sided</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>stats<span class="sc">::</span><span class="fu">power.t.test</span>(<span class="at">n=</span><span class="cn">NULL</span>, <span class="at">delta =</span> <span class="dv">8-5</span>, <span class="at">sd =</span> <span class="dv">6</span>, <span class="at">sig.level =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">type =</span> <span class="st">"two.sample"</span>, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;      Two-sample t test power calculation 
+#&gt; 
+#&gt;               n = 63.76576
+#&gt;           delta = 3
+#&gt;              sd = 6
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.8
+#&gt;     alternative = two.sided
+#&gt; 
+#&gt; NOTE: n is number in *each* group</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Writing our own function</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>who_two_mean_test <span class="ot">&lt;-</span> <span class="cf">function</span>(mu1, mu2, sd1, <span class="at">sd2 =</span> sd1,</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>),</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>){</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  Za <span class="ot">&lt;-</span> <span class="fu">z_alpha</span>(conf.level, <span class="at">two.sided =</span> (sided <span class="sc">==</span> <span class="st">"two.sided"</span>))</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>  Zb <span class="ot">&lt;-</span> <span class="fu">z_beta</span>(power)</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>  n  <span class="ot">&lt;-</span> (sd1<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd2<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> (Za <span class="sc">+</span> Zb)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (mu1 <span class="sc">-</span> mu2)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Sample size required per group:"</span>, <span class="fu">ceiling</span>(n), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(n))</span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a><span class="fu">who_two_mean_test</span>(<span class="at">mu1 =</span> <span class="dv">8</span>, <span class="at">mu2 =</span> <span class="dv">5</span>, <span class="at">sd1 =</span> <span class="dv">6</span>, <span class="at">sd2 =</span> <span class="dv">6</span>, <span class="at">sided =</span> <span class="st">"two.sided"</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>, <span class="at">power =</span> <span class="fl">0.80</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Sample size required per group: 63</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sec-sse_survival" class="level2">
+<h2 class="anchored" data-anchor-id="sec-sse_survival">Sample Size Estimation for survival studies</h2>
+<p>In R, <code>powerSurvEpi::ssizeCT.default()</code> can be used to estimate sample size. It implements Freedman-based approach, but goes one step further than a raw event count: given the anticipated probability of the event occurring in each arm by the end of the study (<code>pE</code>, <code>pC</code>), it directly returns the <strong>total number of participants</strong> needed in each arm, not just the number of events.</p>
+<p><strong>Example:</strong> A phase III trial is being planned to compare a new immunotherapy regimen against standard chemotherapy for patients with advanced gastric cancer. Historical data suggest a median progression-free survival (PFS) of 6 months on standard chemotherapy; the new regimen is hypothesized to extend median PFS to 9 months, a 1.5-fold improvement. Investigators want 85% power to detect this difference at the 5% two-sided significance level. Over the planned follow-up period, about 75% of patients on standard chemotherapy and 55% of patients on the new regimen are expected to experience disease progression.</p>
+<p><strong>Solution:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 67%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ratio of median PFS (ΔΔ)</td>
+<td>1.5 (9 vs.&nbsp;6 months)</td>
+</tr>
+<tr class="even">
+<td>Level of significance (αα)</td>
+<td>0.05, two-sided</td>
+</tr>
+<tr class="odd">
+<td>Power</td>
+<td>85%</td>
+</tr>
+<tr class="even">
+<td>Probability of progression, treatment arm (pEp_E pE​)</td>
+<td>0.55</td>
+</tr>
+<tr class="odd">
+<td>Probability of progression, control arm (pCp_C pC​)</td>
+<td>0.75</td>
+</tr>
+<tr class="even">
+<td>Allocation ratio (kk k)</td>
+<td>1 (equal groups)</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("powerSurvEpi") </span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(powerSurvEpi)  </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="co"># k = allocation ratio (nE/nC), RR = postulated hazard ratio</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pE/pC = probability of the event by the end of follow-up in each arm </span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate NEV</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>freedman_nev <span class="ot">&lt;-</span> <span class="cf">function</span>(delta, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.80</span>,</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">sided =</span> <span class="fu">c</span>(<span class="st">"two.sided"</span>, <span class="st">"one.sided"</span>)){</span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  sided <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(sided)</span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>  z_alpha <span class="ot">&lt;-</span> <span class="cf">if</span>(sided <span class="sc">==</span> <span class="st">"two.sided"</span>) <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha<span class="sc">/</span><span class="dv">2</span>) <span class="cf">else</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha)</span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>  z_beta  <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(power)</span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>  NEV <span class="ot">&lt;-</span> ((z_alpha <span class="sc">+</span> z_beta)<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (delta <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (delta <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Number of events required:"</span>, <span class="fu">ceiling</span>(NEV), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">ceiling</span>(NEV))</span>
+<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb73-19"><a href="#cb73-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-20"><a href="#cb73-20" aria-hidden="true" tabindex="-1"></a><span class="fu">freedman_nev</span>(<span class="at">delta =</span> <span class="fl">1.5</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.85</span>, <span class="at">sided =</span> <span class="st">"two.sided"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Number of events required: 225</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssizeCT.default</span>(<span class="at">power =</span> <span class="fl">0.85</span>, <span class="at">k =</span> <span class="dv">1</span>, <span class="at">pE =</span> <span class="fl">0.55</span>, <span class="at">pC =</span> <span class="fl">0.75</span>, <span class="at">RR =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fl">1.5</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  nE  nC 
+#&gt; 173 173</code></pre>
+</div>
+</div>
+<p>```</p>
+<p>Freedman’s formula alone says <strong>225 events</strong> are needed to detect this effect. Since not every enrolled patient will progress during the study, <code>ssizeCT.default()</code> converts that event target into a full enrollment target: <strong>173 patients per arm</strong>, given the anticipated progression probabilities above.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-lenz2026" class="csl-entry" role="listitem">
+Lenz, Armando, Alan G. Haynes, Andreas Limacher, Odile Stalder, and Marie Roumet. 2026. <em>Presize: Precision Based Sample Size Calculation</em>. <a href="https://cran.r-project.org/web/packages/presize/index.html">https://cran.r-project.org/web/packages/presize/index.html</a>.
+</div>
+<div id="ref-stevenson2026" class="csl-entry" role="listitem">
+Stevenson, Mark, Evan Sergeant, Cord Heuer, Ian Kopacka, Klemens Fuchs, Telmo Nunes, Cord Heuer, et al. 2026. <em>epiR: Tools for the Analysis of Epidemiological Data</em>. <a href="https://cran.r-project.org/web/packages/epiR/index.html">https://cran.r-project.org/web/packages/epiR/index.html</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../Section2/17_sampling.html" class="pagination-link" aria-label="Sampling distribution and Central Limit theorem">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/Sample size calculation/18_Sample_size_calculation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

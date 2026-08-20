@@ -1,0 +1,564 @@
+---
+title: "Association Between Two Numeric Variables"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
+```
+
+```{r, include=FALSE, warning=FALSE,message=FALSE, echo=FALSE}
+#load libraries and datasets
+library(tidyverse)
+library(car)        # leveneTest(), Anova() (Type II/III SS)
+library(DescTools)  # CI helpers used later in the chapter
+library(kableExtra)
+library(corrplot)
+library(knitr)
+library(psych)
+
+wcgs <- readxl::read_excel("Section2/Categorical data analysis/Datasets/wcgs.xls")
+```
+
+# Learning Objectives {.unnumbered}
+
+By the end of this chapter, you should be able to:
+
+1.  Explain what it means for two numeric (continuous) variables to be "associated," and describe that association using a scatter diagram.
+2.  State the definition, assumptions, properties, and correct interpretation of the **Pearson product-moment correlation coefficient** ($r$).
+3.  Calculate $r$ **by hand** from raw data, test $H_0: \rho = 0$, and construct a confidence interval for $\rho$.
+4.  State the definition, assumptions, properties, and correct interpretation of the **Spearman rank correlation coefficient** ($r_s$ or $\rho_s$).
+5.  Calculate $r_s$ **by hand**, including the correction needed when tied ranks are present.
+6.  Reproduce both coefficients in **R**, using the Western Collaborative Group Study (**WCGS**) data set as a worked example, and correctly choose between Pearson and Spearman for a given pair of variables.
+7.  Recognise common pitfalls in interpreting correlation coefficients.
+
+------------------------------------------------------------------------
+
+# Association Between Two Numeric Variables
+
+In epidemiology and clinical research we frequently ask whether two **quantitative (numeric)** characteristics measured on the same individuals tend to move together — for example, does systolic blood pressure rise with age? Does body weight track with height? Does serum cholesterol relate to blood pressure?
+
+**Association** (or *correlation*, used loosely) between two numeric variables describes the tendency of one variable to change systematically as the other changes. It has three components that should always be examined together:
+
+-   **Direction** — do the variables move in the same direction (*positive* association) or opposite directions (*negative* association)?
+-   **Strength** — how closely do the points cluster around a discernible trend?
+-   **Form** — is the trend linear, curvilinear (monotonic but not straight), or is there no discernible pattern?
+
+## The scatter diagram
+
+The scatter diagram (scatterplot) is the essential first step in *any* correlation analysis — a numeric summary should never be trusted without first looking at the data.
+
+```{r}
+#| label: fig-scatter-intro
+#| fig-cap: "Height and weight in the WCGS cohort (each point is one man)."
+
+ggplot(wcgs, aes(x = height, y = weight)) +
+  geom_point(alpha = 0.25, colour = "steelblue") +
+  geom_smooth(method = "lm", se = FALSE, colour = "firebrick") +
+  labs(x = "Height (inches)", y = "Weight (lb)",
+       title = "Height vs. weight, WCGS cohort (n = 3,154)") +
+  theme_minimal(base_size = 12)
+```
+
+Two correlation coefficients dominate practice, and this chapter covers both:
+
+|   | **Pearson** $r$ | **Spearman** $r_s$ |
+|----|----|----|
+| Measures | Strength of **linear** association | Strength of **monotonic** association |
+| Uses | Raw values | **Ranks** of the values |
+| Best suited to | Approximately normal, linearly related continuous data | Ordinal data, non-normal data, data with outliers, or monotonic-but-curved relationships |
+
+------------------------------------------------------------------------
+
+## Pearson Product-Moment Correlation Coefficient
+
+### Definition {#sec-ppmc}
+
+For a population, the Pearson correlation coefficient is
+
+$$
+\rho = \frac{\operatorname{Cov}(X,Y)}{\sigma_X\,\sigma_Y}
+$$
+
+For a sample of $n$ paired observations $(x_i, y_i)$, it is estimated by
+
+$$
+r = \frac{\displaystyle\sum_{i=1}^{n}(x_i-\bar x)(y_i-\bar y)}
+        {\sqrt{\displaystyle\sum_{i=1}^{n}(x_i-\bar x)^2 \; \sum_{i=1}^{n}(y_i-\bar y)^2}}
+$$ {#eq-pearson-deviation}
+
+an equivalent **computational (raw-score) formula**, more convenient for hand calculation, is
+
+$$
+r = \frac{n\sum x_iy_i - \left(\sum x_i\right)\left(\sum y_i\right)}
+        {\sqrt{\left[n\sum x_i^2-\left(\sum x_i\right)^2\right]\left[n\sum y_i^2-\left(\sum y_i\right)^2\right]}}
+$$ {#eq-pearson-raw}
+
+## Assumptions
+
+1.  Both $X$ and $Y$ are **continuous (interval/ratio) numeric** variables.
+2.  The relationship between $X$ and $Y$ is (approximately) **linear**.
+3.  For inference (hypothesis tests / CIs), the pairs $(X,Y)$ come from a **bivariate normal distribution** — in practice this is usually checked by inspecting the marginal distributions of $X$ and $Y$ for gross non-normality and skew.
+4.  Observations are **independent** of one another.
+5.  No excessively influential **outliers**.
+6.  Variance of $Y$ is reasonably constant across the range of $X$ (homoscedasticity).
+
+## Properties
+
+-   $-1 \le r \le 1$; $r=1$ is perfect positive linear association, $r=-1$ perfect negative linear association, $r=0$ no *linear* association.
+-   $r$ is **unit-free** (dimensionless) and **symmetric**: $r_{xy} = r_{yx}$.
+-   $r$ measures only **linear** association — a strong curved relationship can produce a small $r$.
+-   $r$ is sensitive to **outliers** and to **restriction of range**.
+-   $r^2$ (the **coefficient of determination**) is the proportion of variance in $Y$ "explained" by the linear relationship with $X$.
+-   Correlation does **not** imply causation.
+
+## A rule-of-thumb interpretation scale
+
+| $|r|$       | Strength of linear association |
+|-------------|--------------------------------|
+| 0.00 – 0.09 | Negligible                     |
+| 0.10 – 0.39 | Weak                           |
+| 0.40 – 0.69 | Moderate                       |
+| 0.70 – 0.89 | Strong                         |
+| 0.90 – 1.00 | Very strong                    |
+
+These cut-points (adapted from conventions such as Cohen, 1988) are a rough guide only; the meaningfulness of a given $r$ always depends on the substantive context.
+
+## Hypothesis test for $\rho$
+
+To test $H_0: \rho = 0$ versus $H_1: \rho \ne 0$:
+
+$$
+t = r\sqrt{\frac{n-2}{1-r^2}} \qquad \sim \; t_{(n-2)} \text{ under } H_0
+$$ {#eq-pearson-t}
+
+## Confidence interval for $\rho$ (Fisher's $z$-transformation)
+
+Because the sampling distribution of $r$ is skewed (except when $\rho=0$), Fisher's $z$-transformation is used:
+
+$$
+z' = \tfrac12 \ln\!\left(\frac{1+r}{1-r}\right), \qquad SE(z') = \frac{1}{\sqrt{n-3}}
+$$
+
+A $95\%$ CI for $z'$ is $z' \pm 1.96 \times SE(z')$; each limit is back-transformed with
+
+$$
+r = \frac{e^{2z'}-1}{e^{2z'}+1}
+$$
+
+------------------------------------------------------------------------
+
+# Manual (Hand) Calculation of Pearson $r$
+
+We illustrate the arithmetic with a small, reproducible random sample of $n=10$ men drawn from the WCGS data, using **height** (inches) and **weight** (lb).
+
+```{r}
+#| label: pearson-manual-sample
+set.seed(123)
+idx <- sample(seq_len(nrow(wcgs)), 10)
+sub <- as.data.frame(wcgs[idx, c("id", "height", "weight")])
+names(sub) <- c("id", "x_height", "y_weight")
+kable(sub, caption = "Random subsample (n = 10) used for the manual Pearson calculation")
+```
+
+## Step 1: Compute the deviation table
+
+For each subject we need $x-\bar x$, $y-\bar y$, their product, and their squares.
+
+```{r}
+#| label: pearson-manual-table
+x <- sub$x_height; y <- sub$y_weight
+n <- length(x)
+xbar <- mean(x); ybar <- mean(y)
+
+tab <- data.frame(
+  id     = sub$id,
+  x      = x,
+  y      = y,
+  dx     = round(x - xbar, 2),
+  dy     = round(y - ybar, 2),
+  dx_dy  = round((x - xbar) * (y - ybar), 2),
+  dx2    = round((x - xbar)^2, 2),
+  dy2    = round((y - ybar)^2, 2)
+)
+kable(tab, col.names = c("ID","x (height)","y (weight)","$x-\\bar x$","$y-\\bar y$",
+                          "$(x-\\bar x)(y-\\bar y)$","$(x-\\bar x)^2$","$(y-\\bar y)^2$"))
+
+cat("Column sums:\n",
+    " sum(x) =", sum(x), "  sum(y) =", sum(y), "\n",
+    " sum[(x-xbar)(y-ybar)] =", sum(tab$dx_dy), "\n",
+    " sum[(x-xbar)^2]       =", sum(tab$dx2), "\n",
+    " sum[(y-ybar)^2]       =", sum(tab$dy2), "\n")
+```
+
+## Step 2: Apply the deviation formula
+
+$$
+\bar x = \frac{694}{10}=69.4 \qquad \bar y=\frac{1750}{10}=175.0
+$$
+
+$$
+r=\frac{\sum(x-\bar x)(y-\bar y)}{\sqrt{\sum(x-\bar x)^2 \sum(y-\bar y)^2}}
+ =\frac{831.0}{\sqrt{72.4 \times 16624}}
+ =\frac{831.0}{\sqrt{1{,}203{,}977.6}}
+ =\frac{831.0}{1097.26}
+$$
+
+```{r}
+#| label: pearson-manual-r
+r_manual <- sum(tab$dx_dy) / sqrt(sum(tab$dx2) * sum(tab$dy2))
+r_manual
+```
+
+**By hand,** $r = 0.757$ — a strong, positive linear association between height and weight in this subsample.
+
+### Cross-check with the computational (raw-score) formula
+
+```{r}
+#| label: pearson-manual-raw
+Sx <- sum(x); Sy <- sum(y); Sxy <- sum(x*y); Sx2 <- sum(x^2); Sy2 <- sum(y^2)
+r_raw <- (n*Sxy - Sx*Sy) / sqrt((n*Sx2 - Sx^2) * (n*Sy2 - Sy^2))
+data.frame(Sx, Sy, Sxy, Sx2, Sy2, r_raw)
+```
+
+Both formulas agree exactly, as they must algebraically.
+
+## Step 3: Test $H_0: \rho = 0$
+
+$$
+t = r\sqrt{\frac{n-2}{1-r^2}} = 0.757\sqrt{\frac{8}{1-0.757^2}}
+$$
+
+```{r}
+#| label: pearson-manual-ttest
+t_manual  <- r_manual * sqrt((n - 2) / (1 - r_manual^2))
+df_manual <- n - 2
+p_manual  <- 2 * pt(-abs(t_manual), df = df_manual)
+data.frame(t = t_manual, df = df_manual, p_value = p_manual)
+```
+
+With $t = 3.28$ on $8$ df, $p = 0.011$: we reject $H_0$ at the $5\%$ level and conclude there is a statistically significant positive linear association between height and weight in this small sample.
+
+## Step 4: Verify against R's built-in function
+
+```{r}
+#| label: pearson-manual-verify
+cor.test(x, y, method = "pearson")
+```
+
+The hand-calculated $r$, $t$, $df$, and $p$-value match R's `cor.test()` output exactly — confirming the manual arithmetic.
+
+------------------------------------------------------------------------
+
+# Spearman Rank Correlation Coefficient
+
+## When to use Spearman instead of Pearson {#sec-spearman}
+
+Spearman's coefficient should be preferred over Pearson's when:
+
+-   The variables are **ordinal** rather than truly numeric (e.g., pain scores, tumour grade).
+-   The data are numeric but **markedly non-normal or skewed** (Pearson's inferential validity is weakened).
+-   There are **influential outliers** that would distort $r$.
+-   The relationship is **monotonic but not linear** (consistently increasing or decreasing, but curved) — Spearman still detects this fully, whereas Pearson under-estimates it.
+
+## Definition
+
+Spearman's rank correlation is simply the Pearson correlation coefficient computed on the **ranks** of $X$ and $Y$ rather than on their raw values. If there are no tied ranks, this simplifies to the well-known shortcut formula:
+
+$$
+r_s = 1-\frac{6\sum_{i=1}^n d_i^2}{n(n^2-1)}, \qquad d_i = \operatorname{rank}(x_i)-\operatorname{rank}(y_i)
+$$ {#eq-spearman}
+
+**Tied values** are given the **average of the ranks** they would otherwise occupy. When ties are present, @eq-spearman is only an *approximation*; the exact value is obtained by computing the ordinary Pearson formula (@eq-pearson-deviation) on the rank-transformed data. Software (including R) uses this ties-corrected version by default.
+
+## Assumptions and properties
+
+-   Requires only that the data be at least **ordinal**, and that the relationship be **monotonic**.
+-   $-1 \le r_s \le 1$, same interpretation of sign and magnitude as Pearson's $r$, but describing a **monotonic** rather than strictly linear trend.
+-   Far more **robust to outliers** than Pearson's $r$, because extreme values are pulled in by ranking.
+-   Hypothesis test of $H_0: \rho_s = 0$ can use the same $t$-approximation as Pearson's (@eq-pearson-t), substituting $r_s$ for $r$, for moderate/large $n$; exact permutation-based $p$-values are used for small $n$ without ties.
+
+------------------------------------------------------------------------
+
+# Manual (Hand) Calculation of Spearman $r_s$
+
+We again draw a reproducible random subsample of $n=10$ men (this time keeping only those with a recorded cholesterol value) and examine **total cholesterol** (`chol`, mg/dL) against **systolic blood pressure** (`sbp`, mmHg) — two variables that are typically right-skewed, making Spearman a more defensible choice than Pearson.
+
+```{r}
+#| label: spearman-manual-sample
+set.seed(321)
+idx2 <- sample(which(!is.na(wcgs$chol)), 10)
+sub2 <- as.data.frame(wcgs[idx2, c("id", "chol", "sbp")])
+kable(sub2, caption = "Random subsample (n = 10, complete cholesterol) used for the manual Spearman calculation")
+```
+
+## Step 1: Rank each variable separately
+
+Ranks are assigned from lowest (rank 1) to highest; **tied values receive the average of the ranks they span**. Notice that `sbp` = 120 occurs three times (ranks 3, 4, 5 → averaged to 4).
+
+```{r}
+#| label: spearman-manual-ranks
+cx <- sub2$chol; cy <- sub2$sbp
+rx <- rank(cx); ry <- rank(cy)
+d  <- rx - ry
+d2 <- d^2
+
+tab2 <- data.frame(id = sub2$id, chol = cx, sbp = cy,
+                    rank_chol = rx, rank_sbp = ry, d = d, d2 = d2)
+kable(tab2, col.names = c("ID","Cholesterol","SBP","Rank (chol)","Rank (sbp)","$d$","$d^2$"))
+cat("Sum of d^2 =", sum(d2), "\n")
+```
+
+## Step 2: Apply the shortcut formula (ignoring ties)
+
+$$
+r_s \approx 1-\frac{6\sum d_i^2}{n(n^2-1)} = 1-\frac{6(114.5)}{10(100-1)} = 1-\frac{687}{990}
+$$
+
+```{r}
+#| label: spearman-manual-shortcut
+n2 <- length(cx)
+rho_shortcut <- 1 - (6 * sum(d2)) / (n2 * (n2^2 - 1))
+rho_shortcut
+```
+
+This gives $r_s \approx 0.306$. **However**, because `sbp` contains tied values, this shortcut formula is only approximate.
+
+## Step 3: Exact value: Pearson's formula applied to the ranks
+
+```{r}
+#| label: spearman-manual-exact
+rho_exact <- cor(rx, ry, method = "pearson")
+rho_exact
+```
+
+The tie-corrected (exact) value is $r_s = 0.295$ — close to, but not identical to, the uncorrected shortcut (0.306). **Rule of thumb: with any tied values, always use the Pearson-on-ranks method (or software) rather than the raw** $d^2$ shortcut.
+
+## Step 4: Verify against R's built-in function
+
+```{r}
+#| label: spearman-manual-verify
+cor.test(cx, cy, method = "spearman")
+```
+
+R's `cor.test()` reports $r_s = 0.295$, matching our tie-corrected hand calculation exactly (R issues a warning that an *exact* $p$-value cannot be computed because of ties, and instead reports an asymptotic $t$-approximation $p$-value). With $n=10$ and $r_s=0.295$, $p = 0.41$ — no statistically significant monotonic association is detected in this small subsample.
+
+------------------------------------------------------------------------
+
+# Demonstration in R Using the Full WCGS Data Set
+
+## About the data
+
+The **Western Collaborative Group Study (WCGS)** was a prospective cohort study of coronary heart disease (CHD) among middle-aged American men. The extract used here (`wcgs.xls`) contains **`r nrow(wcgs)`** subjects and the following key numeric variables:
+
+```{r}
+#| label: tbl-dictionary
+#| tbl-cap: "Selected WCGS variables used in this chapter"
+dict <- data.frame(
+  Variable = c("age","height","weight","bmi","sbp","dbp","chol","ncigs","chd69","behpat"),
+  Description = c(
+    "Age (years)",
+    "Height (inches)",
+    "Weight (pounds)",
+    "Body mass index (kg/m$^2$)",
+    "Systolic blood pressure (mmHg)",
+    "Diastolic blood pressure (mmHg)",
+    "Total serum cholesterol (mg/dL)",
+    "Cigarettes smoked per day",
+    "Coronary heart disease event by end of follow-up (Yes/No)",
+    "Behaviour pattern (A1, A2, B3, B4)"
+  )
+)
+kable(dict)
+```
+
+## Step 1: Import the data
+
+```{r}
+#| label: import
+#| eval: false
+library(readxl)
+wcgs <- read_excel("wcgs.xls")
+str(wcgs)
+```
+
+```{r}
+#| label: import-summary
+summary(wcgs[, c("age","height","weight","bmi","sbp","dbp","chol","ncigs")])
+```
+
+## Step 2: Visualise the relationships first
+
+```{r}
+#| label: fig-scatter-two
+#| fig-cap: "Two candidate relationships: (left) height vs. weight — roughly linear; (right) cholesterol vs. systolic BP — noisier, right-skewed variables."
+#| fig-subcap:
+#|   - "Height vs. weight"
+#|   - "Cholesterol vs. SBP"
+#| layout-ncol: 2
+ggplot(wcgs, aes(height, weight)) +
+  geom_point(alpha = 0.25, colour = "steelblue") +
+  geom_smooth(method = "lm", se = FALSE, colour = "firebrick") +
+  labs(x = "Height (in)", y = "Weight (lb)") +
+  theme_minimal()
+
+ggplot(wcgs, aes(chol, sbp)) +
+  geom_point(alpha = 0.25, colour = "darkorange3") +
+  geom_smooth(method = "lm", se = FALSE, colour = "firebrick") +
+  labs(x = "Cholesterol (mg/dL)", y = "SBP (mmHg)") +
+  theme_minimal()
+```
+
+## Step 3: Check the normality assumption (needed for Pearson inference)
+
+```{r}
+#| label: fig-qq
+#| fig-cap: "Normal Q-Q plots: height and weight are close to normal; cholesterol and SBP are right-skewed."
+#| fig-subcap:
+#|   - "Height"
+#|   - "Weight"
+#|   - "Cholesterol"
+#|   - "SBP"
+#| layout-ncol: 2
+qqnorm(wcgs$height, main = "Height"); qqline(wcgs$height, col = "red")
+qqnorm(wcgs$weight, main = "Weight"); qqline(wcgs$weight, col = "red")
+qqnorm(wcgs$chol,   main = "Cholesterol"); qqline(wcgs$chol, col = "red")
+qqnorm(wcgs$sbp,    main = "SBP"); qqline(wcgs$sbp, col = "red")
+```
+
+```{r}
+#| label: shapiro
+shapiro.test(wcgs$height)
+shapiro.test(wcgs$chol)
+```
+
+With $n = 3{,}154$, the Shapiro-Wilk test is extremely sensitive to trivial departures from normality (essentially all large samples reject $H_0$); the Q-Q plots are the more useful diagnostic here. Height is close to normal; cholesterol and SBP show the right skew typical of biological "positive-only" measurements, which is a caution for Pearson inference — and part of why we illustrate Spearman with this pair.
+
+## Step 4: Pearson correlation
+
+```{r}
+#| label: pearson-full-hw
+cor.test(wcgs$height, wcgs$weight, method = "pearson")
+```
+
+**Interpretation:** $r = 0.533$ ($95\%$ CI: $0.507$ to $0.557$), $t(3152) = 35.4$, $p < 0.001$. There is a **moderate, highly statistically significant, positive linear association** between height and weight: taller men tend to weigh more. $r^2 = 0.284$, i.e., height linearly "explains" about $28\%$ of the variability in weight.
+
+```{r}
+#| label: pearson-full-cholsbp
+cor.test(wcgs$chol, wcgs$sbp, method = "pearson")
+```
+
+Pearson's $r = 0.123$ for cholesterol vs. SBP — a weak association — but recall both variables are right-skewed, so this Pearson estimate may be distorted by a handful of high values.
+
+## Step 5: Spearman correlation
+
+```{r}
+#| label: spearman-full-cholsbp
+cor.test(wcgs$chol, wcgs$sbp, method = "spearman", exact = FALSE)
+```
+
+**Interpretation:** $r_s = 0.138$, $p < 0.001$. Because $n$ is large, even this weak monotonic association is statistically significant — a reminder that with large samples, statistical significance and practical/clinical importance are not the same thing. Note `exact = FALSE` is required here because `chol` contains tied values and is large, so R falls back on the asymptotic $t$-approximation for the $p$-value.
+
+```{r}
+#| label: spearman-full-hw
+cor.test(wcgs$height, wcgs$weight, method = "spearman", exact = FALSE)
+```
+
+For height and weight, Pearson ($r=0.533$) and Spearman ($r_s=0.529$) agree closely — expected, since this relationship is close to linear and both variables are reasonably symmetric.
+
+## Step 6: A correlation matrix and correlation plot
+
+It is often useful to examine several numeric variables at once.
+
+```{r}
+#| label: fig-corrmat
+#| fig-cap: "Pearson correlation matrix of key WCGS numeric variables."
+vars <- c("age","height","weight","bmi","sbp","dbp","chol","ncigs")
+M <- cor(wcgs[, vars], use = "pairwise.complete.obs", method = "pearson")
+round(M, 2)
+
+corrplot(M, method = "circle", type = "upper", addCoef.col = "black",
+         number.cex = 0.7, tl.col = "black", tl.srt = 45,
+         title = "Pearson correlations, WCGS numeric variables",
+         mar = c(0,0,2,0))
+```
+
+```{r}
+#| label: fig-pairspanel
+#| fig-cap: "Pairwise scatterplots, distributions, and Pearson correlations for a subset of WCGS variables."
+psych::pairs.panels(wcgs[, c("age","height","weight","sbp","chol")],
+                     method = "pearson", hist.col = "lightblue",
+                     density = TRUE, ellipses = FALSE)
+```
+
+## Step 7: Summary table, Pearson and Spearman side by side
+
+```{r}
+#| label: tbl-summary-both
+pairs_list <- list(c("height","weight"), c("age","sbp"), c("chol","sbp"), c("bmi","sbp"))
+
+results <- do.call(rbind, lapply(pairs_list, function(p) {
+  x <- wcgs[[p[1]]]; y <- wcgs[[p[2]]]
+  ok <- complete.cases(x, y)
+  pear <- cor.test(x[ok], y[ok], method = "pearson")
+  spea <- cor.test(x[ok], y[ok], method = "spearman", exact = FALSE)
+  data.frame(Variable_1 = p[1], Variable_2 = p[2], n = sum(ok),
+             Pearson_r = round(unname(pear$estimate), 3),
+             Pearson_p = signif(pear$p.value, 3),
+             Spearman_rs = round(unname(spea$estimate), 3),
+             Spearman_p = signif(spea$p.value, 3))
+}))
+kable(results)
+```
+
+------------------------------------------------------------------------
+
+# Pearson vs. Spearman: A Side-by-Side Comparison
+
+| Feature | Pearson $r$ | Spearman $r_s$ |
+|----|----|----|
+| Data type required | Numeric (interval/ratio) | Ordinal or numeric |
+| Detects | Linear association | Any monotonic association |
+| Uses | Actual values | Ranks of the values |
+| Sensitive to outliers? | Yes, strongly | No, largely robust |
+| Requires (approx.) normality for inference? | Yes | No |
+| Computation | Covariance / product of SDs | Pearson formula applied to ranks |
+| Typical use case | Height vs. weight, dose vs. response (linear) | Skewed labs (e.g., triglycerides), ordinal scores, monotone-but-curved relationships |
+
+------------------------------------------------------------------------
+
+# Common Pitfalls in Interpreting Correlation
+
+-   **Correlation is not causation.** A significant $r$ or $r_s$ establishes association, not that one variable causes changes in the other; confounding, reverse causation, and chance are all still possible explanations.
+-   **Non-linearity.** Pearson's $r$ can be close to zero even when $X$ and $Y$ are strongly related, if the relationship is curved (e.g., U-shaped) — always plot the data first.
+-   **Outliers and leverage points.** A single extreme observation can inflate or deflate Pearson's $r$ substantially; Spearman is more robust in this situation.
+-   **Restriction of range.** Correlation estimated within a narrow range of $X$ (e.g., only healthy adults) will understate the true association in the full population.
+-   **Ecological correlation.** Correlating group-level averages (e.g., country-level means) can produce misleadingly strong correlations that do not hold at the individual level (ecological fallacy).
+-   **Statistical vs. clinical significance.** With very large $n$ (as in WCGS, $n>3{,}000$), even trivially small correlations become "statistically significant." Always report and interpret the magnitude of $r$/$r_s$, not just the $p$-value.
+-   **Multiple testing.** Scanning many pairwise correlations (e.g., a full correlation matrix) inflates the chance of false positives; interpret exploratory matrices cautiously and confirm key findings with pre-specified hypotheses.
+
+------------------------------------------------------------------------
+
+# Summary
+
+-   The **scatter diagram** is the starting point for any correlation analysis.
+-   **Pearson's** $r$ quantifies the strength and direction of a **linear** relationship between two numeric variables; it assumes approximate bivariate normality and is sensitive to outliers.
+-   **Spearman's** $r_s$ quantifies the strength and direction of a **monotonic** relationship using ranks; it requires only ordinal data, handles skew and outliers gracefully, and reduces to a simple $d^2$ shortcut formula when there are no tied ranks (with a small correction needed when ties are present).
+-   Both coefficients range from $-1$ to $+1$, are tested against $H_0: \rho = 0$ using a $t$-based statistic, and should always be reported together with sample size, a confidence interval where possible, and — most importantly — a plot of the raw data.
+-   In the WCGS data, height and weight show a moderate, near-linear positive association ($r \approx r_s \approx 0.53$), while cholesterol and systolic blood pressure show only a weak monotonic association ($r=0.12$, $r_s=0.14$) despite reaching statistical significance because of the large sample size.
+
+------------------------------------------------------------------------
+
+# References {.unnumbered}
+
+-   Rosner B. *Fundamentals of Biostatistics*. 8th ed. Cengage Learning.
+-   Daniel WW, Cross CL. *Biostatistics: A Foundation for Analysis in the Health Sciences*. 11th ed. Wiley.
+-   Bland M. *An Introduction to Medical Statistics*. 4th ed. Oxford University Press.
+-   Woodward M. *Epidemiology: Study Design and Data Analysis*. 3rd ed. Chapman & Hall/CRC.
+-   Cohen J. *Statistical Power Analysis for the Behavioral Sciences*. 2nd ed. Lawrence Erlbaum Associates, 1988.
+-   Rosenman RH, et al. "A predictive study of coronary heart disease: the Western Collaborative Group Study." *JAMA*. 1964;189:15–22. (Original WCGS study.)

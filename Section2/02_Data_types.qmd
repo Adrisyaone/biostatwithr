@@ -1,0 +1,103 @@
+---
+title: "Types of data and scales of measurement"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+## Types of Data {#sec-data_types}
+
+Data collected in biostatistics and epidemiology generally fall into two broad categories: **qualitative (categorical)** and **quantitative (numerical)** data.
+
+```{mermaid}
+flowchart TD
+    A[Types of Data] --> B[Qualitative / Categorical]
+    A --> C[Quantitative / Numerical]
+    B --> B1[Nominal]
+    B --> B2[Ordinal]
+    C --> C1[Discrete]
+    C --> C2[Continuous]
+```
+
+### Qualitative (Categorical) Data
+
+Categorical data represent characteristics or attributes that place individuals into groups or categories. They cannot be meaningfully added, subtracted, or averaged.
+
+-   **Nominal data:** Categories with no inherent order. Example: blood type (A, B, AB, O), sex, marital status, country of residence, vaccination status (vaccinated/unvaccinated).
+-   **Ordinal data:** Categories with a meaningful order, but the intervals between categories are not necessarily equal. Example: cancer stage (I, II, III, IV), pain severity (mild, moderate, severe), socioeconomic status (low, middle, high), Likert scale responses (strongly disagree to strongly agree).
+
+### Quantitative (Numerical) Data
+
+Numerical data represent measurable quantities and can be manipulated arithmetically.
+
+-   **Discrete data:** Data that can take only specific, countable values (usually whole numbers), typically arising from counting. Example: number of children per household, number of hospital admissions per day, number of new COVID-19 cases per week, parity (number of live births).
+-   **Continuous data:** Data that can take any value within a range, typically arising from measurement. Example: height, weight, blood pressure, serum cholesterol level, BMI, gestational age.
+
+::: callout-tip
+A useful rule of thumb: if you can meaningfully ask "how many?" the data are usually discrete; if you can ask "how much?" and fractional values make sense, the data are usually continuous.
+:::
+
+**Comparison Table**
+
+| Feature | Nominal | Ordinal | Discrete | Continuous |
+|----|----|----|----|----|
+| Type | Categorical | Categorical | Numerical | Numerical |
+| Order meaningful? | No | Yes | Yes | Yes |
+| Arithmetic meaningful? | No | No (generally) | Yes | Yes |
+| Example | Blood type | Cancer stage | Number of pregnancies | Blood pressure |
+
+## Variables
+
+A **variable** is any characteristic, number, or quantity that can be measured or counted and that can differ from one individual (or observation) to another.
+
+### Classification of Variables
+
+```{mermaid}
+flowchart TD
+    V[Variables] --> Q[Quantitative]
+    V --> C[Qualitative]
+    Q --> QD[Discrete]
+    Q --> QC[Continuous]
+    C --> CN[Nominal]
+    C --> CO[Ordinal]
+    V --> R[By Role in Analysis]
+    R --> R1[Independent / Exposure Variable]
+    R --> R2[Dependent / Outcome Variable]
+    R --> R3[Confounding Variable]
+```
+
+-   **Independent variable (exposure/predictor):** The variable believed to influence or predict the outcome. Example: smoking status.
+-   **Dependent variable (outcome/response):** The variable being predicted or explained. Example: lung cancer status.
+-   **Confounding variable:** A variable associated with both the exposure and the outcome that can distort the observed association if not controlled for. Example: age as a confounder in the relationship between physical activity and heart disease.
+
+**Public health example:** In a study of the relationship between air pollution (independent variable measured as PM2.5 concentration, a continuous variable) and asthma attacks (dependent variable, a discrete count), age and smoking status might act as confounding variables.
+
+## Scales of Measurement
+
+Stanley Smith Stevens (1946) classified measurement into four scales[@stevens1946]. Understanding the scale of measurement of a variable is essential because it determines which descriptive statistics and which statistical tests are appropriate.
+
+| Scale | Order? | Equal intervals? | True zero? | Allowed operations | Examples |
+|----|----|----|----|----|----|
+| **Nominal** | No | No | No | Counting, mode, frequencies | Blood type, sex, ethnicity |
+| **Ordinal** | Yes | No | No | Median, percentiles, ranking | Cancer stage, pain scale |
+| **Interval** | Yes | Yes | No (arbitrary zero) | Mean, SD, addition/subtraction | Temperature (°C), IQ score |
+| **Ratio** | Yes | Yes | Yes (true zero) | All arithmetic, including ratios | Weight, height, age, blood pressure |
+
+::: callout-tip
+A simple test for **ratio scale**: does "zero" mean "none of the quantity," and does it make sense to say "20 kg is twice as heavy as 10 kg"? If yes, it is a ratio scale. Temperature in Celsius fails this test (0°C is not "no temperature," and 20°C is not "twice as hot" as 10°C), so it is only an interval scale.
+:::
+
+Nominal and ordinal scales are collectively referred to as **categorical**, while interval and ratio scales are collectively referred to as **numerical/quantitative**. Most public health and clinical measurements (weight, blood pressure, cell counts, survival time) are on the ratio scale.
+
+## Summary
+
+-   Data are broadly classified as **qualitative** (nominal, ordinal) or **quantitative** (discrete, continuous).
+
+-   **Variables** may serve as independent, dependent, or confounding variables in an analysis.
+
+-   The **scale of measurement** (nominal, ordinal, interval, ratio) determines which statistical summaries and tests are valid.
+
+## References

@@ -13,7 +13,7 @@ data <- haven::read_sav("Datasets/dt.sav")
 
 ## **Data**
 
-Data is the raw material for the statistical work. Merriam-Webster disctionary defined data as *‘factual information (such as measurements or statistics) used as a basis for reasoning, discussion, or calculation’*[@Merrianwebster]*.* Based in source, data can be classified into two - a) Primary data, and b) Secondary data.
+Data is the raw material for the statistical work. Merriam-Webster disctionary defined data as *‘factual information (such as measurements or statistics) used as a basis for reasoning, discussion, or calculation’*[@merriamwebster2026]*.* Based in source, data can be classified into two - a) Primary data, and b) Secondary data.
 
 Primary data refers to the first hand data collected by the researcher him/herself through direct efforts and experience for the purpose of addressing the research problem. Primary data collection is carried out under the direct supervision of research investigator. Primary data is collected through surveys, observation, telephonic interviews, personal interviews, self filled questionnaire, focus group discussion and so on. Primary data are specific to researcher's need and are in crude form. It is expensive as it requires time, investment and human resources.
 
@@ -45,7 +45,7 @@ There are four scales of measurement which are as follows:
 
 -   Ratio Scale
 
-![](Pictures/Figure_11.png)
+![](/Section1/Pictures/Figure_11.png)
 
 ### **Nominal Scale**
 
@@ -71,7 +71,7 @@ The ratio scale is quantitative measurement scale and the 4^th^ level of measur
 
 **Example:** Weight (in kilogram), Energy loss (in calories), Blood glucose level (mg/dl).
 
-![](Pictures/four-levels-of-measurement-data.jpg)
+![](/Section1/Pictures/3a48209d-9c06-49c4-87da-fc7f65bce67e.png)
 
 ## Variables type in R
 
@@ -267,3 +267,5 @@ table(data$mstat) # Note that the frequency table looks exactly like a numeric v
 data$mstat <- as.numeric(data$mstat)
 class(data$mstat) # Check the data type 
 ```
+
+## References

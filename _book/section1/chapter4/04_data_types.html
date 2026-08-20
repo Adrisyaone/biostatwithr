@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data and variables – Epidemiology and Biostatistics with R</title>
+<title>Data and variables – Biostatistics with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -65,7 +85,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../section1/chapter5/04_descriptives.html" rel="next">
+<link href="../../Section2/01_introduction_to_Biostat.html" rel="next">
 <link href="../../section1/Chapter3/03_basics.html" rel="prev">
 <link href="../../cover.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -303,29 +323,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <img src="../../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="../../">Epidemiology and Biostatistics with R</a> 
+      <a href="../../">Biostatistics with R</a> 
         <div class="sidebar-tools-main tools-wide">
-    <a href="https://github.com/Adrisyaone/epidemiologyR.git" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="../../Epidemiology-and-Biostatistics-with-R.pdf">
-              <i class="bi bi-file-pdf pe-1"></i>
-            Download PDF
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="../../Epidemiology-and-Biostatistics-with-R.epub">
-              <i class="bi bi-journal pe-1"></i>
-            Download ePub
-            </a>
-          </li>
-      </ul>
-    </div>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
               <i class="bi bi-twitter pe-1"></i>
@@ -336,6 +340,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
               <i class="bi bi-linkedin pe-1"></i>
             LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
             </a>
           </li>
       </ul>
@@ -378,22 +388,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2</span></a>
+  <a href="../../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Data and variables</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../section1/chapter5/04_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../section1/chapter6/04_graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Selection of Graphics for data presentation</span></a>
   </div>
 </li>
       </ul>
@@ -409,67 +409,117 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/01_introduction_descriptive_statistics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  <a href="../../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/02_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  <a href="../../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/03_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  <a href="../../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/04_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  <a href="../../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/05_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/06_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics and Probability Foundations</span></a>
+  <a href="../../Section2/06_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/07_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  <a href="../../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/05_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  <a href="../../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Numerical data analysis/06_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  <a href="../../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Categorical data analysis/Categorical_data_analysis2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  <a href="../../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Count data analysis/Poisson's regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count data</span></a>
+  <a href="../../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Survival analysis/Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  <a href="../../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../Section2/Sample size calculation/Sample size calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation</span></a>
+  <a href="../../Section2/12_1_Correlation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Association Between Two Numeric Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_2_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing a Sample Mean to a Fixed Value</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_3_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_4_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/12_5_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation and power</span></a>
   </div>
 </li>
       </ul>
@@ -523,8 +573,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#complex" id="toc-complex" class="nav-link" data-scroll-target="#complex"><strong>Complex</strong></a></li>
   </ul></li>
   <li><a href="#converting-data-types" id="toc-converting-data-types" class="nav-link" data-scroll-target="#converting-data-types">Converting data types</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/edit/main/section1/chapter4/04_data_types.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/section1/chapter4/04_data_types.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -551,7 +602,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data"><strong>Data</strong></h2>
-<p>Data is the raw material for the statistical work. Merriam-Webster disctionary defined data as <em>‘factual information (such as measurements or statistics) used as a basis for reasoning, discussion, or calculation’</em><span class="citation" data-cites="Merrianwebster">(<a href="#ref-Merrianwebster" role="doc-biblioref"><strong>Merrianwebster?</strong></a>)</span><em>.</em> Based in source, data can be classified into two - a) Primary data, and b) Secondary data.</p>
+<p>Data is the raw material for the statistical work. Merriam-Webster disctionary defined data as <em>‘factual information (such as measurements or statistics) used as a basis for reasoning, discussion, or calculation’</em><span class="citation" data-cites="merriamwebster2026">(<a href="#ref-merriamwebster2026" role="doc-biblioref">Merriam Webster 2026</a>)</span><em>.</em> Based in source, data can be classified into two - a) Primary data, and b) Secondary data.</p>
 <p>Primary data refers to the first hand data collected by the researcher him/herself through direct efforts and experience for the purpose of addressing the research problem. Primary data collection is carried out under the direct supervision of research investigator. Primary data is collected through surveys, observation, telephonic interviews, personal interviews, self filled questionnaire, focus group discussion and so on. Primary data are specific to researcher’s need and are in crude form. It is expensive as it requires time, investment and human resources.</p>
 <p>Secondary data refers to the second hand data collected by somebody else other than the researcher himself/herself for their own purpose. They are available through sources like census, government publications, data repositories, data dashboards, books, articles etc. Secondary data exist in refined form. They are cost effective. But they are not specific to researcher’s need so they are less accurate, less reliable, and less adequate compared to primary data.</p>
 </section>
@@ -577,7 +628,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Interval Scale</p></li>
 <li><p>Ratio Scale</p></li>
 </ul>
-<p><img src="Pictures/Figure_11.png" class="img-fluid"></p>
+<p><img src="../..\Section1/Pictures/Figure_11.png" class="img-fluid"></p>
 <section id="nominal-scale" class="level3">
 <h3 class="anchored" data-anchor-id="nominal-scale"><strong>Nominal Scale</strong></h3>
 <p>A nominal scale is the 1<sup>st</sup> level of measurement scale in which the numbers serve as “tags” or “labels” to classify or identify the objects. A nominal scale usually deals with the non-numeric variables or the numbers that do not have any value. A variable with nominal scale can have two or more categories. The numbers don’t define the object characteristics. The only permissible aspect of numbers in the nominal scale is “counting.”</p>
@@ -597,7 +648,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="ratio-scale"><strong>Ratio Scale</strong></h3>
 <p>The ratio scale is quantitative measurement scale and the 4<sup>th</sup>&nbsp;level of measurement scale. It is the highest scale of measurement. It is a type of variable measurement scale. It allows researchers to compare the differences or intervals. The ratio scale has a unique feature. Ratio scale has a feature of absolute zero. It doesn’t have negative numbers, because of its zero-point feature.</p>
 <p><strong>Example:</strong> Weight (in kilogram), Energy loss (in calories), Blood glucose level (mg/dl).</p>
-<p><img src="Pictures/four-levels-of-measurement-data.jpg" class="img-fluid"></p>
+<p><img src="../..\Section1/Pictures/3a48209d-9c06-49c4-87da-fc7f65bce67e.png" class="img-fluid"></p>
 </section>
 </section>
 <section id="variables-type-in-r" class="level2">
@@ -882,8 +933,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>#&gt; [1] "numeric"</code></pre>
 </div>
 </div>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-merriamwebster2026" class="csl-entry" role="listitem">
+Merriam Webster. 2026. <span>“Definition of DATA.”</span> <a href="https://www.merriam-webster.com/dictionary/data">https://www.merriam-webster.com/dictionary/data</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1301,13 +1360,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../section1/Chapter3/03_basics.html" class="pagination-link" aria-label="Basics in R: Part-2">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Basics in R: Part-2</span></span>
+      <a href="../../section1/Chapter3/03_basics.html" class="pagination-link" aria-label="Basics in R: Part-2 (Data cleaning)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../section1/chapter5/04_descriptives.html" class="pagination-link" aria-label="Descriptive Statistics">
-        <span class="nav-page-text"><span class="chapter-title">Descriptive Statistics</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../Section2/01_introduction_to_Biostat.html" class="pagination-link" aria-label="Introduction to Biostatistics">
+        <span class="nav-page-text"><span class="chapter-title">Introduction to Biostatistics</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1316,5 +1375,5 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/edit/main/section1/chapter4/04_data_types.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/epidemiologyR.git/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/section1/chapter4/04_data_types.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

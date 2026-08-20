@@ -1,0 +1,939 @@
+---
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+---
+
+# Sample Size estimation and power {#sec-ssc_and_power}
+
+### **Introduction**
+
+Sample size estimation is a important step in the design of any research study. It determines how many participants or data points are needed to draw reliable conclusions from the study. An adequately sized sample ensures that the study has sufficient power to detect a true effect if one exists, avoids wastage of resources, and protects against ethical concerns about using either too many or too few research subjects.
+
+### Characteristics of Sample
+
+### 1. Representative
+
+A representative sample accurately reflects the demographics, behaviors, or characteristics of the larger population from which it is drawn. This characteristic is essential to generalize the findings from the sample to the population. A sample that is not representative may lead to biased results if the participants have different characteristics from the general population.
+
+**Methods to Achieve Representativeness:**
+
+-   **Random Sampling:** Every member of the population has an equal chance of being selected.
+
+-   **Stratified Sampling:** The population is divided into subgroups (strata) that are known to exist, and random samples are drawn from each stratum.
+
+-   **Cluster Sampling:** Randomly selecting entire clusters or groups from a population, where each cluster reflects the characteristics of the whole.
+
+### 2. Sufficiently Large
+
+The sample must be large enough to provide reliable, statistically valid results. The size needed depends on the expected effect size, the variability in the data, the desired power of the study (i.e., the probability of detecting an effect if one exists), and the acceptable level of type I and type II errors.
+
+**Benefits of Adequate Sample Size:**
+
+-   **Increased Precision:** Larger samples tend to yield more precise estimates of the population parameters.
+
+-   **Reduced Sampling Error:** The error between the sample statistic and the population parameter is likely to be smaller.
+
+### 3. Efficient
+
+An efficient sample is one that provides the maximum amount of information needed for the study while using the least amount of resources (time, money, effort). Efficiency is particularly important in studies with limited resources or when the study involves hard-to-reach populations.
+
+**Strategies for Efficiency:**
+
+-   **Optimal Allocation in Stratified Sampling:** Dividing resources in a way that maximizes the variability captured by each part of the sample.
+
+-   **Multistage Sampling:** Combining several sampling methods can be more resource-efficient than a simple random sample, especially for large, geographically dispersed populations.
+
+### 4. Easy to Draw
+
+The sample should be such that it can be drawn without undue difficulty. This means considering logistical aspects of sampling, such as the ease of accessing the population, the availability of contact information, and the willingness of individuals to participate.
+
+**Considerations for Easy Sampling:**
+
+-   **Accessibility of the Population:** Choosing a population that is readily accessible and willing to participate can significantly simplify the process of sample collection.
+
+-   **Practicality of Sampling Methods:** Employing sampling methods that are practical and feasible under the circumstances of the study, like using existing databases or online platforms for surveys when face-to-face interaction is not possible.
+
+### How large sample size should be?
+
+Determining the appropriate sample size for a study is crucial because both excessively small and overly large sample sizes can lead to significant drawbacks. Let's explore these conditions in more detail:
+
+#### When the Sample Size is Too Small
+
+1.  **Failure to Detect Clinically Important Associations or Differences:** A small sample size has limited statistical power, which means the study might not be able to detect significant effects or differences that are clinically meaningful. This inability to observe a true effect can lead to false negatives (Type II errors).
+
+2.  **Imprecise Estimation of Associations or Differences:** With fewer data points, the estimates of parameters such as means, proportions, or correlations become less precise. This lack of precision is reflected in wider confidence intervals, making it difficult to draw firm conclusions from the data.
+
+3.  **Failure to Answer Research Questions:** If the sample size is insufficient to provide clear, reliable results, the primary research questions may remain unanswered. This ambiguity can render the research inconclusive and, in many cases, necessitates further study, delaying potential advancements in the field.
+
+4.  **Waste of Participant Input:** Participants who contribute their time and information to a study that is too small may feel their effort is wasted if the study fails to provide meaningful results. This can affect participant morale and willingness to engage in future research.
+
+#### When the Sample Size is Too Large
+
+1.  **Waste of Resources:** Excessively large samples involve more logistical arrangements, more staff time, and potentially more equipment and materials than are actually needed to achieve the objectives of the study.
+
+2.  **Waste of Money:** The costs associated with data collection, data management, and analysis increase with the size of the sample. Over-recruitment can lead to unnecessary expenditure that could have been allocated to other important aspects of the study or other research projects.
+
+3.  **Waste of Time:** Managing a larger sample size often requires additional time for data collection, entry, and analysis. This not only extends the timeline of the current project but may also delay the initiation of subsequent studies.
+
+4.  **Difficulty in Maintaining Quality of Data:** As sample sizes increase, maintaining consistency and accuracy in data collection across many subjects and settings can become challenging. Larger datasets can introduce more opportunities for errors in data entry, loss of data fidelity, and complications in data management.
+
+Thus sample size should be optimum. Optimum sample size can be identified through sample size calculation. The importance of sample size calculation are :
+
+1.  Allow appropriate analysis'
+2.  Provide desired level of accuracy
+3.  Allow validity of significance test
+4.  Required for ethical approval
+
+### **Fundamentals of Sample Size Estimation**
+
+#### **1. Objective of the Study**
+
+The purpose of the study heavily influences sample size. Objectives can vary from estimating a parameter (like an average or proportion) with a specified precision, to detecting a difference between groups, or to establishing a correlation between variables.
+
+#### **2. Significance Level (α)**
+
+The significance level is the probability of rejecting the null hypothesis when it is actually true (Type I error). A common value used is 0.05, implying a 5% risk of a Type I error.
+
+#### **3. Power (1 - β)**
+
+Power is the probability of correctly rejecting the null hypothesis when it is false, essentially avoiding a Type II error. A typical power used in studies is 80% or 90%, depending on the importance of the outcome being studied.
+
+#### **4. Effect Size**
+
+Effect size is a quantitative measure of the magnitude of the experimental effect that the researcher seeks to detect. The larger the effect size, the smaller the sample size required to detect it.
+
+Some requirements for sample size calculation using R
+
+```{r}
+# packages
+# install.packages("presize")
+# install.packages("epiR")
+# install.packages("pwrss")
+
+library(presize)
+library(epiR)
+library(pwrss)
+
+
+# standard normal deviates used throughout this chapter
+z_alpha <- function(conf.level = 0.95, two.sided = TRUE){
+  alpha <- 1 - conf.level
+  if(two.sided) qnorm(1 - alpha / 2) else qnorm(1 - alpha)
+}
+
+z_beta <- function(power = 0.80){
+  qnorm(power)
+}
+```
+
+## Sample size calculation for Cross-section study estimating simple prevalence
+
+### Using precision based approach
+
+#### When population is finite and anticipated population proportion is not known.
+
+In this scenario, we can use Yamane formula
+
+$$ n = \frac{1}{1 + N.d^2} $$ where N is total count of finite population and d is the absolute error
+
+Lets create a function to calculate sample size by Yamane formula
+
+```{r}
+# lets generate a function for yamane formula
+yamane<-function(N, abs.err){
+  n=N/(1+N*abs.err^2)
+  cat("Sample size is :", "\n", ceiling(n))
+}
+```
+
+**Example:** Let us consider, you are interested in carrying a prevalence study using simple random sampling from a population of over 12000 university students. There were no previous studies to anticipate prevalence. What is the required sample size to estimate prevalence within 5% point of the true prevalence.
+
+**Solution:**
+
+Here, N=12000; d=0.05
+
+```{r}
+# Calculate sample size using our own function
+yamane(12000, 0.05)
+```
+
+#### When anticipated population proportion is known and population is not finite.
+
+To calculate sample size for this scenario, we require anticipated **population proportion (p)**, **confidence level (1-alpha)** and **absolute precision (d)**. The required cochrane formula is as follow:
+
+$$ n = \frac{Z^2. p(1-p)}{d^2} $$ where $Z=1.96$ at 95% confidence level, `p`=anticipated population proportion and `d` is absolute precision.
+
+Sample size can be estimated using own function or using functions from R packages. To calculated sample size for this situation, we can use `epi.sssimpleestb()` function from `epiR` package or we can use the following function:
+
+```{r}
+# Lets generate our own function to calculate sample size when anticipated population proportion is known and population is not finite
+
+sscal_oneprop_precision_based<-function(P, error, error_type=c("absolute", "relative"), conf.int=0.95, N=NA){
+  alpha=1-conf.int
+  Za= z_alpha(conf.level = conf.int, two.sided = TRUE)
+  if(error_type=="relative"){
+  n=Za^2*(1-P)/(P*error^2)
+  n <- ifelse(is.na(N), n, (n * N)/(n + (N - 1)))
+  }
+  else{
+    n=Za^2*(P*(1-P)/error^2)
+    n <- ifelse(is.na(N), n, (n * N)/(n + (N - 1)))
+    }
+  
+  cat("Sample size is:", "\n", ceiling(n))
+}
+
+```
+
+::: {.callout-note appearance="minimal"}
+**Example 1:** Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old. How many adults should be included in the study so that the estimated prevalence is within 2% point of the true value with 95% confidence level and it is estimated from the previous study that prevalence is 10%.
+:::
+
+**Solution:**
+
+From **Example 1**, we know that $p=10%$, $1-alpha =95%$, $d=2%$. The calculated sample size is as follows:
+
+```{r, warning=FALSE}
+# install.packages("epiR")
+library(epiR)
+
+# Error: package or namespace load failed for ‘epiR’ in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
+#  there is no package called ‘gfonts’
+# In addition: Warning message:
+# package ‘epiR’ was built under R version 4.4.2
+
+# I got error due to absenence of 'gfonts' so i'm installing it.
+
+# install.packages('gfonts')
+
+# use epi.sssimpleestb() function from epiR package
+epi.sssimpleestb(Py = 0.10, epsilon = 0.02,error = "absolute",conf.level = 0.95, se =1, sp = 1)
+
+
+# using created function
+sscal_oneprop_precision_based(P = 0.10, error = 0.02, error_type = "absolute", conf.int = 0.95)
+```
+
+#### When anticipated population proportion is known and population is finite
+
+When population is finite, we have to correct our sample size which can be carried out by using following formula
+
+$$ n = \frac{n_0.N}{n_0 +(N-1)} $$ where n0 is the calculated sample size from the previous formula.
+
+We can calculate sample size using `epi.sssimpleestb()` from epiR package [@stevenson2026] or function created before.
+
+::: callout-note
+**Example 2:** Let us consider, we wanted to calculate prevalence of hepatitis among adults age 15-49 years old in the hotel of population 1500. How many adults should be included in the study so that the estimated prevalence is within 20% relative error and 95% confidence level and it is estimated from the previous study that prevalence is 10%.
+:::
+
+**Solution**
+
+From Example 2, we know that $p=10%$, $1-alpha =95%$, $d=2%$ and $N=1500$. The calculated sample size is as follows:
+
+```{r}
+# Using epiR package
+epi.sssimpleestb(Py = 0.10, epsilon = 0.2,error = "relative",conf.level = 0.95, se =1, sp = 1, N = 1500)
+
+
+# using own function
+sscal_oneprop_precision_based(P = 0.10, error = 0.2, error_type = "relative", conf.int = 0.95, N=1500)
+```
+
+### Using power based approach
+
+When studies are designed to test hypothesis that the anticipated prevalence of condition is less than, greater than or equal to the hypothesized value. To calculate prevalence through this approach, we require following:
+
+-   prevalence under null hypothesis
+-   test prevalence
+-   level of significance
+-   power of the test, and
+-   type of alternative hypothesis (one-sided or both sided)
+
+#### One Sample proportion with hypothesis testing
+
+For the study conducting asymptotic z-test for a single proportion (one sample test), the sample size can be calculated using the formula that uses normal approximation to the distribution of the test statistic. The formula is as follow:
+
+$$
+n=\frac{\left( Z_a \sqrt{P_0 (1 - P_0)} + Z_b \sqrt{P (1 - P)} \right)^2}{(P_0 - P)^2}
+$$
+
+where,
+
+$P_0$ is population proportion under null hypothesis
+
+$P_a$ is anticipated value of the population proportion (proportion under alternative hypothesis)
+
+$Z_a$ is Z value at x% CI (one sided or two sided)
+
+$Z_b$ is Z value at y% power
+
+::: callout-note
+**Example 3:** A regional survey found that **30%** of women aged 15–49 in a district use a modern method of contraception. After a two-year family-planning outreach program, program officers want to test whether uptake has genuinely *increased* above the baseline of 30% , they are not interested in a possible decrease, only an improvement. They anticipate the true post-program rate to be around **38%**. How many women should be surveyed to have **85% power** of detecting this increase, at the **5% level of significance**, using a **one-sided test**?
+:::
+
+**Solution:**
+
+We have,
+
+$P_0=0.30$
+
+$P_a=0.38%$
+
+$alpha =0.05$ (one sided)
+
+$power=0.85$
+
+```{r}
+
+# Using own Function
+sscal_oneprop_power_based<-function(P0, P, sided.test=c("one sided", "two sided"), conf.int=0.95, power=0.80){
+  alpha=1-conf.int
+  if(sided.test=="two sided"){
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  } else{Za=qnorm(p=1-alpha, mean=0, sd=1)}
+  
+  beta=1-power
+  Zb=qnorm(p=1-beta, mean=0, sd=1)
+  
+  n=({Za*sqrt(P0*(1-P0))+Zb*sqrt(P*(1-P))}^2)/(P0-P)^2
+  
+  cat("Sample size is:", ceiling(n), "\n \n")
+}
+
+# Calculation
+sscal_oneprop_power_based(P0 =0.30, P = 0.38,sided.test = "one sided", power = 0.85,conf.int = 0.95 )
+
+# Using R package
+pwrss.z.prop(p = 0.38, p0 = 0.30, alpha = 0.05, power = 0.85,
+             alternative = "less", arcsin.trans = FALSE)
+```
+
+::: callout-note
+**Example:** The success rate for a surgical treatment of a particular heart condition is widely reported in the literature to be 70%. A new medical treatment has been proposed that is alleged to offer equivalent treatment success. A hospital without the necessary facilities or staff to provide the surgical treatment has decided to use the new medical treatment for all new patients presenting with this condition. How many patients must be studied to test the hypothesis that the success rate of the new method of treatment is 70% against an alternative hypothesis that it is not 70% at the 5% level of significance? The investigators wish to have a 90% power of detecting a difference between the success rates of 10 percentage points or more in either direction.
+:::
+
+**Solution:**
+
+test success rate (p0)= 0.7
+
+anticipated success rate (p)=0.8 or 0.6
+
+alpha=0.05
+
+power =0.9
+
+sided test = two sided
+
+```{r}
+pwrss::pwrss.z.prop(p = 0.8, p0 = 0.7, alpha = 0.05, power = 0.90,alternative = "not equal"
+      ,
+             arcsin.trans = FALSE)
+
+sscal_oneprop_power_based(P0 =0.70, P = 0.80,sided.test = "two sided", power = 0.90,conf.int = 0.95 )
+```
+
+## Sample size calculation for study estimating difference in two proportions
+
+This can be done by two approach:
+
+a\) precision based approach
+
+b\) power based approach
+
+#### Using precision based approach
+
+In this approach, we required anticipated population proportions for two groups, confidence level, precision level. The formula to calculate sample size is as follows:
+
+$$
+n= \frac{Z_a^2 *V^2}{d^2}
+$$
+
+Where\
+$$
+V=P_1 *(1-P_1)+P_2*(1-P_2)
+$$
+
+::: callout-note
+**Example 4:** What sample size should be selected from each of two groups in order to estimate the risk difference within 5 percentage points of the true difference, with 95% confidence, when no reliable estimates of P1 and P2 are available?
+:::
+
+**Solution**
+
+precision = 5% (0.05)
+
+P1, P2 are unknown so lets take 50% each
+
+confidence level =95%
+
+```{r}
+# Using own function
+sscal_twoprop_precision_based<-function(P1, P2, abs.error, conf.int=0.95, N=NA){
+  alpha=1-conf.int
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  
+  V=P1*(1-P1)+P2*(1-P2)
+  
+  n=Za^2*V/(abs.error^2)
+  
+  cat("Sample size required \n group1: ", ceiling(n),  "group2:", ceiling(n), "\n\n")
+}
+
+
+sscal_twoprop_precision_based(P1 = 0.5, P2 = 0.5,abs.error = 0.05,conf.int = 0.95)
+
+
+# Using R package
+# P1 = 0.5, P2 = 0.5, d = 0.06 -> conf.width = 2 * 0.06
+prec_riskdiff(p1 = 0.5, p2 = 0.5, conf.width = 2 * 0.05,r = 1,
+              conf.level = 0.95, method = "wald")[1:6]
+```
+
+#### Using power based approach
+
+In power based approach, we required anticipated population proportions (p1 and p2) , level of significance, power of test and type of test (one sided or two sided).
+
+::: callout-note
+**Example 5:** An investigator wants to compare the complication rates between two types of surgery: one with a 15% complication rate and the other with a 25% complication rate. How large should the sample size be in each group to detect, with 80% power and a significance level of 5%, whether the complication rate of the second surgery is significantly higher than that of the first?
+:::
+
+**Solution:**
+
+complication rate for the one group (p1)=5%
+
+complication rate for the another group (p2)=15%
+
+power: 90%
+
+Confidence level=95%
+
+sided test= one sided
+
+```{r}
+sscal_twoprop_power_based<-function(P1, P2, sided.test=c("one.sided", "two.sided"), conf.int=0.95, power=0.80){
+  P=(P1+P2)/2
+  alpha=1-conf.int
+  if(sided.test=="two.sided"){
+  Za=qnorm(p=1-alpha/2, mean=0, sd=1)
+  } else{Za=qnorm(p=1-alpha, mean=0, sd=1)}
+  
+  beta=1-power
+  Zb=qnorm(p=1-beta, mean=0, sd=1)
+  
+  n=({Za*sqrt(2*P*(1-P))+Zb*sqrt(P1*(1-P1)+P2*(1-P2))}^2)/(P1-P2)^2
+  
+  cat("Sample size required \n group1: ", ceiling(n), "\n", "group2:", ceiling(n))
+}
+
+# Calculation
+sscal_twoprop_power_based(P1 =0.15, P2 = 0.25,sided.test = "one.sided", power = 0.8,conf.int = 0.95 )
+
+
+# function from package 
+power.prop.test(p1 = 0.15, p2 = 0.25, sig.level = 0.05, power = 0.8,alternative = "one.sided")
+```
+
+## Sample size calculation for Case-control studies estimating odds ratio
+
+#### Using precision based approach
+
+In order to calculate sample size either $P_1^*$ (exposure probability among cases) or the anticipated odds ratio $OR$, together with $P_2^*$ (exposure probability among controls, often approximated by the overall exposure rate), confidence level, and relative precision $\varepsilon$.
+
+Tables 6a–h of the manual give minimum sample sizes for confidence levels of 95%/90% and relative precisions of 10%, 20%, 25% and 50%. A commonly used closed-form (Woolson et al.) approximation for a given relative precision $\varepsilon$ on the log-odds-ratio scale is:
+
+$$
+n = \frac{Z_{1-\alpha/2}^2\left(\dfrac{1}{P_1^*(1-P_1^*)}+\dfrac{1}{P_2^*(1-P_2^*)}\right)}{\left[\ln(1-\varepsilon)\right]^2}
+$$
+
+In R, sample size can be calculated using `presize::prec_or()`[@lenz2026]. It computes sample size for a target odds-ratio CI width using the Gart, Woolf, or independence-smoothed-logit methods, rather than the closed-form Woolson approximation above, so results will be similar but not identical. A relative precision of $\varepsilon$ around $OR$ translates to a target `conf.width` of roughly $2 \cdot OR \cdot \varepsilon$ on the OR scale.
+
+::: callout-note
+**Example:** In a Terai district where arsenic-contaminated groundwater is common, about 40% of the population is believed to drink from unsafe tubewells. A case–control study of skin lesions and unsafe water exposure is planned, to estimate the odds ratio (anticipated to be about 2.5) to within 20% of its true value, with 95% confidence.
+:::
+
+**Solution:** $P_2^* = 0.40$; $OR = 2.5$; confidence level $= 95\%$; $\varepsilon = 0.20$
+
+```{r}
+
+# Using R package 
+library(presize)
+
+# P2* = 0.40, OR = 2.5 -> implied P1* = OR*P2/(1-P2+OR*P2)
+P1_star <- (2.5 * 0.40) / (1 - 0.40 + 2.5 * 0.40)
+
+# epsilon = 0.20 -> conf.width = 2 * OR * epsilon = 2 * 2.5 * 0.20
+prec_or(p1 = P1_star, p2 = 0.40, conf.width = 2 * 2.5 * 0.20,
+        conf.level = 0.95, method = "gart")
+
+
+# Using own function
+CC_odds_ratio <- function(P2, OR, epsilon, conf.level = 0.95){
+  # P2: exposure probability among controls (overall exposure rate)
+  # OR: anticipated odds ratio
+  P1 <- (OR * P2) / (1 - P2 + OR * P2)   # implied exposure probability among cases
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  n  <- (Za^2 * (1 / (P1 * (1 - P1)) + 1 / (P2 * (1 - P2)))) / (log(1 - epsilon))^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+CC_odds_ratio(P2 = 0.40, OR = 2.5, epsilon = 0.20, conf.level = 0.95)
+```
+
+#### Using power based approach
+
+In order to calculate sample size, we required: test value $OR_0 = 1$, anticipated odds ratio $OR_a$ (or $P_1^*$ directly), $P_2^*$ (exposure probability among controls), significance level $\alpha$, power $1-\beta$, and whether the test is one- or two-sided.
+
+Under the null hypothesis $OR_0 = 1$, the exposure probabilities in cases and controls are equal ($P_1^* = P_2^*$), so this reduces to exactly the same two-proportion hypothesis-test problem but applied to *exposure* probabilities instead of *outcome* probabilities. First convert the anticipated $OR_a$ and $P_2^*$ into an implied $P_1^*$, then apply the pooled-variance Fleiss formula:
+
+$$
+P_1^* = \frac{OR_a \cdot P_2^*}{1 - P_2^* + OR_a \cdot P_2^*}, \qquad
+\bar P^* = \frac{P_1^*+P_2^*}{2}
+$$
+
+$$
+n = \frac{\left(Z_{1-\alpha/2}\sqrt{2\bar P^*(1-\bar P^*)} + Z_{1-\beta}\sqrt{P_1^*(1-P_1^*)+P_2^*(1-P_2^*)}\right)^2}{(P_1^*-P_2^*)^2} \text{ (per group)}
+$$
+
+In R, we can estimate sample size using R package `epiR::epi.sscc()`[@stevenson2026]. It implements this exact case–control hypothesis-test situation (following Dupont 1988), taking the anticipated $OR$ and the control exposure rate ($P_2^*$, here `p0`) directly.
+
+**Example:** Oral submucous fibrosis (OSF) is suspected to be linked to habitual areca-nut chewing. In a planned case–control study, about 25% of controls (people without OSF) are expected to be habitual chewers, and the anticipated odds ratio for chewers versus non-chewers is 2.5. The investigators are only interested in detecting an *increase* in the odds of exposure among cases (not a decrease), so a one-sided test is appropriate. How many cases and controls are needed for 90% power at the 5% level of significance?
+
+**Solution:** $P_2^* = 0.25$; $OR_a = 2.5$; $\alpha = 0.05$; power $= 90\%$; one-sided test
+
+```{r}
+
+# Using epiR package
+library(epiR)
+
+epi.sscc(OR = 2.5, p1 = NA, p0 = 0.25, n = NA, power = 0.90, r = 1,
+         sided.test = 1, method = "unmatched", fleiss = FALSE, conf.level = 0.95)
+
+
+
+# Writing our own function**
+
+CC_odds_ratio_test <- function(P2, OR, sided = c("two.sided", "one.sided"),
+                                 conf.level = 0.95, power = 0.80){
+  sided <- match.arg(sided)
+  P1   <- (OR * P2) / (1 - P2 + OR * P2)
+  Pbar <- (P1 + P2) / 2
+  Za <- z_alpha(conf.level, two.sided = (sided == "two.sided"))
+  Zb <- z_beta(power)
+  n  <- (Za * sqrt(2 * Pbar * (1 - Pbar)) +
+         Zb * sqrt(P1 * (1 - P1) + P2 * (1 - P2)))^2 / (P1 - P2)^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+CC_odds_ratio_test(P2 = 0.25, OR = 2.5, sided = "one.sided",
+                     conf.level = 0.95, power = 0.90)
+```
+
+## Sample size calculation for Cohort studies estimating relative risk
+
+#### Using precision based approach
+
+To calculate sample size, either $P_1$ (disease probability among exposed) or the anticipated relative risk ($RR$), together with $P_2$ (disease probability among unexposed), confidence level, and relative precision $\varepsilon$, are required.
+
+$$
+n = \frac{Z_{1-\alpha/2}^2\left(\dfrac{1-P_1}{P_1}+\dfrac{1-P_2}{P_2}\right)}{\left[\ln(1-\varepsilon)\right]^2} \text{ (per group)}
+$$
+
+In R, we calculate sample size using `presize::prec_riskratio()`[@lenz2026]. It is analogous precision-based sample size for a risk ratio (relative risk), using the Koopman or Katz methods. As above, a relative precision of $\varepsilon$ around $RR$ translates to a target `conf.width` of roughly $2 \cdot RR \cdot \varepsilon$.
+
+::: callout-note
+**Example:** A cohort study will follow brick-kiln workers exposed to high silica dust and a comparable group of unexposed factory workers to investigate chronic respiratory illness. The disease is present in about 12% of unexposed workers, and the relative risk among exposed workers is anticipated to be around 3. The investigators want to estimate this relative risk to within 30% of its true value, with 95% confidence.
+:::
+
+**Solution:**
+
+$P_2 = 0.12$; $RR = 3$; confidence level $= 95\%$; $\varepsilon = 0.30$
+
+```{r}
+library(presize)
+
+# P2 = 0.12, RR = 3 -> implied P1 = RR * P2
+P1_rr <- 3 * 0.12
+
+# epsilon = 0.30 -> conf.width = 2 * RR * epsilon = 2 * 3 * 0.30
+prec_riskratio(p1 = P1_rr, p2 = 0.12, conf.width = 2 * 3 * 0.30,
+                conf.level = 0.95, method = "koopman")
+
+
+# Writing our own function
+cohort_RR_SS <- function(P2, RR, epsilon, conf.level = 0.95){
+  P1 <- P2 * RR
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  n  <- (Za^2 * ((1 - P1) / P1 + (1 - P2) / P2)) / (log(1 - epsilon))^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+cohort_RR_SS(P2 = 0.12, RR = 3, epsilon = 0.30, conf.level = 0.95)
+```
+
+#### Using power based approach
+
+In order to calculate sample size using power based approach, we require : test value $RR_0 = 1$, anticipated relative risk $RR_a$ (or $P_1$ directly), $P_2$ (disease probability among the unexposed), significance level, power, and one- or two-sided test.
+
+Under the null hypothesis $RR_0 = 1$, the disease probabilities in the exposed and unexposed groups are equal ($P_1 = P_2$), so exactly as with the odds ratio above, this is again the same two-proportion hypothesis-test problem, applied here to *disease* probabilities:
+
+$$
+P_1 = RR_a \cdot P_2, \qquad \bar P = \frac{P_1+P_2}{2}
+$$
+
+$$
+n = \frac{\left(Z_{1-\alpha/2}\sqrt{2\bar P(1-\bar P)} + Z_{1-\beta}\sqrt{P_1(1-P_1)+P_2(1-P_2)}\right)^2}{(P_1-P_2)^2} \text{ (per group)}
+$$
+
+**Using an existing R package**
+
+In R sample size can be estimated using `epiR::epi.sscohortc()`[@stevenson2026]. It implements this exact cohort hypothesis-test situation for individual count (risk) data, taking the anticipated disease probabilities in the exposed (`irexp1`) and unexposed (`irexp0`) groups directly.
+
+::: callout-note
+**Example:** A cohort study will follow women who cook daily over open biomass-fuel stoves and a comparable group of women using cleaner cookstoves, to investigate chronic respiratory illness over 5 years. Chronic respiratory illness is expected in about 10% of the clean-cookstove (unexposed) group, and the relative risk for biomass-fuel users is anticipated to be around 1.8. How many women are needed in each group to detect this difference with 80% power at the 5% level of significance, two-sided?
+:::
+
+**Solution:** $P_2 = 0.10$; $RR_a = 1.8$; $\alpha = 0.05$; power $= 80\%$; two-sided test
+
+```{r}
+# Using epiR package
+library(epiR)
+
+epi.sscohortc(irexp1 = 0.18, irexp0 = 0.10, pexp = NA, n = NA, power = 0.80,
+              r = 1, N = NA, design = 1, sided.test = 2, conf.level = 0.95)
+
+
+# Writing our own function
+C_relative_risk_test <- function(P2, RR, sided = c("two.sided", "one.sided"),
+                                    conf.level = 0.95, power = 0.80){
+  sided <- match.arg(sided)
+  P1   <- RR * P2
+  Pbar <- (P1 + P2) / 2
+  Za <- z_alpha(conf.level, two.sided = (sided == "two.sided"))
+  Zb <- z_beta(power)
+  n  <- (Za * sqrt(2 * Pbar * (1 - Pbar)) +
+         Zb * sqrt(P1 * (1 - P1) + P2 * (1 - P2)))^2 / (P1 - P2)^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+
+C_relative_risk_test(P2 = 0.10, RR = 1.8, sided = "two.sided",
+                        conf.level = 0.95, power = 0.80)
+```
+
+## Sample size estimation for Incidence-rate studies
+
+#### Using precision based appraoch
+
+For this, we required relative precision $\varepsilon$ and confidence level. Assuming the number of events follows a Poisson process, the required number of *events* to observe is:
+
+$$
+n = \frac{Z_{1-\alpha/2}^2}{\varepsilon^2}
+$$
+
+In R, we can use a function `presize::prec_rate()`. It gives the number of events needed for a target rate precision. An anticipated rate must be supplied even though the final answer (number of events) does not actually depend on it. A relative precision of $\varepsilon$ around an assumed rate $r$ translates to `conf.width` $= 2 r \varepsilon$.
+
+```{r}
+# Usint R package
+library(presize)
+
+# assume an arbitrary rate r = 1 (unit-free); epsilon = 0.15 -> conf.width = 2*1*0.15
+prec_rate(r = 1, conf.width = 2 * 1 * 0.15, conf.level = 0.90, method = "score")
+
+# Writing our own function**
+who_incidence_rate <- function(epsilon, conf.level = 0.95){
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  n  <- Za^2 / epsilon^2
+  cat("Number of events (person-time observations) required:", ceiling(n), "\n")
+  invisible(ceiling(n))
+  who_incidence_rate(epsilon = 0.15, conf.level = 0.90)
+
+}
+
+```
+
+::: callout-note
+**Example:** A tuberculosis treatment centre wants to estimate the annual relapse incidence rate among treated patients to within 15% of its true value, with 90% confidence. How many relapse events must be observed?
+:::
+
+**Solution:** $\varepsilon = 0.15$; confidence level $= 90\%$
+
+#### Using power based approach
+
+For this it required, anticipated incidence rates $\lambda_1$ and $\lambda_2$, significance level, power, and the allocation ratio $k = n_2/n_1$ between groups. When study duration is not fixed (subjects followed until the event occurs or they are lost to follow-up), the sample size for group 1 is:
+
+$$
+n_1 = \frac{\left(Z_{1-\alpha/2}\sqrt{(1+1/k)\bar\lambda} + Z_{1-\beta}\sqrt{\lambda_1 + \lambda_2/k}\right)^2}{(\lambda_1-\lambda_2)^2}, \qquad \bar\lambda = \frac{\lambda_1+k\lambda_2}{1+k}
+$$
+
+In R, we can use `epiR::epi.sscohortt()` [@stevenson2026] which implements this exact situation (duration-not-fixed cohort comparison of two incidence rates), so it should reproduce the hand-calculated answer closely.
+
+::: callout-note
+**Example:** A study will compare hearing-loss incidence between garment-factory workers using new ear protection and a historical cohort using the old equipment. The old equipment is associated with an annual incidence of 18%; the new equipment is expected to bring this down to 8%. How many workers should be followed in each group (equal allocation) to have 80% power of detecting this difference at the 5% level, two-sided?
+:::
+
+**Solution:** $\lambda_1 = 0.18$, $\lambda_2 = 0.08$; $k = 1$; $\alpha = 0.05$; power $= 80\%$
+
+```{r}
+library(epiR)
+
+epi.sscohortt(FT = NA, irexp1 = 0.18, irexp0 = 0.08, n = NA, power = 0.80,
+              r = 1, design = 1, sided.test = 2, conf.level = 0.95)
+
+
+# Writing our own function**
+who_two_incidence <- function(lambda1, lambda2, k = 1,
+                               sided = c("two.sided", "one.sided"),
+                               conf.level = 0.95, power = 0.80){
+  sided <- match.arg(sided)
+  Za <- z_alpha(conf.level, two.sided = (sided == "two.sided"))
+  Zb <- z_beta(power)
+  lambda_bar <- (lambda1 + k * lambda2) / (1 + k)
+  n1 <- (Za * sqrt((1 + 1 / k) * lambda_bar) +
+         Zb * sqrt(lambda1 + lambda2 / k))^2 / (lambda1 - lambda2)^2
+  n2 <- k * n1
+  cat("Sample size required \n group1:", ceiling(n1), "\n group2:", ceiling(n2), "\n")
+  invisible(list(n1 = ceiling(n1), n2 = ceiling(n2)))
+}
+
+who_two_incidence(lambda1 = 0.18, lambda2 = 0.08, k = 1,
+                   sided = "two.sided", conf.level = 0.95, power = 0.80)
+```
+
+## Sample size calculation for study estimating single group mean
+
+#### Using Precision based approach
+
+##### Absolute precision
+
+It required anticipated standard deviation $\sigma$, confidence level, and absolute precision $d$ (in the same units as the outcome, on either side of the mean) to estimate sample size.
+
+$$
+n = \frac{Z_{1-\alpha/2}^2\,\sigma^2}{d^2}
+$$
+
+In R, we can use `presize::prec_mean()` to estimate sample size. It solves the same problem, using a $t$-distribution rather than the normal approximation above (so it will need a starting guess of $n$ to compute the right degrees of freedom, but converges to essentially the same answer for the sample sizes typical of health surveys).
+
+::: callout-note
+**Example:** A district hospital wants to estimate the mean birth weight of newborns delivered there. A small pilot chart review suggests a standard deviation of about 450 g. How many births should be reviewed so that the mean birth weight can be estimated to within 100 g of the true value, with 95% confidence?
+:::
+
+**Solution:** $\sigma = 450$; confidence level $= 95\%$; $d = 100$
+
+```{r}
+library(presize)
+
+# sd = 450 g, d = 100 g -> conf.width = 2 * 100
+prec_mean(mean = 3000, sd = 450, conf.width = 2 * 100, conf.level = 0.95)
+
+# Writing our own function**
+
+who_mean_absolute <- function(sd, d, conf.level = 0.95){
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  n  <- (Za^2 * sd^2) / d^2
+  cat("Sample size required:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+who_mean_absolute(sd = 450, d = 100, conf.level = 0.95)
+```
+
+##### Relative precision
+
+It required anticipated mean $\mu$, anticipated standard deviation $\sigma$, confidence level, and relative precision $\varepsilon$ (as a fraction of $\mu$) to estimate sample size.
+
+$$
+n = \frac{Z_{1-\alpha/2}^2\,\sigma^2}{(\varepsilon\mu)^2}
+$$
+
+In R, we can estimate sample size using `presize::prec_mean()` function. It handles this by converting the relative precision into an absolute `conf.width` of $2\varepsilon\mu$.
+
+::: callout-note
+**Example:** An antenatal clinic wants to estimate the mean haemoglobin level of pregnant women attending the clinic, to within 5% of the true mean, with 95% confidence. A previous local study reported a mean of 11 g/dL with a standard deviation of 1.5 g/dL.
+:::
+
+**Solution:**
+
+$\mu = 11$; $\sigma = 1.5$; confidence level $= 95\%$; $\varepsilon = 0.05$
+
+```{r}
+library(presize)
+
+# mean = 11 g/dL, sd = 1.5, epsilon = 0.05 -> conf.width = 2 * 0.05 * 11
+prec_mean(mean = 11, sd = 1.5, conf.width = 2 * 0.05 * 11, conf.level = 0.95)
+
+
+# Writing our own function**
+who_mean_relative <- function(mean, sd, epsilon, conf.level = 0.95){
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  n  <- (Za^2 * sd^2) / (epsilon * mean)^2
+  cat("Sample size required:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+who_mean_relative(mean = 11, sd = 1.5, epsilon = 0.05, conf.level = 0.95)
+```
+
+#### Using power based approach
+
+This approach required test value under the null hypothesis $\mu_0$, anticipated value under the alternative $\mu_a$, anticipated standard deviation $\sigma$, significance level, power, and one- or two-sided test.
+
+$$
+n = \left[\frac{(Z_{1-\alpha/2}+Z_{1-\beta})\,\sigma}{\mu_0-\mu_a}\right]^2
+$$
+
+(replace $Z_{1-\alpha/2}$ with $Z_{1-\alpha}$ for a one-sided test).
+
+In R, we can use Base R's `stats::power.t.test()`. It solves this same one-sample mean hypothesis test directly (using the exact $t$-distribution rather than the normal approximation, so its answer will typically be a shade larger than the closed-form formula above).
+
+::: callout-note
+**Example:** A workplace wellness program reports that office workers nationally average 6,000 steps per day. Program organisers anticipate that participants who complete their 8-week walking challenge will average 7,000 steps per day, with a standard deviation of 1,800 steps (from a previous cohort). How many participants are needed to detect this difference with 90% power, at the 5% level of significance, two-sided?
+:::
+
+**Solution:** $\mu_0 = 6000$; $\mu_a = 7000$; $\sigma = 1800$; $\alpha = 0.05$; power $= 90\%$; two-sided
+
+```{r}
+stats::power.t.test(n=NULL, delta = 7000-6000, sd = 1800, sig.level=0.05, power = 0.90, type = "one.sample", alternative = "two.sided")
+
+
+# Writing our own function**
+who_mean_test <- function(mu0, mua, sd, sided = c("two.sided", "one.sided"),
+                           conf.level = 0.95, power = 0.80){
+  sided <- match.arg(sided)
+  Za <- z_alpha(conf.level, two.sided = (sided == "two.sided"))
+  Zb <- z_beta(power)
+  n  <- ((Za + Zb) * sd / (mu0 - mua))^2
+  cat("Sample size required:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+who_mean_test(mu0 = 6000, mua = 7000, sd = 1800, sided = "two.sided",
+              conf.level = 0.95, power = 0.90)
+```
+
+### Sample size calculation for study estimating two group mean
+
+##### Using Precision based approach
+
+It required anticipated standard deviations $\sigma_1$ and $\sigma_2$, confidence level, and absolute precision $d$.
+
+$$
+n = \frac{Z_{1-\alpha/2}^2\,(\sigma_1^2+\sigma_2^2)}{d^2} \text{ (per group, equal group sizes)}
+$$
+
+In R, `presize::prec_meandiff()` can be used. It computes the sample size needed to estimate a mean difference to a target CI width, allowing unequal variances between groups.
+
+::: callout-note
+**Example:** A nutrition survey wants to estimate the difference in mean haemoglobin level between two ethnic communities in the Terai. Previous data suggest standard deviations of about 1.4 g/dL and 1.6 g/dL in the two groups. How many people are needed in each group to estimate this mean difference to within 0.5 g/dL, with 95% confidence?
+:::
+
+**Solution:**
+
+$\sigma_1 = 1.4$; $\sigma_2 = 1.6$; confidence level $= 95\%$; $d = 0.5$
+
+```{r}
+library(presize)
+
+# sd1 = 1.4, sd2 = 1.6, d = 0.5 -> conf.width = 2 * 0.5
+prec_meandiff(delta = 0.5, sd1 = 1.4, sd2 = 1.6, conf.width = 2 * 0.5,
+              conf.level = 0.95, variance = "unequal")
+
+# Writing our own function
+who_two_mean_absolute <- function(sd1, sd2, d, conf.level = 0.95){
+  Za <- z_alpha(conf.level, two.sided = TRUE)
+  V  <- sd1^2 + sd2^2
+  n  <- (Za^2 * V) / d^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+who_two_mean_absolute(sd1 = 1.4, sd2 = 1.6, d = 0.5, conf.level = 0.95)
+```
+
+##### Power based approach
+
+This approach required anticipated means $\mu_1$, $\mu_2$; anticipated standard deviations $\sigma_1$, $\sigma_2$; significance level; power; one- or two-sided test.
+
+$$
+n = \frac{(\sigma_1^2+\sigma_2^2)\,(Z_{1-\alpha/2}+Z_{1-\beta})^2}{(\mu_1-\mu_2)^2} \text{ (per group, equal group sizes)}
+$$
+
+In R, we can use Base R's `stats::power.t.test()`. It solves the two-sample mean comparison directly (assuming equal variance and equal group sizes; for unequal group sizes or unequal variances, `pwr::pwr.t2n.test()` is a common alternative).
+
+::: callout-note
+**Example:** Two antihypertensive drugs are being compared in a trial. Drug A is expected to reduce systolic blood pressure by 8 mmHg on average, and Drug B by 5 mmHg, both with a standard deviation of about 6 mmHg (based on prior trials). How many patients are needed in each arm to detect this difference with 80% power, at the 5% level of significance, two-sided?
+:::
+
+**Solution:**
+
+$\mu_1 = 8$; $\mu_2 = 5$; $\sigma_1 = \sigma_2 = 6$; $\alpha = 0.05$; power $= 80\%$; two-sided
+
+```{r}
+stats::power.t.test(n=NULL, delta = 8-5, sd = 6, sig.level = 0.05, power = 0.80,
+             type = "two.sample", alternative = "two.sided")
+
+
+# Writing our own function
+who_two_mean_test <- function(mu1, mu2, sd1, sd2 = sd1,
+                               sided = c("two.sided", "one.sided"),
+                               conf.level = 0.95, power = 0.80){
+  sided <- match.arg(sided)
+  Za <- z_alpha(conf.level, two.sided = (sided == "two.sided"))
+  Zb <- z_beta(power)
+  n  <- (sd1^2 + sd2^2) * (Za + Zb)^2 / (mu1 - mu2)^2
+  cat("Sample size required per group:", ceiling(n), "\n")
+  invisible(ceiling(n))
+}
+
+who_two_mean_test(mu1 = 8, mu2 = 5, sd1 = 6, sd2 = 6, sided = "two.sided", conf.level = 0.95, power = 0.80)
+```
+
+## Sample Size Estimation for survival studies {#sec-sse_survival}
+
+In R, `powerSurvEpi::ssizeCT.default()` can be used to estimate sample size. It implements Freedman-based approach, but goes one step further than a raw event count: given the anticipated probability of the event occurring in each arm by the end of the study (`pE`, `pC`), it directly returns the **total number of participants** needed in each arm, not just the number of events.
+
+**Example:** A phase III trial is being planned to compare a new immunotherapy regimen against standard chemotherapy for patients with advanced gastric cancer. Historical data suggest a median progression-free survival (PFS) of 6 months on standard chemotherapy; the new regimen is hypothesized to extend median PFS to 9 months, a 1.5-fold improvement. Investigators want 85% power to detect this difference at the 5% two-sided significance level. Over the planned follow-up period, about 75% of patients on standard chemotherapy and 55% of patients on the new regimen are expected to experience disease progression.
+
+**Solution:**
+
+| Parameter                                            | Value                |
+|------------------------------------------------|-----------------------|
+| Ratio of median PFS (Δ\Delta Δ)                      | 1.5 (9 vs. 6 months) |
+| Level of significance (α\alpha α)                    | 0.05, two-sided      |
+| Power                                                | 85%                  |
+| Probability of progression, treatment arm (pEp_E pE​) | 0.55                 |
+| Probability of progression, control arm (pCp_C pC​)   | 0.75                 |
+| Allocation ratio (kk k)                              | 1 (equal groups)     |
+
+```{r}
+# install.packages("powerSurvEpi") 
+library(powerSurvEpi)  
+# k = allocation ratio (nE/nC), RR = postulated hazard ratio
+# pE/pC = probability of the event by the end of follow-up in each arm 
+
+
+# calculate NEV
+freedman_nev <- function(delta, alpha = 0.05, power = 0.80,
+                          sided = c("two.sided", "one.sided")){
+  sided <- match.arg(sided)
+  z_alpha <- if(sided == "two.sided") qnorm(1 - alpha/2) else qnorm(1 - alpha)
+  z_beta  <- qnorm(power)
+  
+  NEV <- ((z_alpha + z_beta)^2 * (delta + 1)^2) / (delta - 1)^2
+  
+  cat("Number of events required:", ceiling(NEV), "\n")
+  invisible(ceiling(NEV))
+}
+
+freedman_nev(delta = 1.5, alpha = 0.05, power = 0.85, sided = "two.sided")
+
+ssizeCT.default(power = 0.85, k = 1, pE = 0.55, pC = 0.75, RR = 1 / 1.5, alpha = 0.05)
+```
+
+\`\`\`
+
+Freedman's formula alone says **225 events** are needed to detect this effect. Since not every enrolled patient will progress during the study, `ssizeCT.default()` converts that event target into a full enrollment target: **173 patients per arm**, given the anticipated progression probabilities above.

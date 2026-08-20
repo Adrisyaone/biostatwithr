@@ -23,19 +23,19 @@ pwd="159357covid"
 
 Before getting into R, lets learn about function. In simple terms, a function is something that takes inputs, processes them, and generates outputs. A function is a sequence of program instructions that perform a specific task. We can create a function and call it multiple times as per our needs. Thus, we don't need to write the same piece of code again and again.
 
-![Fig: Basic structure of function](images/3e0c562c-f5ad-424b-bb2b-9d6e3c6d0152.png)
+![Fig: Basic structure of function](/Section1/Pictures/3e0c562c-f5ad-424b-bb2b-9d6e3c6d0152.png)
 
-In the figure above, function $f(x)$ processess the input of 5 and gives output of 125. This showed that, function needs input which when processed gives an output.
+In the figure above, function $f(x)$ processes the input of 5 and gives output of 125. This showed that, function needs input which when processed gives an output.
 
 The different parts of a function are:
 
--   **Function Name** − This is the actual name of the function. It is stored in R environment as an object with this name.
+-   **Function Name**: This is the actual name of the function. It is stored in R environment as an object with this name.
 
--   **Arguments** − An argument is a placeholder. When a function is invoked, you pass a value to the argument. Arguments are optional; that is, a function may contain no arguments. Also arguments can have default values.
+-   **Arguments**: An argument is a placeholder. When a function is invoked, you pass a value to the argument. Arguments are optional; that is, a function may contain no arguments. Also arguments can have default values.
 
--   **Function Body** − The function body contains a collection of statements that defines what the function does.
+-   **Function Body**: The function body contains a collection of statements that defines what the function does.
 
--   **Return Value** − The return value of a function is the last expression in the function body to be evaluated.
+-   **Return Value**: The return value of a function is the last expression in the function body to be evaluated.
 
 In R, the functions are called by their name and inputs are kept inside small bracket separated by comma.
 
@@ -130,7 +130,7 @@ print(evaluate(2, 3, 4))
 
 **Lazy evaluation of function**
 
-In R, arguments are evaluated lazily. Here, lazily means that the arguments will get used in the function whenever needed. If any argument is passed but not needed in the function body, then it will get neglected by the function. Thus, we can optimise resource utilisation and increase the function performance with this feature.
+In R, arguments are evaluated lazily. Here, lazily means that the arguments will get used in the function whenever needed. If any argument is passed but not needed in the function body, then it will get neglected by the function. Thus, we can optimize resource utilisation and increase the function performance with this feature.
 
 ```{r}
 # Function definition
@@ -357,7 +357,7 @@ In R, searching R help pages is an essential skill for getting assistance and un
     ?setwd 
     ```
 
-    ![](Pictures/picture_8.png){width="798"}
+    ![](/Section1/Pictures/picture_8.png)
 
 2.  **Search for Keywords:** You can also use the **`help.search()`** function to search for keywords across all available help pages. This function will list all the topics that match the provided keywords.
 
@@ -366,7 +366,7 @@ In R, searching R help pages is an essential skill for getting assistance and un
     help.search("linear regression") 
     ```
 
-    ![](Pictures/picture_10.png){width="815"}
+    ![](/Section1/Pictures/picture_10.png)
 
 3.  **Use Books**
 
@@ -480,7 +480,7 @@ As of Feburary 2024, there were over 20431 packages available on the **C**ompre
 
 Data are present in CSV files (.csv), Excel spreadsheets (.xlsx), SPSS (.sav), SAS files(.sas), Stata files (.dta) or can be in Google sheets or in the servers like Kobotoolbox. You can import data visually or using code. If you are trying to import data visually. First of all go to top right panel where you can see "import dataset". Click the "import dataset" button. and select format of dataset (SPSS, STATA, Excel ,CSV, Text, SAS). Add path to dataset and rename dataset.
 
-![](Pictures/steps%20to%20import%20data.png)
+![](/Section1/Pictures/steps%20to%20import%20data.png)
 
 The sample datasets that are used in this chapter can be downloaded from the google drive link below. Please keep them in your project folder inside a folder named **"Datasets".**
 
@@ -640,11 +640,11 @@ saveRDS(object = data,file = "Output/dt.RDS")
 
 You can save R-scripts by just clicking the **Save** button just above the top left panel
 
-![](Pictures/picture_12.png){width="1280"}
+![](/Section1/Pictures/picture_12.png)
 
 In order to save history of codes that are already ran in console can be save with the help of function `savehistory()`.
 
-![](Pictures/Picture16.png){width="659"}
+![](/Section1/Pictures/Picture16.png)
 
 ```{r, eval=FALSE}
 savehistory(file = "history_file.Rhistory")
@@ -734,17 +734,17 @@ dt[,"mpg"]
 dt[, c("mpg", "hp", "wt")]
 
 # Access variable with index
-dt[,3]
-dt[, c(2,4,5)]
+dt[,3] # select third column and all rows
+dt[, c(2,4,5)] # select second, fourth and fifth column and all rows
 
 # Access specific row by row index
-dt[1, ]
-dt[1:30, ]
-dt[c(1,4,6,15:20), ]
+dt[1, ] # filter first row and all column
+dt[1:30, ]  # filter row 1 to 30 and all column
+dt[c(1,4,6,15:20), ] # filter row 1, 4,6 and 15 to 20 and  all column
 
 
 # Access specific cell
-dt[3,2]
+dt[3,2] # select value from a cell referring to 3rd row and 2nd column
 ```
 
 ## Exploring your data

@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Comparing Three or more Independent Group Means – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Section2/Numerical data analysis/13_linear_regression.html" rel="next">
+<link href="../Section2/12_4_bivariate.html" rel="prev">
+<link href="../cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/12_5_bivariate.html"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/06_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_1_Correlation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Association Between Two Numeric Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_2_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing a Sample Mean to a Fixed Value</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_3_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_4_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_5_bivariate.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling Technique</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation and power</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#comparing-three-or-more-independent-groups" id="toc-comparing-three-or-more-independent-groups" class="nav-link" data-scroll-target="#comparing-three-or-more-independent-groups">Comparing Three or More Independent Groups</a></li>
+  <li><a href="#sec-oneway_anova" id="toc-sec-oneway_anova" class="nav-link" data-scroll-target="#sec-oneway_anova">One-Way ANOVA</a>
+  <ul class="collapse">
+  <li><a href="#hypotheses" id="toc-hypotheses" class="nav-link" data-scroll-target="#hypotheses">Hypotheses</a></li>
+  <li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
+  <li><a href="#partitioning-the-variance" id="toc-partitioning-the-variance" class="nav-link" data-scroll-target="#partitioning-the-variance">Partitioning the variance</a></li>
+  <li><a href="#the-f-statistic" id="toc-the-f-statistic" class="nav-link" data-scroll-target="#the-f-statistic">The <span class="math inline">\(F\)</span> statistic</a></li>
+  <li><a href="#post-hoc-comparisons-tukeys-hsd" id="toc-post-hoc-comparisons-tukeys-hsd" class="nav-link" data-scroll-target="#post-hoc-comparisons-tukeys-hsd">Post-hoc comparisons: Tukey’s HSD</a>
+  <ul class="collapse">
+  <li><a href="#why-a-post-hoc-test-is-needed" id="toc-why-a-post-hoc-test-is-needed" class="nav-link" data-scroll-target="#why-a-post-hoc-test-is-needed">Why a post-hoc test is needed</a></li>
+  <li><a href="#tukeys-honestly-significant-difference-hsd" id="toc-tukeys-honestly-significant-difference-hsd" class="nav-link" data-scroll-target="#tukeys-honestly-significant-difference-hsd">Tukey’s Honestly Significant Difference (HSD)</a></li>
+  <li><a href="#other-post-hoc-and-multiple-comparison-methods" id="toc-other-post-hoc-and-multiple-comparison-methods" class="nav-link" data-scroll-target="#other-post-hoc-and-multiple-comparison-methods">Other post-hoc and multiple-comparison methods</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#manual-hand-calculation-of-one-way-anova" id="toc-manual-hand-calculation-of-one-way-anova" class="nav-link" data-scroll-target="#manual-hand-calculation-of-one-way-anova">Manual (Hand) Calculation of One-Way ANOVA</a>
+  <ul class="collapse">
+  <li><a href="#step-1-compute-the-grand-mean-and-each-groups-mean" id="toc-step-1-compute-the-grand-mean-and-each-groups-mean" class="nav-link" data-scroll-target="#step-1-compute-the-grand-mean-and-each-groups-mean">Step 1: Compute the grand mean and each group’s mean</a></li>
+  <li><a href="#step-2-between-groups-sum-of-squares" id="toc-step-2-between-groups-sum-of-squares" class="nav-link" data-scroll-target="#step-2-between-groups-sum-of-squares">Step 2 : Between-groups sum of squares</a></li>
+  <li><a href="#step-3-within-groups-sum-of-squares" id="toc-step-3-within-groups-sum-of-squares" class="nav-link" data-scroll-target="#step-3-within-groups-sum-of-squares">Step 3: Within-groups sum of squares</a></li>
+  <li><a href="#step-4-total-sum-of-squares-a-check" id="toc-step-4-total-sum-of-squares-a-check" class="nav-link" data-scroll-target="#step-4-total-sum-of-squares-a-check">Step 4: Total sum of squares (a check)</a></li>
+  <li><a href="#step-5-build-the-anova-table" id="toc-step-5-build-the-anova-table" class="nav-link" data-scroll-target="#step-5-build-the-anova-table">Step 5: Build the ANOVA table</a></li>
+  <li><a href="#step-6-verify-against-r" id="toc-step-6-verify-against-r" class="nav-link" data-scroll-target="#step-6-verify-against-r">Step 6: Verify against R</a></li>
+  </ul></li>
+  <li><a href="#sec-welch_oneway_anova" id="toc-sec-welch_oneway_anova" class="nav-link" data-scroll-target="#sec-welch_oneway_anova">Welch’s ANOVA (Unequal Variances)</a>
+  <ul class="collapse">
+  <li><a href="#when-to-use-it" id="toc-when-to-use-it" class="nav-link" data-scroll-target="#when-to-use-it">When to use it</a></li>
+  </ul></li>
+  <li><a href="#sec-h_test_KW" id="toc-sec-h_test_KW" class="nav-link" data-scroll-target="#sec-h_test_KW">The Kruskal-Wallis Test</a>
+  <ul class="collapse">
+  <li><a href="#when-to-use-it-1" id="toc-when-to-use-it-1" class="nav-link" data-scroll-target="#when-to-use-it-1">When to use it</a></li>
+  <li><a href="#procedure-and-formula" id="toc-procedure-and-formula" class="nav-link" data-scroll-target="#procedure-and-formula">Procedure and formula</a></li>
+  </ul></li>
+  <li><a href="#manual-calculation-of-the-kruskal-wallis-test" id="toc-manual-calculation-of-the-kruskal-wallis-test" class="nav-link" data-scroll-target="#manual-calculation-of-the-kruskal-wallis-test">Manual calculation of the Kruskal-Wallis Test</a>
+  <ul class="collapse">
+  <li><a href="#step-1-rank-all-15-values-together" id="toc-step-1-rank-all-15-values-together" class="nav-link" data-scroll-target="#step-1-rank-all-15-values-together">Step 1: Rank all 15 values together</a></li>
+  <li><a href="#step-2-sum-the-ranks-in-each-group" id="toc-step-2-sum-the-ranks-in-each-group" class="nav-link" data-scroll-target="#step-2-sum-the-ranks-in-each-group">Step 2: Sum the ranks in each group</a></li>
+  <li><a href="#step-3-compute-h" id="toc-step-3-compute-h" class="nav-link" data-scroll-target="#step-3-compute-h">Step 3: Compute <span class="math inline">\(H\)</span></a></li>
+  <li><a href="#step-4-p-value-from-the-chi-squared-distribution" id="toc-step-4-p-value-from-the-chi-squared-distribution" class="nav-link" data-scroll-target="#step-4-p-value-from-the-chi-squared-distribution">Step 4: <span class="math inline">\(p\)</span>-value from the chi-squared distribution</a></li>
+  <li><a href="#step-5-verify-against-r" id="toc-step-5-verify-against-r" class="nav-link" data-scroll-target="#step-5-verify-against-r">Step 5: Verify against R</a></li>
+  </ul></li>
+  <li><a href="#demonstration-in-r-using-the-full-wcgs-data-set" id="toc-demonstration-in-r-using-the-full-wcgs-data-set" class="nav-link" data-scroll-target="#demonstration-in-r-using-the-full-wcgs-data-set">Demonstration in R Using the Full WCGS Data Set</a>
+  <ul class="collapse">
+  <li><a href="#visualising-and-checking-assumptions" id="toc-visualising-and-checking-assumptions" class="nav-link" data-scroll-target="#visualising-and-checking-assumptions">Visualising and checking assumptions</a></li>
+  <li><a href="#checking-variance-homogeneity" id="toc-checking-variance-homogeneity" class="nav-link" data-scroll-target="#checking-variance-homogeneity">Checking variance homogeneity</a></li>
+  <li><a href="#one-way-anova-welchs-anova-and-kruskal-wallis" id="toc-one-way-anova-welchs-anova-and-kruskal-wallis" class="nav-link" data-scroll-target="#one-way-anova-welchs-anova-and-kruskal-wallis">One-way ANOVA, Welch’s ANOVA, and Kruskal-Wallis</a></li>
+  <li><a href="#post-hoc-comparisons-which-groups-differ" id="toc-post-hoc-comparisons-which-groups-differ" class="nav-link" data-scroll-target="#post-hoc-comparisons-which-groups-differ">Post-hoc comparisons: which groups differ?</a></li>
+  <li><a href="#summary-table-across-several-outcome-variables" id="toc-summary-table-across-several-outcome-variables" class="nav-link" data-scroll-target="#summary-table-across-several-outcome-variables">Summary table across several outcome variables</a></li>
+  </ul></li>
+  <li><a href="#a-practical-decision-process" id="toc-a-practical-decision-process" class="nav-link" data-scroll-target="#a-practical-decision-process">A Practical Decision Process</a></li>
+  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls">Common Pitfalls</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/12_5_bivariate.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/12_5_bivariate.html"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Comparing Three or more Independent Group Means</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="learning-objectives" class="level1 unnumbered">
+<h1 class="unnumbered">Learning Objectives</h1>
+<p>By the end of this chapter, you should be able to:</p>
+<ol type="1">
+<li>State the situation in which the means of <strong>three or more independent groups</strong> are compared, and translate a research question into <span class="math inline">\(H_0\)</span>/<span class="math inline">\(H_1\)</span>.</li>
+<li>State the assumptions, formula, and correct interpretation of <strong>one-way ANOVA</strong>, and explain how it partitions total variability into between-group and within-group components.</li>
+<li>State when <strong>Welch’s ANOVA</strong> should be used instead of the standard (Fisher) one-way ANOVA, and explain how it relaxes the equal-variance assumption.</li>
+<li>Calculate a one-way ANOVA <strong>by hand</strong> from raw data, building the full ANOVA table (sums of squares, degrees of freedom, mean squares, <span class="math inline">\(F\)</span>).</li>
+<li>State the assumptions, formula, and correct interpretation of the <strong>Kruskal-Wallis test</strong>, the nonparametric alternative for 3+ groups.</li>
+<li>Calculate the Kruskal-Wallis <span class="math inline">\(H\)</span> statistic <strong>by hand</strong>, including handling of tied ranks.</li>
+<li>Explain why a significant omnibus test motivates <strong>post-hoc pairwise comparisons</strong>, and correctly apply and interpret <strong>Tukey’s HSD</strong> and <strong>Bonferroni-adjusted pairwise Wilcoxon tests</strong>.</li>
+<li>Reproduce all procedures in <strong>R</strong>, using the WCGS data, and correctly choose among them based on formal checks of normality and variance homogeneity.</li>
+</ol>
+<hr>
+</section>
+<section id="comparing-three-or-more-independent-groups" class="level1">
+<h1>Comparing Three or More Independent Groups</h1>
+<p>In this chapter, we will use a variable named <code>behpat</code> measuring behavioral pattern (A1, A2, A3, A4) as explained in the codebook of WCGS <span class="citation" data-cites="aragon2020">(<a href="#ref-aragon2020" role="doc-biblioref">Aragon et al. 2020</a>)</span> with <strong>total cholesterol (<code>chol</code>, mg/dL)</strong> as the primary outcome.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol), ], <span class="fu">aes</span>(<span class="at">x =</span> behpat, <span class="at">y =</span> chol, <span class="at">fill =</span> behpat)) <span class="sc">+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Behaviour pattern"</span>, <span class="at">y =</span> <span class="st">"Cholesterol (mg/dL)"</span>) <span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-box-intro" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-box-intro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_5_bivariate_files/figure-html/fig-box-intro-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-box-intro-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.1: Total cholesterol by four-level behaviour pattern (behpat).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Three procedures are commonly used to compare <span class="math inline">\(k \ge 3\)</span> independent groups:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test</th>
+<th>Assumes equal variances?</th>
+<th>Assumes (approx.) normality?</th>
+<th>Uses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>One-way ANOVA</strong> (Fisher’s)</td>
+<td>Yes</td>
+<td>Yes, in each group</td>
+<td>Raw values</td>
+</tr>
+<tr class="even">
+<td><strong>Welch’s ANOVA</strong></td>
+<td>No</td>
+<td>Yes, in each group</td>
+<td>Raw values</td>
+</tr>
+<tr class="odd">
+<td><strong>Kruskal-Wallis test</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Ranks of the pooled values</td>
+</tr>
+</tbody>
+</table>
+<p>Just as Welch’s <span class="math inline">\(t\)</span>-test generalised Student’s <span class="math inline">\(t\)</span>-test to unequal variances in the two-group case, <strong>Welch’s ANOVA</strong> generalises one-way ANOVA to unequal variances across <span class="math inline">\(k\ge3\)</span> groups; and just as the Mann-Whitney U test generalises to a rank-based two-group comparison, the <strong>Kruskal-Wallis test</strong> generalises the Mann-Whitney idea to <span class="math inline">\(k\ge3\)</span> groups by ranking all observations together.</p>
+<hr>
+</section>
+<section id="sec-oneway_anova" class="level1">
+<h1>One-Way ANOVA</h1>
+<section id="hypotheses" class="level2">
+<h2 class="anchored" data-anchor-id="hypotheses">Hypotheses</h2>
+<p><span class="math display">\[
+H_0: \mu_1=\mu_2=\cdots=\mu_k \qquad
+\]</span> <span class="math display">\[
+H_1: \text{at least one } \mu_i \text{ differs from the others}
+\]</span></p>
+<p>Note carefully what <span class="math inline">\(H_1\)</span> does <strong>not</strong> say: it does not specify <em>which</em> group(s) differ, or how many. A significant omnibus <span class="math inline">\(F\)</span>-test tells us only that <strong>some</strong> difference exists somewhere among the <span class="math inline">\(k\)</span> groups; identifying <em>which</em> groups differ requires a separate <strong>post-hoc</strong> procedure (see below).</p>
+</section>
+<section id="assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions">Assumptions</h2>
+<ol type="1">
+<li>The outcome is <strong>continuous numeric</strong>.</li>
+<li>The <span class="math inline">\(k\)</span> groups are <strong>independent</strong> of each other, and observations <strong>within</strong> each group are independent (a random sample from each population). This is the direct extension of the two-group comparison of mean.</li>
+<li>Each population is (approximately) <strong>normally distributed</strong>, or each group’s <span class="math inline">\(n\)</span> is large enough for the Central Limit Theorem to apply.</li>
+<li>The <span class="math inline">\(k\)</span> populations have <strong>equal variances</strong> (<span class="math inline">\(\sigma_1^2=\sigma_2^2=\cdots=\sigma_k^2\)</span>), commonly called <strong>homogeneity of variance</strong>. It is checked with <strong>Levene’s test</strong> (preferred, being robust to non-normality) or Bartlett’s test.</li>
+</ol>
+</section>
+<section id="partitioning-the-variance" class="level2">
+<h2 class="anchored" data-anchor-id="partitioning-the-variance">Partitioning the variance</h2>
+<p>One-way ANOVA works by decomposing the <strong>total</strong> variability in the outcome into a part attributable to differences <strong>between</strong> group means, and a part attributable to variability <strong>within</strong> each group (individuals varying around their own group’s mean):</p>
+<p><span id="eq-sspartition"><span class="math display">\[
+SS_{Total} = SS_{Between} + SS_{Within}
+\tag{23.1}\]</span></span></p>
+<p>with</p>
+<p><span id="eq-ssformulas"><span class="math display">\[
+SS_{Total}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(x_{ij}-\bar x)^2, \qquad
+SS_{Between}=\sum_{i=1}^{k} n_i(\bar x_i-\bar x)^2, \qquad
+SS_{Within}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(x_{ij}-\bar x_i)^2
+\tag{23.2}\]</span></span></p>
+<p>where <span class="math inline">\(\bar x_i\)</span> is the mean of group <span class="math inline">\(i\)</span> (size <span class="math inline">\(n_i\)</span>), <span class="math inline">\(\bar x\)</span> is the <strong>grand mean</strong> across all <span class="math inline">\(N=\sum n_i\)</span> observations, and <span class="math inline">\(x_{ij}\)</span> is the <span class="math inline">\(j\)</span>th observation in group <span class="math inline">\(i\)</span>. Intuitively: if the group means are very spread out relative to the spread of individuals <em>within</em> each group, <span class="math inline">\(SS_{Between}\)</span> will be large relative to <span class="math inline">\(SS_{Within}\)</span>, and we will conclude the groups differ.</p>
+</section>
+<section id="the-f-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="the-f-statistic">The <span class="math inline">\(F\)</span> statistic</h2>
+<p>Each sum of squares is converted to a <strong>mean square</strong> by dividing by its degrees of freedom, and the ratio of the two mean squares forms the test statistic:</p>
+<p><span class="math display">\[
+df_{Between}=k-1, \qquad df_{Within}=N-k
+\]</span></p>
+<p><span class="math display">\[
+MS_{Between}=\frac{SS_{Between}}{k-1}, \qquad MS_{Within}=\frac{SS_{Within}}{N-k}
+\]</span></p>
+<p><span id="eq-fstat"><span class="math display">\[
+F=\frac{MS_{Between}}{MS_{Within}} \qquad \sim\; F_{(k-1,\,N-k)} \text{ under } H_0
+\tag{23.3}\]</span></span></p>
+<p>These quantities are conventionally displayed in an <strong>ANOVA table</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>SS</th>
+<th>df</th>
+<th>MS</th>
+<th>F</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Between groups</td>
+<td><span class="math inline">\(SS_{Between}\)</span></td>
+<td><span class="math inline">\(k-1\)</span></td>
+<td><span class="math inline">\(MS_{Between}\)</span></td>
+<td><span class="math inline">\(MS_{Between}/MS_{Within}\)</span></td>
+</tr>
+<tr class="even">
+<td>Within groups</td>
+<td><span class="math inline">\(SS_{Within}\)</span></td>
+<td><span class="math inline">\(N-k\)</span></td>
+<td><span class="math inline">\(MS_{Within}\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(SS_{Total}\)</span></td>
+<td><span class="math inline">\(N-1\)</span></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>When <span class="math inline">\(k=2\)</span>, one-way ANOVA is mathematically identical to Student’s pooled-variance <span class="math inline">\(t\)</span>-test from Chapter 3 (in fact <span class="math inline">\(F=t^2\)</span>) — one-way ANOVA is simply the natural generalisation to <span class="math inline">\(k\ge3\)</span> groups.</p>
+</section>
+<section id="post-hoc-comparisons-tukeys-hsd" class="level2">
+<h2 class="anchored" data-anchor-id="post-hoc-comparisons-tukeys-hsd">Post-hoc comparisons: Tukey’s HSD</h2>
+<section id="why-a-post-hoc-test-is-needed" class="level3">
+<h3 class="anchored" data-anchor-id="why-a-post-hoc-test-is-needed">Why a post-hoc test is needed</h3>
+<p>A significant omnibus <span class="math inline">\(F\)</span> only establishes that <strong>at least one</strong> group mean differs from at least one other — it does not say <em>which</em> pair(s). It is tempting to just run a <span class="math inline">\(t\)</span>-test on every pair of groups instead, but this is the single most common post-hoc error: with <span class="math inline">\(k\)</span> groups there are <span class="math inline">\(\binom{k}{2}\)</span> possible pairwise comparisons, and if each is tested at an uncorrected <span class="math inline">\(\alpha=0.05\)</span>, the probability that <strong>at least one</strong> comparison falsely rejects <span class="math inline">\(H_0\)</span> — the <strong>family-wise error rate (FWER)</strong> — climbs well above <span class="math inline">\(5\%\)</span>. For <span class="math inline">\(k=4\)</span> groups (as in this chapter’s full behaviour-pattern example) there are <span class="math inline">\(\binom{4}{2}=6\)</span> comparisons, and even assuming independence, the FWER is approximately</p>
+<p><span class="math display">\[
+1-(1-\alpha)^{m} = 1-(0.95)^{6} \approx 0.265
+\]</span></p>
+<p>There is roughly a <strong>1-in-4 chance of at least one false positive</strong>, more than five times the nominal <span class="math inline">\(5\%\)</span> (and the comparisons are typically correlated in practice, which changes the exact figure but not the basic problem). A <strong>post-hoc test</strong> is simply a pairwise-comparison procedure explicitly built to control this family-wise error rate at the nominal <span class="math inline">\(\alpha\)</span>, rather than controlling the error rate of each individual comparison in isolation.</p>
+</section>
+<section id="tukeys-honestly-significant-difference-hsd" class="level3">
+<h3 class="anchored" data-anchor-id="tukeys-honestly-significant-difference-hsd">Tukey’s Honestly Significant Difference (HSD)</h3>
+<p><strong>Tukey’s HSD</strong> is the classical, and usually preferred, post-hoc procedure specifically for <strong>all pairwise comparisons</strong> among <span class="math inline">\(k\)</span> group means following a one-way ANOVA. Instead of the ordinary <span class="math inline">\(t\)</span>-distribution, it uses the <strong>studentised range distribution</strong> (<span class="math inline">\(q\)</span>), which describes how far apart the largest and smallest of <span class="math inline">\(k\)</span> sample means drawn from the <em>same</em> population would be expected to fall purely by chance — using this reference distribution (rather than <span class="math inline">\(k\)</span> separate <span class="math inline">\(t\)</span>-tests) is exactly what accounts for the number of comparisons being made simultaneously, giving Tukey’s HSD its family-wise error control.</p>
+<p>For each pair of groups <span class="math inline">\(i,j\)</span>, the test statistic is</p>
+<p><span id="eq-tukeyq"><span class="math display">\[
+q=\frac{|\bar x_i-\bar x_j|}{\sqrt{MS_{Within}/n}}\qquad \text{(equal group sizes } n\text{)}
+\tag{23.4}\]</span></span></p>
+<p>compared against the critical value <span class="math inline">\(q_{(1-\alpha,\;k,\;N-k)}\)</span> from the studentised range distribution (available in R via <code>qtukey()</code>). Equivalently, and more usefully for hand calculation, Tukey’s HSD gives a single <strong>critical difference</strong> — any pair of group means differing by more than this amount is declared significant:</p>
+<p><span id="eq-tukeyhsd"><span class="math display">\[
+HSD = q_{(1-\alpha,\;k,\;N-k)}\sqrt{\frac{MS_{Within}}{n}}
+\tag{23.5}\]</span></span></p>
+<p>When the groups have <strong>unequal sample sizes</strong> <span class="math inline">\(n_i \ne n_j\)</span> (as in the full WCGS behaviour-pattern data), R (and most software) automatically applies the <strong>Tukey-Kramer adjustment</strong>, replacing <span class="math inline">\(MS_{Within}/n\)</span> with <span class="math inline">\(\dfrac{MS_{Within}}{2}\left(\dfrac1{n_i}+\dfrac1{n_j}\right)\)</span> for each specific pair — so the critical difference is slightly wider for comparisons involving a smaller group. Tukey’s HSD carries the <strong>same assumptions as the one-way ANOVA it follows</strong>: independent observations, approximate normality within each group, and importantly <strong>homogeneous variances across groups</strong>, since it relies on the single pooled <span class="math inline">\(MS_{Within}\)</span> from the ANOVA table.</p>
+</section>
+<section id="other-post-hoc-and-multiple-comparison-methods" class="level3">
+<h3 class="anchored" data-anchor-id="other-post-hoc-and-multiple-comparison-methods">Other post-hoc and multiple-comparison methods</h3>
+<p>Tukey’s HSD is not the only option, and the right choice depends on exactly what is being compared and what can be assumed about the data:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Best suited to</th>
+<th>Assumes equal variances?</th>
+<th>Notes on power/conservativeness</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tukey’s HSD</strong></td>
+<td>All <span class="math inline">\(\binom{k}{2}\)</span> pairwise comparisons</td>
+<td>Yes</td>
+<td>The standard choice for all-pairwise comparisons; more powerful than Bonferroni for this specific purpose because it uses a reference distribution built exactly for the “largest minus smallest of <span class="math inline">\(k\)</span> means” problem, rather than a generic correction.</td>
+</tr>
+<tr class="even">
+<td><strong>Fisher’s Least Significant Difference (LSD)</strong></td>
+<td>All pairwise comparisons, but <em>only</em> as a follow-up to a significant omnibus <span class="math inline">\(F\)</span></td>
+<td>Yes</td>
+<td>Uses an ordinary <span class="math inline">\(t\)</span>-test critical value with no correction for multiple comparisons beyond the “protection” of requiring a significant <span class="math inline">\(F\)</span> first — this protection is imperfect once <span class="math inline">\(k&gt;3\)</span>, so Fisher’s LSD is now generally considered too liberal (inflated FWER) and is not recommended over Tukey’s HSD.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bonferroni correction</strong></td>
+<td>Any small, <em>pre-specified</em> set of comparisons (not necessarily all pairs)</td>
+<td>No (works with Welch/unequal variances too)</td>
+<td>Simple and general — divide <span class="math inline">\(\alpha\)</span> by the number of comparisons <span class="math inline">\(m\)</span> (or multiply each <span class="math inline">\(p\)</span>-value by <span class="math inline">\(m\)</span>) — but conservative (low power) once <span class="math inline">\(m\)</span> is more than a handful, since it does not exploit the specific structure of all-pairwise comparisons the way Tukey’s HSD does.</td>
+</tr>
+<tr class="even">
+<td><strong>Scheffé’s method</strong></td>
+<td><em>Any</em> number of comparisons, including complex contrasts (e.g., averages of several groups vs.&nbsp;another group), not just simple pairs</td>
+<td>Yes</td>
+<td>The most conservative common method — appropriate when you want the flexibility to test contrasts you didn’t specify in advance, but needlessly conservative for simple all-pairwise comparisons, where Tukey’s HSD dominates it in power.</td>
+</tr>
+<tr class="odd">
+<td><strong>Dunnett’s test</strong></td>
+<td>Comparing several <strong>treatment</strong> groups back to a single <strong>reference/control</strong> group only (not all pairs)</td>
+<td>Yes</td>
+<td>More powerful than Tukey’s HSD <em>for this specific narrower question</em>, because it only spends its error-rate “budget” on <span class="math inline">\(k-1\)</span> comparisons against the control rather than all <span class="math inline">\(\binom{k}{2}\)</span> pairs.</td>
+</tr>
+<tr class="even">
+<td><strong>Games-Howell</strong></td>
+<td>All pairwise comparisons when variances are <strong>unequal</strong> (the natural follow-up to Welch’s ANOVA)</td>
+<td>No</td>
+<td>Uses per-pair variance estimates and Welch-Satterthwaite-adjusted degrees of freedom, analogous to how Welch’s <span class="math inline">\(t\)</span>-test relaxes Student’s <span class="math inline">\(t\)</span>-test — the appropriate substitute for Tukey’s HSD whenever Levene’s test flags heterogeneous variances.</td>
+</tr>
+<tr class="odd">
+<td><strong>Dunn’s test / Bonferroni-adjusted pairwise Wilcoxon</strong></td>
+<td>All pairwise comparisons following a significant <strong>Kruskal-Wallis</strong> test (non-normal data)</td>
+<td>No</td>
+<td>The nonparametric analogue of Tukey’s HSD — compares rank sums (Dunn’s test) or applies pairwise Mann-Whitney/Wilcoxon tests with a Bonferroni (or Holm, or Benjamini-Hochberg) correction, as used later in this chapter’s full R demonstration.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Practical rule of thumb:</strong> for the very common case of comparing <strong>all pairs</strong> of <span class="math inline">\(k\)</span> group means with roughly equal variances — the situation in most of this chapter — <strong>Tukey’s HSD</strong> is the right default because it is specifically calibrated for that exact comparison structure, giving it more statistical power than the more generic Bonferroni or Scheffé corrections while still rigorously controlling the family-wise error rate. Switch to <strong>Games-Howell</strong> if variances are unequal, to <strong>Dunnett’s test</strong> if the real question is “does each group differ from a single control,” and to <strong>Dunn’s test / Bonferroni-adjusted pairwise Wilcoxon tests</strong> if normality itself is in doubt and you are following up a Kruskal-Wallis test rather than an ANOVA (as demonstrated later in this chapter).</p>
+</section>
+</section>
+</section>
+<section id="manual-hand-calculation-of-one-way-anova" class="level1">
+<h1>Manual (Hand) Calculation of One-Way ANOVA</h1>
+<p>We draw a reproducible random subsample of <span class="math inline">\(n=5\)</span> men from <strong>three</strong> of the four behaviour-pattern groups — <strong>A1</strong>, <strong>A2</strong>, and <strong>B4</strong> (using three groups, rather than all four, keeps the by-hand arithmetic tractable while preserving the full logic of the method) — and compare <strong>total cholesterol</strong> (mg/dL).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Subsample: 5 men each from A1, A2, and B4 (n = 15 total)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: right;">chol</th>
+<th style="text-align: left;">group</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">12036</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2171</td>
+<td style="text-align: right;">271</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11310</td>
+<td style="text-align: right;">198</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13502</td>
+<td style="text-align: right;">312</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12191</td>
+<td style="text-align: right;">265</td>
+<td style="text-align: left;">A1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3507</td>
+<td style="text-align: right;">225</td>
+<td style="text-align: left;">A2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12128</td>
+<td style="text-align: right;">268</td>
+<td style="text-align: left;">A2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3935</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: left;">A2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">21101</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: left;">A2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10097</td>
+<td style="text-align: right;">235</td>
+<td style="text-align: left;">A2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3105</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: left;">B4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12279</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: left;">B4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13152</td>
+<td style="text-align: right;">211</td>
+<td style="text-align: left;">B4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2090</td>
+<td style="text-align: right;">216</td>
+<td style="text-align: left;">B4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10138</td>
+<td style="text-align: right;">177</td>
+<td style="text-align: left;">B4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="step-1-compute-the-grand-mean-and-each-groups-mean" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-compute-the-grand-mean-and-each-groups-mean">Step 1: Compute the grand mean and each group’s mean</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   Group n  Mean
+#&gt; 1    A1 5 262.0
+#&gt; 2    A2 5 237.6
+#&gt; 3    B4 5 191.2</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 230.2667</code></pre>
+</div>
+</div>
+<p><span class="math display">\[
+\bar x = \frac{264+271+198+312+265+225+268+210+250+235+162+190+211+216+177}{15}=230.27
+\]</span></p>
+</section>
+<section id="step-2-between-groups-sum-of-squares" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-between-groups-sum-of-squares">Step 2 : Between-groups sum of squares</h2>
+<p><span class="math display">\[
+SS_{Between}=5(262.0-230.27)^2+5(237.6-230.27)^2+5(191.2-230.27)^2
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 12934.93</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-within-groups-sum-of-squares" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-within-groups-sum-of-squares">Step 3: Within-groups sum of squares</h2>
+<p>For each group, sum the squared deviations of its own five observations from <strong>that group’s own mean</strong>, then add the three groups’ totals together:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>SSw <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">tapply</span>(sub<span class="sc">$</span>chol, sub<span class="sc">$</span>group, <span class="cf">function</span>(x) <span class="fu">sum</span>((x <span class="sc">-</span> <span class="fu">mean</span>(x))<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>SSw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 10758</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-total-sum-of-squares-a-check" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-total-sum-of-squares-a-check">Step 4: Total sum of squares (a check)</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   SS_Between SS_Within SS_Between + SS_Within SS_Total
+#&gt; 1   12934.93     10758               23692.93 23692.93</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(SS_{Between}+SS_{Within}=SS_{Total}\)</span> exactly (up to rounding), as required by <a href="#eq-sspartition" class="quarto-xref">Equation&nbsp;<span>23.1</span></a>.</p>
+</section>
+<section id="step-5-build-the-anova-table" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-build-the-anova-table">Step 5: Build the ANOVA table</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Hand-built one-way ANOVA table</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Source</th>
+<th style="text-align: right;">SS</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">MS</th>
+<th style="text-align: right;">F</th>
+<th style="text-align: right;">p_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Between groups</td>
+<td style="text-align: right;">12934.93</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">6467.467</td>
+<td style="text-align: right;">7.214</td>
+<td style="text-align: right;">0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Within groups</td>
+<td style="text-align: right;">10758.00</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">896.500</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">23692.93</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="step-6-verify-against-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-verify-against-r">Step 6: Verify against R</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+#&gt; group        2  12935    6467   7.214 0.00876 **
+#&gt; Residuals   12  10758     896                   
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The hand-calculated <span class="math inline">\(F=7.214\)</span> on <span class="math inline">\((2,12)\)</span> df, <span class="math inline">\(p=0.0088\)</span>, match <code>summary(aov())</code> on the same subsample <strong>exactly</strong>. At the <span class="math inline">\(5\%\)</span> level we <strong>reject</strong> <span class="math inline">\(H_0\)</span> in this small subsample at least one of A1, A2, B4 has a different mean cholesterol. (Note this omnibus result alone does not tell us <em>which</em> group(s) differ. To see which gorups differs separately use the post-hoc test.</p>
+<hr>
+</section>
+</section>
+<section id="sec-welch_oneway_anova" class="level1">
+<h1>Welch’s ANOVA (Unequal Variances)</h1>
+<section id="when-to-use-it" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-it">When to use it</h2>
+<p>Just as with the two-group case, if the assumption of equal variances across the <span class="math inline">\(k\)</span> groups is doubtful, either because Levene’s test rejects equal variances, <strong>Welch’s ANOVA</strong> should be used instead of the standard (Fisher) one-way ANOVA. It relaxes the equal-variance assumption by not pooling the within-group variances into a single <span class="math inline">\(MS_{Within}\)</span>; instead, each group’s variance is weighted separately (analogous to how Welch’s <span class="math inline">\(t\)</span>-test does not pool <span class="math inline">\(s_1^2\)</span> and <span class="math inline">\(s_2^2\)</span>), and the degrees of freedom are adjusted downward via a Welch-Satterthwaite-type approximation, exactly as in the two-group case. In R this is available directly via:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oneway.test</span>(outcome <span class="sc">~</span> group, <span class="at">data =</span> your_data, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As with Welch’s <span class="math inline">\(t\)</span>-test, when the group variances genuinely <strong>are</strong> homogeneous, Welch’s ANOVA and the standard one-way ANOVA give nearly identical results, Welch’s ANOVA costs little in that case and protects against inflated Type I error when variances differ, so many statisticians recommend defaulting to it.</p>
+<hr>
+</section>
+</section>
+<section id="sec-h_test_KW" class="level1">
+<h1>The Kruskal-Wallis Test</h1>
+<section id="when-to-use-it-1" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-it-1">When to use it</h2>
+<p>The <strong>Kruskal-Wallis test</strong> is the nonparametric, rank-based generalisation of the Mann-Whitney U test to <span class="math inline">\(k\ge3\)</span> independent groups. It is use when normality is doubtful, samples are small, or the data contain influential outliers, exactly as with the two-group Mann-Whitney test in Chapter 3.</p>
+<p><span class="math display">\[
+H_0: \text{all } k \text{ populations have the same distribution (no location shift among any of them)}
+\]</span></p>
+</section>
+<section id="procedure-and-formula" class="level2">
+<h2 class="anchored" data-anchor-id="procedure-and-formula">Procedure and formula</h2>
+<ol type="1">
+<li>Combine all <span class="math inline">\(N=\sum n_i\)</span> observations from all <span class="math inline">\(k\)</span> groups and <strong>rank them together</strong> from smallest (rank 1) to largest, giving tied values the average of the ranks they span.</li>
+<li>Sum the ranks within each group: <span class="math inline">\(R_i\)</span> for <span class="math inline">\(i=1,\dots,k\)</span>.</li>
+<li>Compute the test statistic:</li>
+</ol>
+<p><span id="eq-kwH"><span class="math display">\[
+H=\frac{12}{N(N+1)}\sum_{i=1}^{k}\frac{R_i^2}{n_i}-3(N+1)
+\tag{26.1}\]</span></span></p>
+<ol start="4" type="1">
+<li>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(H\)</span> is approximately <strong>chi-squared distributed with</strong> <span class="math inline">\(k-1\)</span> degrees of freedom, for reasonably sized <span class="math inline">\(n_i\)</span>:</li>
+</ol>
+<p><span class="math display">\[
+H \;\sim\; \chi^2_{(k-1)} \text{ under } H_0
+\]</span></p>
+<ol start="5" type="1">
+<li><strong>Ties</strong> reduce the variance of the rank sums slightly; software (and, for exactness, hand calculation) applies a small <strong>tie correction</strong> factor to <span class="math inline">\(H\)</span>, dividing it by <span class="math inline">\(1-\dfrac{\sum(t_j^3-t_j)}{N^3-N}\)</span>, where <span class="math inline">\(t_j\)</span> is the number of observations tied at the <span class="math inline">\(j\)</span>th distinct value. When there are no ties, this correction factor is exactly <span class="math inline">\(1\)</span> and can be ignored.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="manual-calculation-of-the-kruskal-wallis-test" class="level1">
+<h1>Manual calculation of the Kruskal-Wallis Test</h1>
+<p>We use the <strong>same</strong> 15-subject, 3-group (A1/A2/B4) subsample as above — conveniently, this subsample happens to contain <strong>no tied cholesterol values</strong>, simplifying the rank calculation.</p>
+<section id="step-1-rank-all-15-values-together" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-rank-all-15-values-together">Step 1: Rank all 15 values together</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Combined, ranked cholesterol values (all 15 subjects)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: right;">chol</th>
+<th style="text-align: left;">group</th>
+<th style="text-align: right;">rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3105</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10138</td>
+<td style="text-align: right;">177</td>
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12279</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11310</td>
+<td style="text-align: right;">198</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3935</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: left;">A2</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13152</td>
+<td style="text-align: right;">211</td>
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2090</td>
+<td style="text-align: right;">216</td>
+<td style="text-align: left;">B4</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3507</td>
+<td style="text-align: right;">225</td>
+<td style="text-align: left;">A2</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10097</td>
+<td style="text-align: right;">235</td>
+<td style="text-align: left;">A2</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21101</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: left;">A2</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12036</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12191</td>
+<td style="text-align: right;">265</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12128</td>
+<td style="text-align: right;">268</td>
+<td style="text-align: left;">A2</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2171</td>
+<td style="text-align: right;">271</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13502</td>
+<td style="text-align: right;">312</td>
+<td style="text-align: left;">A1</td>
+<td style="text-align: right;">15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="step-2-sum-the-ranks-in-each-group" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-sum-the-ranks-in-each-group">Step 2: Sum the ranks in each group</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   Group n Rank_sum
+#&gt; 1    A1 5       56
+#&gt; 2    A2 5       45
+#&gt; 3    B4 5       19</code></pre>
+</div>
+</div>
+<p><span class="math display">\[
+R_{A1}=56, \qquad R_{A2}=45, \qquad R_{B4}=19, \qquad R_{A1}+R_{A2}+R_{B4}=120=\frac{15\times16}{2}\;\checkmark
+\]</span></p>
+</section>
+<section id="step-3-compute-h" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-compute-h">Step 3: Compute <span class="math inline">\(H\)</span></h2>
+<p><span class="math display">\[
+H=\frac{12}{15\times16}\left(\frac{56^2}{5}+\frac{45^2}{5}+\frac{19^2}{5}\right)-3(16)
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 7.22</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-p-value-from-the-chi-squared-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-p-value-from-the-chi-squared-distribution">Step 4: <span class="math inline">\(p\)</span>-value from the chi-squared distribution</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;      H df    p_value
+#&gt; 1 7.22  2 0.02705185</code></pre>
+</div>
+</div>
+</section>
+<section id="step-5-verify-against-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-verify-against-r">Step 5: Verify against R</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Kruskal-Wallis rank sum test
+#&gt; 
+#&gt; data:  chol by group
+#&gt; Kruskal-Wallis chi-squared = 7.22, df = 2, p-value = 0.02705</code></pre>
+</div>
+</div>
+<p>The hand-calculated <span class="math inline">\(H=7.22\)</span> on <span class="math inline">\(2\)</span> df, <span class="math inline">\(p=0.0271\)</span>, match <code>kruskal.test()</code> <strong>exactly</strong> (no tie-correction adjustment was needed, since this subsample has no ties). As with the parametric ANOVA above, we reject <span class="math inline">\(H_0\)</span> at the <span class="math inline">\(5\%\)</span> level in this subsample but note the Kruskal-Wallis <span class="math inline">\(p\)</span>-value (<span class="math inline">\(0.0271\)</span>) is somewhat larger (less extreme) than the ANOVA’s (<span class="math inline">\(0.0088\)</span>), a reminder that rank-based tests typically sacrifice some power relative to a correctly-specified parametric test, in exchange for robustness to non-normality.</p>
+<hr>
+</section>
+</section>
+<section id="demonstration-in-r-using-the-full-wcgs-data-set" class="level1">
+<h1>Demonstration in R Using the Full WCGS Data Set</h1>
+<section id="visualising-and-checking-assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="visualising-and-checking-assumptions">Visualising and checking assumptions</h2>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol), ], <span class="fu">aes</span>(<span class="at">x =</span> behpat, <span class="at">y =</span> chol, <span class="at">fill =</span> behpat)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Behaviour pattern"</span>, <span class="at">y =</span> <span class="st">"Cholesterol (mg/dL)"</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol), ], <span class="fu">aes</span>(<span class="at">x =</span> chol, <span class="at">fill =</span> behpat)) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">20</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Cholesterol (mg/dL)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill =</span> <span class="st">"Behaviour pattern"</span>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-chol-normcheck" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-chol-normcheck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-chol-normcheck" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-chol-normcheck-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-chol-normcheck-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_5_bivariate_files/figure-html/fig-chol-normcheck-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%" data-ref-parent="fig-chol-normcheck">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-chol-normcheck-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Boxplots by group
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-chol-normcheck" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-chol-normcheck-2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-chol-normcheck-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_5_bivariate_files/figure-html/fig-chol-normcheck-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%" data-ref-parent="fig-chol-normcheck">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-chol-normcheck-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Histograms by group
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-chol-normcheck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;28.1: Cholesterol distribution by behaviour pattern — full WCGS cohort.
+</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>behpat, <span class="cf">function</span>(x) <span class="fu">shapiro.test</span>(x[<span class="sc">!</span><span class="fu">is.na</span>(x)])<span class="sc">$</span>p.value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;        A1        A2        B3        B4 
+#&gt; 6.067e-03 1.084e-17 4.161e-07 1.520e-04</code></pre>
+</div>
+</div>
+<p>Cholesterol is right-skewed in every group, and with group sizes ranging from <span class="math inline">\(264\)</span> to <span class="math inline">\(1{,}325\)</span>, Shapiro-Wilk rejects normality (all <span class="math inline">\(p&lt;0.001\)</span>) in every group — the usual large-<span class="math inline">\(n\)</span> caveat applies (Shapiro-Wilk becomes hyper-sensitive to trivial deviations from normality once <span class="math inline">\(n\)</span> is in the hundreds or thousands, so a formally “significant” result here does not necessarily rule out ANOVA, given the CLT and the moderate skew involved). Because of this, we will report <strong>all three</strong> procedures below and compare them.</p>
+</section>
+<section id="checking-variance-homogeneity" class="level2">
+<h2 class="anchored" data-anchor-id="checking-variance-homogeneity">Checking variance homogeneity</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(chol <span class="sc">~</span> behpat, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Levene's Test for Homogeneity of Variance (center = median)
+#&gt;         Df F value Pr(&gt;F)
+#&gt; group    3     0.2    0.9
+#&gt;       3138</code></pre>
+</div>
+</div>
+<p>Levene’s test is <strong>not</strong> significant (<span class="math inline">\(F=0.197\)</span>, <span class="math inline">\(p=0.899\)</span>), the four groups’ cholesterol variances are statistically indistinguishable. This is a useful <strong>contrast with Chapter 3’s cholesterol-by-<code>chd69</code> example</strong>, where variances differed enough that Welch’s test and the Mann-Whitney test were clearly preferred. Here, with variances confirmed homogeneous, we expect the standard one-way ANOVA and Welch’s ANOVA to agree closely — and, as shown next, they do.</p>
+</section>
+<section id="one-way-anova-welchs-anova-and-kruskal-wallis" class="level2">
+<h2 class="anchored" data-anchor-id="one-way-anova-welchs-anova-and-kruskal-wallis">One-way ANOVA, Welch’s ANOVA, and Kruskal-Wallis</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">aov</span>(chol <span class="sc">~</span> behpat, <span class="at">data =</span> wcgs)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;               Df  Sum Sq Mean Sq F value Pr(&gt;F)   
+#&gt; behpat         3   24531    8177    4.35 0.0046 **
+#&gt; Residuals   3138 5897301    1879                  
+#&gt; ---
+#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#&gt; 12 observations deleted due to missingness</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oneway.test</span>(chol <span class="sc">~</span> behpat, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  One-way analysis of means (not assuming equal variances)
+#&gt; 
+#&gt; data:  chol and behpat
+#&gt; F = 4.5, num df = 3, denom df = 835, p-value = 0.004</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(chol <span class="sc">~</span> behpat, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Kruskal-Wallis rank sum test
+#&gt; 
+#&gt; data:  chol by behpat
+#&gt; Kruskal-Wallis chi-squared = 12, df = 3, p-value = 0.007</code></pre>
+</div>
+</div>
+<p><strong>Interpretation:</strong> All three procedures agree closely and reach the same conclusion. The standard one-way ANOVA gives <span class="math inline">\(F(3,3138)=4.351\)</span>, <span class="math inline">\(p=0.00458\)</span>; Welch’s ANOVA gives a nearly identical <span class="math inline">\(F=4.521\)</span> (num df <span class="math inline">\(=3\)</span>, denom df <span class="math inline">\(=834.6\)</span>), <span class="math inline">\(p=0.00374\)</span> — exactly what we expect given the homogeneous variances confirmed by Levene’s test above, since Welch’s correction has little work to do when the equal-variance assumption already holds. The Kruskal-Wallis test corroborates this with <span class="math inline">\(\chi^2=12.01\)</span>, <span class="math inline">\(df=3\)</span>, <span class="math inline">\(p=0.00735\)</span>. We reject <span class="math inline">\(H_0\)</span>: mean (and typical) cholesterol is <strong>not</strong> the same across all four behaviour-pattern subtypes. As always, this omnibus result alone does not identify <em>which</em> subtype(s) differ — for that we turn to post-hoc comparisons.</p>
+</section>
+<section id="post-hoc-comparisons-which-groups-differ" class="level2">
+<h2 class="anchored" data-anchor-id="post-hoc-comparisons-which-groups-differ">Post-hoc comparisons: which groups differ?</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   Tukey multiple comparisons of means
+#&gt;     95% family-wise confidence level
+#&gt; 
+#&gt; Fit: aov(formula = chol ~ behpat, data = wcgs)
+#&gt; 
+#&gt; $behpat
+#&gt;          diff     lwr     upr  p adj
+#&gt; A2-A1  -4.452 -11.976  3.0719 0.4250
+#&gt; B3-A1  -8.247 -15.828 -0.6662 0.0267
+#&gt; B4-A1 -10.109 -19.213 -1.0044 0.0226
+#&gt; B3-A2  -3.795  -8.229  0.6388 0.1234
+#&gt; B4-A2  -5.657 -12.371  1.0573 0.1331
+#&gt; B4-B3  -1.862  -8.640  4.9165 0.8948</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>behpat, <span class="at">p.adjust.method =</span> <span class="st">"bonferroni"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+#&gt; 
+#&gt; data:  wcgs$chol and wcgs$behpat 
+#&gt; 
+#&gt;    A1   A2   B3  
+#&gt; A2 0.70 -    -   
+#&gt; B3 0.04 0.29 -   
+#&gt; B4 0.03 0.24 1.00
+#&gt; 
+#&gt; P value adjustment method: bonferroni</code></pre>
+</div>
+</div>
+<p><strong>Interpretation:</strong> Tukey’s HSD identifies exactly two significant pairwise differences: <strong>A1 vs.&nbsp;B3</strong> (mean difference <span class="math inline">\(-8.25\)</span> mg/dL, <span class="math inline">\(p=0.027\)</span>) and <strong>A1 vs.&nbsp;B4</strong> (mean difference <span class="math inline">\(-10.11\)</span> mg/dL, <span class="math inline">\(p=0.023\)</span>). All other pairs (A2 vs.&nbsp;A1, B3 vs.&nbsp;A2, B4 vs.&nbsp;A2, B4 vs.&nbsp;B3) are <strong>not</strong> statistically significant. The Bonferroni-adjusted pairwise Wilcoxon tests show the <strong>same pattern</strong>: A1 vs.&nbsp;B3 (<span class="math inline">\(p=0.038\)</span>) and A1 vs.&nbsp;B4 (<span class="math inline">\(p=0.025\)</span>) are significant, while every other pair is not — a reassuring concordance between the parametric and nonparametric post-hoc approaches, giving confidence that the finding is not an artefact of the (mild) non-normality noted above.</p>
+<p>Substantively, this tells a coherent story: <strong>A1</strong> — the <em>extreme</em> or “purest” Type A subtype — has the highest mean cholesterol of the four groups, significantly higher than both B3 and B4 (the two Type B subtypes), but not significantly different from A2 (the <em>moderate</em> Type A subtype), and B3/B4 are not significantly different from each other or from A2. This is consistent with the broader WCGS finding (explored in Chapter 3 via the collapsed <code>dibpat</code> variable) that Type A behaviour pattern is associated with unfavourable cardiovascular risk-factor profiles, and further suggests the association is strongest at the most extreme end of the Type A spectrum.</p>
+</section>
+<section id="summary-table-across-several-outcome-variables" class="level2">
+<h2 class="anchored" data-anchor-id="summary-table-across-several-outcome-variables">Summary table across several outcome variables</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>vars_list <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"chol"</span>, <span class="st">"sbp"</span>, <span class="st">"bmi"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(vars_list, <span class="cf">function</span>(v) {</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  f  <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(v, <span class="st">"~ behpat"</span>))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  d  <span class="ot">&lt;-</span> wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs[[v]]), ]</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  a  <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">aov</span>(f, <span class="at">data =</span> d))[[<span class="dv">1</span>]]</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  w  <span class="ot">&lt;-</span> <span class="fu">oneway.test</span>(f, <span class="at">data =</span> d, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  kw <span class="ot">&lt;-</span> <span class="fu">kruskal.test</span>(f, <span class="at">data =</span> d)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Outcome =</span> v,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">ANOVA_F =</span> <span class="fu">round</span>(a<span class="sc">$</span><span class="st">`</span><span class="at">F value</span><span class="st">`</span>[<span class="dv">1</span>], <span class="dv">3</span>), <span class="at">ANOVA_df =</span> <span class="fu">paste0</span>(a<span class="sc">$</span>Df[<span class="dv">1</span>], <span class="st">","</span>, a<span class="sc">$</span>Df[<span class="dv">2</span>]),</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">ANOVA_p =</span> <span class="fu">signif</span>(a<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">1</span>], <span class="dv">3</span>),</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_F =</span> <span class="fu">round</span>(<span class="fu">unname</span>(w<span class="sc">$</span>statistic), <span class="dv">3</span>),</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_df =</span> <span class="fu">paste0</span>(<span class="fu">round</span>(<span class="fu">unname</span>(w<span class="sc">$</span>parameter[<span class="dv">1</span>]), <span class="dv">1</span>), <span class="st">","</span>, <span class="fu">round</span>(<span class="fu">unname</span>(w<span class="sc">$</span>parameter[<span class="dv">2</span>]), <span class="dv">1</span>)),</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_p =</span> <span class="fu">signif</span>(w<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">KW_chisq =</span> <span class="fu">round</span>(<span class="fu">unname</span>(kw<span class="sc">$</span>statistic), <span class="dv">3</span>), <span class="at">KW_p =</span> <span class="fu">signif</span>(kw<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results, <span class="at">caption =</span> <span class="st">"One-way ANOVA, Welch's ANOVA, and Kruskal-Wallis results across three outcomes, by behpat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-summary-anova" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-summary-anova-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;28.1: One-way ANOVA, Welch’s ANOVA, and Kruskal-Wallis results across three outcomes, by behpat
+</figcaption>
+<div aria-describedby="tbl-summary-anova-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>One-way ANOVA, Welch’s ANOVA, and Kruskal-Wallis results across three outcomes, by behpat</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Outcome</th>
+<th style="text-align: right;">ANOVA_F</th>
+<th style="text-align: left;">ANOVA_df</th>
+<th style="text-align: right;">ANOVA_p</th>
+<th style="text-align: right;">Welch_F</th>
+<th style="text-align: left;">Welch_df</th>
+<th style="text-align: right;">Welch_p</th>
+<th style="text-align: right;">KW_chisq</th>
+<th style="text-align: right;">KW_p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">chol</td>
+<td style="text-align: right;">4.351</td>
+<td style="text-align: left;">3,3138</td>
+<td style="text-align: right;">0.0046</td>
+<td style="text-align: right;">4.521</td>
+<td style="text-align: left;">3,834.6</td>
+<td style="text-align: right;">0.0037</td>
+<td style="text-align: right;">12.010</td>
+<td style="text-align: right;">0.0073</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sbp</td>
+<td style="text-align: right;">6.399</td>
+<td style="text-align: left;">3,3150</td>
+<td style="text-align: right;">0.0003</td>
+<td style="text-align: right;">6.506</td>
+<td style="text-align: left;">3,846.1</td>
+<td style="text-align: right;">0.0002</td>
+<td style="text-align: right;">16.447</td>
+<td style="text-align: right;">0.0009</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bmi</td>
+<td style="text-align: right;">1.286</td>
+<td style="text-align: left;">3,3150</td>
+<td style="text-align: right;">0.2770</td>
+<td style="text-align: right;">1.391</td>
+<td style="text-align: left;">3,845.1</td>
+<td style="text-align: right;">0.2440</td>
+<td style="text-align: right;">3.648</td>
+<td style="text-align: right;">0.3020</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Cholesterol and systolic blood pressure (<code>sbp</code>) both show significant differences across behaviour-pattern subtypes by all three methods, while BMI (<code>bmi</code>) does not — a useful illustration that the behaviour-pattern association is not simply a proxy for body size, and that all three testing approaches tell a consistent story once variances are homogeneous.</p>
+<hr>
+</section>
+</section>
+<section id="a-practical-decision-process" class="level1">
+<h1>A Practical Decision Process</h1>
+<ol type="1">
+<li><strong>Plot the data</strong> (boxplots, histograms) for each of the <span class="math inline">\(k\)</span> groups.</li>
+<li><strong>Check normality</strong> within each group (Q-Q plots or histograms; Shapiro-Wilk for smaller <span class="math inline">\(n\)</span>, interpreted cautiously for large <span class="math inline">\(n\)</span>).</li>
+<li><strong>Check variance homogeneity</strong> across all <span class="math inline">\(k\)</span> groups (Levene’s test is generally preferred over Bartlett’s test, since it is far less sensitive to non-normality).</li>
+<li>Choose accordingly:</li>
+</ol>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Normality?</th>
+<th>Equal variances?</th>
+<th>Recommended test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Yes</td>
+<td>Yes</td>
+<td>One-way (Fisher’s) ANOVA</td>
+</tr>
+<tr class="even">
+<td>Yes</td>
+<td>No</td>
+<td>Welch’s ANOVA</td>
+</tr>
+<tr class="odd">
+<td>No (or small, skewed, or outlier-prone)</td>
+<td>—</td>
+<td>Kruskal-Wallis test</td>
+</tr>
+</tbody>
+</table>
+<ol start="5" type="1">
+<li><strong>If the omnibus test is significant</strong>, follow up with an appropriate post-hoc test: <strong>Tukey’s HSD</strong> after one-way ANOVA (equal variances), <strong>Bonferroni-adjusted pairwise Wilcoxon tests</strong> after Kruskal-Wallis, or (not computed in this chapter, but worth knowing) the <strong>Games-Howell</strong> test after Welch’s ANOVA, which — unlike Tukey’s HSD — does not assume equal variances.</li>
+</ol>
+<p>As with the two-group case, many statisticians recommend <strong>defaulting to Welch’s ANOVA</strong> for 3+ group comparisons, since it costs little when variances are equal and protects against inflated Type I error when they are not.</p>
+<hr>
+</section>
+<section id="common-pitfalls" class="level1">
+<h1>Common Pitfalls</h1>
+<ul>
+<li><strong>Running many uncorrected pairwise</strong> <span class="math inline">\(t\)</span>-tests instead of an omnibus test with proper post-hoc correction. With <span class="math inline">\(k=4\)</span> groups there are <span class="math inline">\(\binom{4}{2}=6\)</span> possible pairwise comparisons; testing each at an uncorrected <span class="math inline">\(\alpha=0.05\)</span> inflates the true family-wise Type I error rate well above <span class="math inline">\(5\%\)</span>. Tukey’s HSD (or Bonferroni-adjusted pairwise tests, as used for the Kruskal-Wallis follow-up here) controls this properly.</li>
+<li><strong>Misinterpreting a significant omnibus</strong> <span class="math inline">\(F\)</span> (or <span class="math inline">\(H\)</span>) as identifying which groups differ. It does not — it only establishes that <em>some</em> difference exists. Always follow a significant omnibus test with an appropriate post-hoc procedure before making claims about specific groups.</li>
+<li><strong>Using Tukey’s HSD when variances are unequal.</strong> Tukey’s HSD assumes homogeneous variances, just like the standard one-way ANOVA it follows; when Levene’s test indicates heterogeneous variances, use <strong>Games-Howell</strong> post-hoc comparisons (the Welch-appropriate analogue) instead, rather than applying Tukey’s HSD uncritically.</li>
+<li><strong>Ignoring unequal group sizes.</strong> Very unbalanced designs (here, A1’s <span class="math inline">\(n=264\)</span> vs.&nbsp;A2’s <span class="math inline">\(n=1{,}325\)</span>) reduce power to detect differences involving the smaller group(s), and can make some tests more sensitive to violated assumptions — always report the group <span class="math inline">\(n\)</span>’s alongside the test results.</li>
+<li><strong>Over-relying on Shapiro-Wilk in large samples.</strong> As in Chapter 3, with group <span class="math inline">\(n\)</span>’s in the hundreds or thousands, Shapiro-Wilk will often flag “significant” non-normality even for mild, practically harmless skew — inspect the plots as well, and lean on the Central Limit Theorem for large <span class="math inline">\(n\)</span>.</li>
+<li><strong>Confusing statistical and clinical significance.</strong> A statistically significant <span class="math inline">\(8\)</span>–<span class="math inline">\(10\)</span> mg/dL difference in mean cholesterol between behaviour-pattern subtypes, as found here, should be interpreted alongside its clinical relevance and effect size, not just its <span class="math inline">\(p\)</span>-value.</li>
+</ul>
+<hr>
+</section>
+<section id="summary" class="level1">
+<h1>Summary</h1>
+<ul>
+<li>To compare the means of <strong>three or more independent groups</strong>, first assess normality within each group and variance homogeneity across all groups (Levene’s test).</li>
+<li><strong>One-way (Fisher’s) ANOVA</strong> partitions total variability into between-group and within-group sums of squares, forming <span class="math inline">\(F=MS_{Between}/MS_{Within}\)</span>; it is appropriate when groups are approximately normal with similar variances (as with cholesterol by <code>behpat</code> in the WCGS data, where Levene’s test confirmed homogeneity: <span class="math inline">\(F=0.197\)</span>, <span class="math inline">\(p=0.899\)</span>).</li>
+<li><strong>Welch’s ANOVA</strong> relaxes the equal-variance assumption and, as with Welch’s <span class="math inline">\(t\)</span>-test, is a safe general default; it agreed almost exactly with the standard ANOVA here (<span class="math inline">\(F=4.521\)</span> vs.&nbsp;<span class="math inline">\(4.351\)</span>, both <span class="math inline">\(p&lt;0.005\)</span>) precisely because variances were homogeneous — a useful contrast with Chapter 3’s cholesterol-by-<code>chd69</code> example, where unequal variances made the two approaches diverge more.</li>
+<li>The <strong>Kruskal-Wallis test</strong> extends the Mann-Whitney U logic to <span class="math inline">\(k\ge3\)</span> groups using ranks, requiring no distributional assumption beyond independence; it corroborated the parametric results here (<span class="math inline">\(\chi^2=12.01\)</span>, <span class="math inline">\(df=3\)</span>, <span class="math inline">\(p=0.00735\)</span>).</li>
+<li>A significant omnibus test only shows that <strong>some</strong> group differs — always follow up with an appropriate <strong>post-hoc</strong> procedure. Here, Tukey’s HSD and Bonferroni-adjusted pairwise Wilcoxon tests <strong>agreed exactly</strong> on which pairs differed: the extreme Type A subtype (A1) had significantly higher cholesterol than both Type B subtypes (B3, B4), while no other pairwise differences reached significance.</li>
+</ul>
+<hr>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<ul>
+<li>Rosner B. <em>Fundamentals of Biostatistics</em>. 8th ed.&nbsp;Cengage Learning.</li>
+<li>Daniel WW, Cross CL. <em>Biostatistics: A Foundation for Analysis in the Health Sciences</em>. 11th ed.&nbsp;Wiley.</li>
+<li>Bland M. <em>An Introduction to Medical Statistics</em>. 4th ed.&nbsp;Oxford University Press.</li>
+<li>Fisher RA. <em>Statistical Methods for Research Workers</em>. Oliver and Boyd, 1925. (Origin of analysis of variance.)</li>
+<li>Welch BL. “On the comparison of several mean values: an alternative approach.” <em>Biometrika</em>. 1951;38(3-4):330-336.</li>
+<li>Kruskal WH, Wallis WA. “Use of Ranks in One-Criterion Variance Analysis.” <em>Journal of the American Statistical Association</em>. 1952;47(260):583-621.</li>
+<li>Tukey JW. “Comparing Individual Means in the Analysis of Variance.” <em>Biometrics</em>. 1949;5(2):99-114.</li>
+<li>Rosenman RH, et al.&nbsp;“A predictive study of coronary heart disease: the Western Collaborative Group Study.” <em>JAMA</em>. 1964;189:15-22. (Original WCGS study.)</li>
+</ul>
+<p>Downloa</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-aragon2020" class="csl-entry" role="listitem">
+Aragon, Tomas J., Michael P. Fay, Daniel Wollschlaeger, and Adam Omidpanah. 2020. <em>Epitools: Epidemiology Tools</em>. <a href="https://cran.r-project.org/web/packages/epitools/index.html">https://cran.r-project.org/web/packages/epitools/index.html</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Section2/12_4_bivariate.html" class="pagination-link" aria-label="Comparing Two Paired (Matched) Measurements">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Section2/Numerical data analysis/13_linear_regression.html" class="pagination-link" aria-label="Linear regression Analysis">
+        <span class="nav-page-text"><span class="chapter-title">Linear regression Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/12_5_bivariate.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

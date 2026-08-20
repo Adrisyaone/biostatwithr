@@ -16,10 +16,10 @@ book:
   cover-image: cover.png
   favicon: cover.png
   search: true
-  repo-url: "https://github.com/Adrisyaone/epidemiologyR.git"
+  repo-url: "https://github.com/Adrisyaone"
   repo-actions: [edit, issue]
-  sharing: [twitter, linkedin]
-  downloads: [pdf, epub]
+  sharing: [twitter, linkedin, facebook]
+  downloads: [pdf]
   page-navigation: true
   back-to-top-navigation: true
 
@@ -38,25 +38,32 @@ book:
         - section1/Chapter2/02_basics.qmd
         - section1/Chapter3/03_basics.qmd
         - section1/chapter4/04_data_types.qmd
-        - section1/chapter5/04_descriptives.qmd
-        - section1/chapter6/04_graphics.qmd
-
 
     - part: "Biostatistics"
       chapters: 
-        - Section2/01_introduction_descriptive_statistics.qmd
-        - Section2/02_measures_central_tendency.qmd
-        - Section2/03_measures_of_dispersion.qmd
-        - Section2/04_probability.qmd
-        - Section2/05_discrete_probability_distributions.qmd
-        - Section2/06_continuous_probability_distributions.qmd
-        - Section2/07_intro_hypothesis_testing.qmd
-        - Section2/05_bivariate.qmd
-        - Section2/Numerical data analysis/06_linear_regression.qmd
-        - Section2/Categorical data analysis/Categorical_data_analysis2.qmd
-        - Section2/Count data analysis/Poisson's regression.qmd
-        - Section2/Survival analysis/Survival_analysis.qmd
-        - Section2/Sample size calculation/Sample size calculation.qmd
+        - Section2/01_introduction_to_Biostat.qmd
+        - Section2/02_Data_types.qmd
+        - Section2/03_measures_central_tendency.qmd
+        - Section2/04_measures_of_dispersion.qmd
+        - Section2/05_descriptives.qmd
+        - Section2/06_probability.qmd
+        - Section2/07_discrete_probability_distributions.qmd
+        - Section2/08_continuous_probability_distributions.qmd
+        - Section2/09_Sampling distribution.qmd
+        - Section2/10_estimation.qmd
+        - Section2/11_intro_hypothesis_testing.qmd
+        - Section2/12_bivariate.qmd
+        - Section2/12_1_Correlation.qmd
+        - Section2/12_2_bivariate.qmd
+        - Section2/12_3_bivariate.qmd
+        - Section2/12_4_bivariate.qmd
+        - Section2/12_5_bivariate.qmd
+        - Section2/Numerical data analysis/13_linear_regression.qmd
+        - Section2/Categorical data analysis/14_Categorical_data_analysis.qmd
+        - Section2/Count data analysis/15_Poisson_regression.qmd
+        - Section2/Survival analysis/16_Survival_analysis.qmd
+        - Section2/17_sampling.qmd
+        - Section2/Sample size calculation/18_Sample_size_calculation.qmd
 
     
   appendices:

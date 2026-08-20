@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Probability – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Section2/07_discrete_probability_distributions.html" rel="next">
+<link href="../Section2/05_descriptives.html" rel="prev">
+<link href="../cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/06_probability.html"><span class="chapter-title">Probability</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/06_probability.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation and power</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#random-experiments" id="toc-random-experiments" class="nav-link" data-scroll-target="#random-experiments">Random Experiments</a></li>
+  <li><a href="#sample-space" id="toc-sample-space" class="nav-link" data-scroll-target="#sample-space">Sample Space</a></li>
+  <li><a href="#events" id="toc-events" class="nav-link" data-scroll-target="#events">Events</a>
+  <ul class="collapse">
+  <li><a href="#types-of-events" id="toc-types-of-events" class="nav-link" data-scroll-target="#types-of-events">Types of Events</a></li>
+  </ul></li>
+  <li><a href="#probability-axioms-kolmogorovs-axioms" id="toc-probability-axioms-kolmogorovs-axioms" class="nav-link" data-scroll-target="#probability-axioms-kolmogorovs-axioms">Probability Axioms (Kolmogorov’s Axioms)</a></li>
+  <li><a href="#three-approaches-to-assigning-probability" id="toc-three-approaches-to-assigning-probability" class="nav-link" data-scroll-target="#three-approaches-to-assigning-probability">Three Approaches to Assigning Probability</a>
+  <ul class="collapse">
+  <li><a href="#classical-a-priori-probability" id="toc-classical-a-priori-probability" class="nav-link" data-scroll-target="#classical-a-priori-probability">1. Classical (A Priori) Probability</a></li>
+  <li><a href="#empirical-relative-frequency-probability" id="toc-empirical-relative-frequency-probability" class="nav-link" data-scroll-target="#empirical-relative-frequency-probability">2. Empirical (Relative Frequency) Probability</a></li>
+  <li><a href="#subjective-probability" id="toc-subjective-probability" class="nav-link" data-scroll-target="#subjective-probability">3. Subjective Probability</a></li>
+  </ul></li>
+  <li><a href="#venn-diagrams" id="toc-venn-diagrams" class="nav-link" data-scroll-target="#venn-diagrams">Venn Diagrams</a>
+  <ul class="collapse">
+  <li><a href="#general-two-event-venn-diagram" id="toc-general-two-event-venn-diagram" class="nav-link" data-scroll-target="#general-two-event-venn-diagram">General Two-Event Venn Diagram</a></li>
+  <li><a href="#mutually-exclusive-events-no-overlap" id="toc-mutually-exclusive-events-no-overlap" class="nav-link" data-scroll-target="#mutually-exclusive-events-no-overlap">Mutually Exclusive Events (No Overlap)</a></li>
+  <li><a href="#clinical-example-venn-diagram" id="toc-clinical-example-venn-diagram" class="nav-link" data-scroll-target="#clinical-example-venn-diagram">Clinical Example Venn Diagram</a></li>
+  </ul></li>
+  <li><a href="#the-addition-rule" id="toc-the-addition-rule" class="nav-link" data-scroll-target="#the-addition-rule">The Addition Rule</a>
+  <ul class="collapse">
+  <li><a href="#general-addition-rule" id="toc-general-addition-rule" class="nav-link" data-scroll-target="#general-addition-rule">General Addition Rule</a></li>
+  <li><a href="#addition-rule-for-mutually-exclusive-events" id="toc-addition-rule-for-mutually-exclusive-events" class="nav-link" data-scroll-target="#addition-rule-for-mutually-exclusive-events">Addition Rule for Mutually Exclusive Events</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  </ul></li>
+  <li><a href="#mutually-exclusive-events" id="toc-mutually-exclusive-events" class="nav-link" data-scroll-target="#mutually-exclusive-events">Mutually Exclusive Events</a></li>
+  <li><a href="#independent-vs.-dependent-events" id="toc-independent-vs.-dependent-events" class="nav-link" data-scroll-target="#independent-vs.-dependent-events">Independent vs.&nbsp;Dependent Events</a>
+  <ul class="collapse">
+  <li><a href="#independent-events" id="toc-independent-events" class="nav-link" data-scroll-target="#independent-events">Independent Events</a></li>
+  <li><a href="#dependent-events" id="toc-dependent-events" class="nav-link" data-scroll-target="#dependent-events">Dependent Events</a></li>
+  </ul></li>
+  <li><a href="#conditional-probability" id="toc-conditional-probability" class="nav-link" data-scroll-target="#conditional-probability">Conditional Probability</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#formula" id="toc-formula" class="nav-link" data-scroll-target="#formula">Formula</a></li>
+  <li><a href="#worked-example-clinical" id="toc-worked-example-clinical" class="nav-link" data-scroll-target="#worked-example-clinical">Worked Example (Clinical)</a></li>
+  </ul></li>
+  <li><a href="#the-multiplication-rule" id="toc-the-multiplication-rule" class="nav-link" data-scroll-target="#the-multiplication-rule">The Multiplication Rule</a>
+  <ul class="collapse">
+  <li><a href="#general-rule-dependent-events" id="toc-general-rule-dependent-events" class="nav-link" data-scroll-target="#general-rule-dependent-events">General Rule (Dependent Events)</a></li>
+  <li><a href="#special-case-independent-events" id="toc-special-case-independent-events" class="nav-link" data-scroll-target="#special-case-independent-events">Special Case (Independent Events)</a></li>
+  <li><a href="#worked-example-sequential-dependent-sampling" id="toc-worked-example-sequential-dependent-sampling" class="nav-link" data-scroll-target="#worked-example-sequential-dependent-sampling">Worked Example: Sequential (Dependent) Sampling</a></li>
+  </ul></li>
+  <li><a href="#tree-diagrams" id="toc-tree-diagrams" class="nav-link" data-scroll-target="#tree-diagrams">Tree Diagrams</a></li>
+  <li><a href="#worked-example-combining-multiple-rules-clinical" id="toc-worked-example-combining-multiple-rules-clinical" class="nav-link" data-scroll-target="#worked-example-combining-multiple-rules-clinical">Worked Example Combining Multiple Rules (Clinical)</a></li>
+  <li><a href="#bayes-theorem" id="toc-bayes-theorem" class="nav-link" data-scroll-target="#bayes-theorem">Bayes’ Theorem</a>
+  <ul class="collapse">
+  <li><a href="#conditional-probability-review" id="toc-conditional-probability-review" class="nav-link" data-scroll-target="#conditional-probability-review">Conditional Probability Review</a></li>
+  <li><a href="#bayes-rule---derivation" id="toc-bayes-rule---derivation" class="nav-link" data-scroll-target="#bayes-rule---derivation">Bayes’ Rule - Derivation</a>
+  <ul class="collapse">
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  </ul></li>
+  <li><a href="#applications-medical-diagnosis-and-screening-tests" id="toc-applications-medical-diagnosis-and-screening-tests" class="nav-link" data-scroll-target="#applications-medical-diagnosis-and-screening-tests">Applications: Medical Diagnosis and Screening Tests</a>
+  <ul class="collapse">
+  <li><a href="#the-confusion-matrix" id="toc-the-confusion-matrix" class="nav-link" data-scroll-target="#the-confusion-matrix">The Confusion Matrix</a></li>
+  <li><a href="#key-diagnostic-test-measures" id="toc-key-diagnostic-test-measures" class="nav-link" data-scroll-target="#key-diagnostic-test-measures">Key Diagnostic Test Measures</a></li>
+  </ul></li>
+  <li><a href="#worked-example-full-manual-calculation" id="toc-worked-example-full-manual-calculation" class="nav-link" data-scroll-target="#worked-example-full-manual-calculation">Worked Example: Full Manual Calculation</a>
+  <ul class="collapse">
+  <li><a href="#interpretation-1" id="toc-interpretation-1" class="nav-link" data-scroll-target="#interpretation-1">Interpretation</a></li>
+  <li><a href="#likelihood-ratios-worked-calculation" id="toc-likelihood-ratios-worked-calculation" class="nav-link" data-scroll-target="#likelihood-ratios-worked-calculation">Likelihood Ratios (Worked Calculation)</a></li>
+  </ul></li>
+  <li><a href="#bayes-theorem-flowchart-diagnostic-testing" id="toc-bayes-theorem-flowchart-diagnostic-testing" class="nav-link" data-scroll-target="#bayes-theorem-flowchart-diagnostic-testing">Bayes’ Theorem Flowchart (Diagnostic Testing)</a></li>
+  <li><a href="#additional-worked-example-public-health-screening-program-comparison" id="toc-additional-worked-example-public-health-screening-program-comparison" class="nav-link" data-scroll-target="#additional-worked-example-public-health-screening-program-comparison">Additional Worked Example: Public Health Screening Program Comparison</a></li>
+  </ul></li>
+  <li><a href="#bayesian-inference" id="toc-bayesian-inference" class="nav-link" data-scroll-target="#bayesian-inference">Bayesian Inference</a>
+  <ul class="collapse">
+  <li><a href="#the-core-components" id="toc-the-core-components" class="nav-link" data-scroll-target="#the-core-components">The Core Components</a>
+  <ul class="collapse">
+  <li><a href="#prior" id="toc-prior" class="nav-link" data-scroll-target="#prior">Prior</a></li>
+  <li><a href="#likelihood" id="toc-likelihood" class="nav-link" data-scroll-target="#likelihood">Likelihood</a></li>
+  <li><a href="#posterior" id="toc-posterior" class="nav-link" data-scroll-target="#posterior">Posterior</a></li>
+  <li><a href="#posterior-predictive-distribution" id="toc-posterior-predictive-distribution" class="nav-link" data-scroll-target="#posterior-predictive-distribution">Posterior Predictive Distribution</a></li>
+  </ul></li>
+  <li><a href="#simple-numerical-example-estimating-a-disease-prevalence" id="toc-simple-numerical-example-estimating-a-disease-prevalence" class="nav-link" data-scroll-target="#simple-numerical-example-estimating-a-disease-prevalence">Simple Numerical Example — Estimating a Disease Prevalence</a></li>
+  <li><a href="#frequentist-vs.-bayesian-comparison" id="toc-frequentist-vs.-bayesian-comparison" class="nav-link" data-scroll-target="#frequentist-vs.-bayesian-comparison">Frequentist vs.&nbsp;Bayesian Comparison</a></li>
+  <li><a href="#applications-in-epidemiology" id="toc-applications-in-epidemiology" class="nav-link" data-scroll-target="#applications-in-epidemiology">Applications in Epidemiology</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/06_probability.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/06_probability.html"><span class="chapter-title">Probability</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Probability</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><strong>Probability</strong> is the mathematical language for quantifying uncertainty. Everything that follows in this book — hypothesis testing, confidence intervals, regression, diagnostic testing — rests on probability theory. In biostatistics, probability lets us answer questions such as: What is the chance that a patient with a positive screening test truly has the disease? What is the probability that a randomly selected newborn is preterm? How likely is it that an observed difference between treatment groups occurred by chance alone?</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Definition:</strong> Probability is a numerical measure, between 0 and 1 (or 0% and 100%), of the likelihood that a particular event will occur. A probability of 0 means the event is impossible; a probability of 1 means the event is certain.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="random-experiments" class="level2">
+<h2 class="anchored" data-anchor-id="random-experiments">Random Experiments</h2>
+<p>A <strong>random experiment</strong> is any process or procedure that can be repeated (at least conceptually) under the same conditions, whose individual outcome cannot be predicted with certainty, but whose set of <em>possible</em> outcomes is known in advance.</p>
+<p><strong>Examples in public health:</strong></p>
+<ul>
+<li>Testing a randomly selected patient for a disease (outcome: positive or negative).</li>
+<li>Recording the number of new malaria cases in a district in one month.</li>
+<li>Selecting a newborn and recording birth weight.</li>
+<li>Administering a vaccine and observing whether the recipient develops an adverse reaction.</li>
+</ul>
+</section>
+<section id="sample-space" class="level2">
+<h2 class="anchored" data-anchor-id="sample-space">Sample Space</h2>
+<p>The <strong>sample space</strong>, denoted <span class="math inline">\(S\)</span> or <span class="math inline">\(\Omega\)</span>, is the set of <strong>all possible outcomes</strong> of a random experiment.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li>Testing a patient for a disease: <span class="math inline">\(S = \{\text{Positive}, \text{Negative}\}\)</span>.</li>
+<li>Rolling a die to randomly assign a patient to 1 of 6 study arms: <span class="math inline">\(S=\{1,2,3,4,5,6\}\)</span>.</li>
+<li>Recording the number of hospital-acquired infections in a month: <span class="math inline">\(S = \{0,1,2,3,\ldots\}\)</span> (a countably infinite sample space).</li>
+<li>Measuring a patient’s temperature: <span class="math inline">\(S = (\text{all real numbers in a plausible physiological range})\)</span>, a continuous sample space.</li>
+</ul>
+</section>
+<section id="events" class="level2">
+<h2 class="anchored" data-anchor-id="events">Events</h2>
+<p>An <strong>event</strong> is any subset of the sample space — a collection of one or more outcomes we are interested in. Events are typically denoted with capital letters (<span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span>, …).</p>
+<p><strong>Example:</strong> In the die-rolling experiment for assigning patients to 6 study arms, let <span class="math inline">\(A\)</span> = “patient assigned to an even-numbered arm” <span class="math inline">\(= \{2,4,6\}\)</span>.</p>
+<section id="types-of-events" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-events">Types of Events</h3>
+<ul>
+<li><strong>Simple (elementary) event:</strong> Consists of exactly one outcome, e.g., <span class="math inline">\(\{3\}\)</span>.</li>
+<li><strong>Compound event:</strong> Consists of more than one outcome, e.g., <span class="math inline">\(\{2,4,6\}\)</span>.</li>
+<li><strong>Certain event:</strong> The entire sample space <span class="math inline">\(S\)</span>; probability = 1.</li>
+<li><strong>Impossible event:</strong> The empty set <span class="math inline">\(\emptyset\)</span>; probability = 0.</li>
+<li><strong>Complementary event (</strong><span class="math inline">\(A^c\)</span> or <span class="math inline">\(\bar{A}\)</span>): All outcomes in <span class="math inline">\(S\)</span> that are <em>not</em> in <span class="math inline">\(A\)</span>. <span class="math inline">\(P(A^c) = 1-P(A)\)</span>.</li>
+<li><strong>Mutually exclusive (disjoint) events:</strong> Two events that cannot occur at the same time, i.e., <span class="math inline">\(A \cap B = \emptyset\)</span>.</li>
+<li><strong>Independent events:</strong> The occurrence of one event does not affect the probability of the other.</li>
+<li><strong>Dependent events:</strong> The occurrence of one event changes the probability of the other.</li>
+</ul>
+</section>
+</section>
+<section id="probability-axioms-kolmogorovs-axioms" class="level2">
+<h2 class="anchored" data-anchor-id="probability-axioms-kolmogorovs-axioms">Probability Axioms (Kolmogorov’s Axioms)</h2>
+<p>For any event <span class="math inline">\(A\)</span> in sample space <span class="math inline">\(S\)</span>:</p>
+<ol type="1">
+<li><strong>Non-negativity:</strong> <span class="math inline">\(P(A) \ge 0\)</span> for every event <span class="math inline">\(A\)</span>.</li>
+<li><strong>Normalization:</strong> <span class="math inline">\(P(S) = 1\)</span> (something in the sample space must happen).</li>
+<li><strong>Additivity:</strong> For any two <strong>mutually exclusive</strong> events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>: <span class="math inline">\(P(A \cup B) = P(A) + P(B)\)</span>. (More generally, for a countable sequence of mutually exclusive events, the probability of their union is the sum of their probabilities.)</li>
+</ol>
+<p>From these three axioms, all other probability rules can be derived, including <span class="math inline">\(P(A^c) = 1 - P(A)\)</span> and <span class="math inline">\(0 \le P(A) \le 1\)</span>.</p>
+</section>
+<section id="three-approaches-to-assigning-probability" class="level2">
+<h2 class="anchored" data-anchor-id="three-approaches-to-assigning-probability">Three Approaches to Assigning Probability</h2>
+<section id="classical-a-priori-probability" class="level3">
+<h3 class="anchored" data-anchor-id="classical-a-priori-probability">1. Classical (A Priori) Probability</h3>
+<p>Applies when all outcomes in the sample space are <strong>equally likely</strong>. <span class="math display">\[P(A) = \frac{\text{Number of outcomes favorable to } A}{\text{Total number of outcomes in } S}\]</span></p>
+<p><strong>Worked example:</strong> A study randomizes patients to one of 4 equally likely treatment arms. The probability a given patient is assigned to Arm 1 is <span class="math inline">\(P(\text{Arm 1}) = 1/4 = 0.25\)</span>.</p>
+</section>
+<section id="empirical-relative-frequency-probability" class="level3">
+<h3 class="anchored" data-anchor-id="empirical-relative-frequency-probability">2. Empirical (Relative Frequency) Probability</h3>
+<p>Based on <strong>observed data</strong> from repeated trials or historical records, rather than theoretical assumptions. <span class="math display">\[P(A) = \frac{\text{Number of times } A \text{ occurred}}{\text{Total number of trials observed}}\]</span></p>
+<p><strong>Worked example (clinical):</strong> Among 500 patients who underwent a particular surgery at a hospital last year, 15 developed a post-operative infection. The empirical probability of infection is: <span class="math display">\[P(\text{infection}) = \frac{15}{500} = 0.03 = 3\%\]</span></p>
+<p>This is exactly how incidence proportions/risk are calculated in epidemiology.</p>
+</section>
+<section id="subjective-probability" class="level3">
+<h3 class="anchored" data-anchor-id="subjective-probability">3. Subjective Probability</h3>
+<p>Based on <strong>personal judgment, experience, or belief</strong>, used when neither equally likely outcomes nor sufficient historical data are available.</p>
+<p><strong>Example:</strong> A clinician estimates “I believe there is about a 70% chance this patient’s symptoms are due to a viral rather than bacterial infection,” based on clinical experience rather than a formal calculation. Subjective probability underlies <strong>prior probabilities</strong> in Bayesian analysis (Sections 5–6).</p>
+</section>
+</section>
+<section id="venn-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="venn-diagrams">Venn Diagrams</h2>
+<p>Venn diagrams visually represent relationships between events (sets) within a sample space. Below, regions are labeled to show set relationships; overlapping regions represent intersections.</p>
+<section id="general-two-event-venn-diagram" class="level3">
+<h3 class="anchored" data-anchor-id="general-two-event-venn-diagram">General Two-Event Venn Diagram</h3>
+<p><img src="images/7f2f6957-e099-4d7a-af82-90f5eae0a750.png" class="img-fluid" width="502"></p>
+</section>
+<section id="mutually-exclusive-events-no-overlap" class="level3">
+<h3 class="anchored" data-anchor-id="mutually-exclusive-events-no-overlap">Mutually Exclusive Events (No Overlap)</h3>
+<p><img src="images/21eb2b12-30c4-4987-ae8b-628e810dbbb8-02.png" class="img-fluid" width="504"></p>
+<p>Because <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> share no outcomes, there is no overlapping region — this is the defining feature of mutually exclusive events.</p>
+</section>
+<section id="clinical-example-venn-diagram" class="level3">
+<h3 class="anchored" data-anchor-id="clinical-example-venn-diagram">Clinical Example Venn Diagram</h3>
+<p>Let <span class="math inline">\(A\)</span> = “patient has diabetes” and <span class="math inline">\(B\)</span> = “patient has hypertension” in a clinic population of 200 patients: 60 have diabetes only, 50 have hypertension only, 40 have both, and 50 have neither.</p>
+<p><img src="images/b21f6b39-cfca-428f-88a9-8e717cadce66.png" width="503" height="335"></p>
+<p>From this diagram:</p>
+<p><span class="math inline">\(P(\text{diabetes}) = (60+40)/200 = 0.50\)</span>;</p>
+<p><span class="math inline">\(P(\text{hypertension}) = (50+40)/200=0.45\)</span>;</p>
+<p><span class="math inline">\(P(\text{both}) = 40/200 = 0.20\)</span>; <span class="math inline">\(P(\text{neither}) = 50/200=0.25\)</span>.</p>
+</section>
+</section>
+<section id="the-addition-rule" class="level2">
+<h2 class="anchored" data-anchor-id="the-addition-rule">The Addition Rule</h2>
+<section id="general-addition-rule" class="level3">
+<h3 class="anchored" data-anchor-id="general-addition-rule">General Addition Rule</h3>
+<p><span class="math display">\[P(A \cup B) = P(A) + P(B) - P(A \cap B)\]</span></p>
+<p>We subtract <span class="math inline">\(P(A \cap B)\)</span> to avoid double-counting outcomes that belong to both events.</p>
+</section>
+<section id="addition-rule-for-mutually-exclusive-events" class="level3">
+<h3 class="anchored" data-anchor-id="addition-rule-for-mutually-exclusive-events">Addition Rule for Mutually Exclusive Events</h3>
+<p>If <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are mutually exclusive (<span class="math inline">\(P(A \cap B) = 0\)</span>): <span class="math display">\[P(A \cup B) = P(A) + P(B)\]</span></p>
+</section>
+<section id="worked-example" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example">Worked Example</h3>
+<p>Using the clinic data above (<span class="math inline">\(n=200\)</span>): What is the probability a randomly selected patient has diabetes or hypertension (or both)?</p>
+<p><strong>Step 1.</strong> <span class="math inline">\(P(A) = P(\text{diabetes}) = 100/200 = 0.50\)</span> (60 diabetes-only + 40 both).</p>
+<p><strong>Step 2.</strong> <span class="math inline">\(P(B) = P(\text{hypertension}) = 90/200 = 0.45\)</span> (50 hypertension-only + 40 both).</p>
+<p><strong>Step 3.</strong> <span class="math inline">\(P(A \cap B) = 40/200 = 0.20\)</span>.</p>
+<p><strong>Step 4.</strong> Apply the addition rule: <span class="math display">\[P(A \cup B) = 0.50+0.45-0.20 = 0.75\]</span></p>
+<p><strong>Verification by direct count:</strong> <span class="math inline">\((60+50+40)/200 = 150/200 = 0.75\)</span>. This confirms 75% of patients have at least one of the two conditions.</p>
+</section>
+</section>
+<section id="mutually-exclusive-events" class="level2">
+<h2 class="anchored" data-anchor-id="mutually-exclusive-events">Mutually Exclusive Events</h2>
+<p>Two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are <strong>mutually exclusive (disjoint)</strong> if they cannot both occur simultaneously: <span class="math inline">\(P(A \cap B) = 0\)</span>.</p>
+<p><strong>Clinical example:</strong> A patient’s ABO blood type result is a single test outcome. A patient cannot simultaneously be “type A” and “type B” (ignoring rare chimerism); these are mutually exclusive events.</p>
+</section>
+<section id="independent-vs.-dependent-events" class="level2">
+<h2 class="anchored" data-anchor-id="independent-vs.-dependent-events">Independent vs.&nbsp;Dependent Events</h2>
+<section id="independent-events" class="level3">
+<h3 class="anchored" data-anchor-id="independent-events">Independent Events</h3>
+<p>Two events are <strong>independent</strong> if the occurrence of one does not change the probability of the other: <span class="math display">\[P(A \cap B) = P(A) \times P(B) \quad \text{(Multiplication Rule for independent events)}\]</span> Equivalently, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent if <span class="math inline">\(P(A|B) = P(A)\)</span>.</p>
+<p><strong>Worked example:</strong> The sex of a first-born child and the sex of a second-born child (in the absence of any biological linkage) are independent. If <span class="math inline">\(P(\text{boy}) = 0.5\)</span> for each birth, then: <span class="math display">\[P(\text{both children are boys}) = 0.5 \times 0.5 = 0.25\]</span></p>
+</section>
+<section id="dependent-events" class="level3">
+<h3 class="anchored" data-anchor-id="dependent-events">Dependent Events</h3>
+<p>Two events are <strong>dependent</strong> if the occurrence of one <strong>does</strong> affect the probability of the other. In this case, we must use <strong>conditional probability</strong>: <span class="math display">\[P(A \cap B) = P(A) \times P(B|A) \quad \text{(General/Multiplication Rule)}\]</span></p>
+<p><strong>Clinical example:</strong> Smoking status and lung cancer diagnosis are dependent events — knowing a patient smokes changes the probability that they will be diagnosed with lung cancer.</p>
+</section>
+</section>
+<section id="conditional-probability" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-probability">Conditional Probability</h2>
+<section id="definition" class="level3">
+<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<p><strong>Conditional probability</strong> is the probability that event <span class="math inline">\(B\)</span> occurs, <em>given that</em> event <span class="math inline">\(A\)</span> has already occurred (or is known to be true).</p>
+</section>
+<section id="formula" class="level3">
+<h3 class="anchored" data-anchor-id="formula">Formula</h3>
+<p><span class="math display">\[P(B|A) = \frac{P(A \cap B)}{P(A)}, \quad \text{provided } P(A) &gt; 0\]</span></p>
+</section>
+<section id="worked-example-clinical" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example-clinical">Worked Example (Clinical)</h3>
+<p>Using the clinic data (<span class="math inline">\(n=200\)</span>: 60 diabetes only, 50 hypertension only, 40 both, 50 neither): What is the probability a patient has hypertension, <strong>given</strong> that they have diabetes?</p>
+<p><strong>Step 1.</strong> <span class="math inline">\(P(\text{diabetes}) = 100/200 = 0.50\)</span>.</p>
+<p><strong>Step 2.</strong> <span class="math inline">\(P(\text{diabetes} \cap \text{hypertension}) = 40/200 = 0.20\)</span>.</p>
+<p><strong>Step 3.</strong> Apply the formula: <span class="math display">\[P(\text{hypertension}|\text{diabetes}) = \frac{0.20}{0.50} = 0.40\]</span></p>
+<p><strong>Interpretation:</strong> Among diabetic patients, 40% also have hypertension — noticeably higher than the overall prevalence of hypertension in the whole clinic (45%… actually let’s compare correctly: overall <span class="math inline">\(P(\text{hypertension})=0.45\)</span>). Here conditioning on diabetes gives 40%, close to but not equal to the unconditional 45%, illustrating how conditioning can shift a probability up, down, or leave it nearly unchanged depending on the strength of association between the two conditions.</p>
+</section>
+</section>
+<section id="the-multiplication-rule" class="level2">
+<h2 class="anchored" data-anchor-id="the-multiplication-rule">The Multiplication Rule</h2>
+<section id="general-rule-dependent-events" class="level3">
+<h3 class="anchored" data-anchor-id="general-rule-dependent-events">General Rule (Dependent Events)</h3>
+<p><span class="math display">\[P(A \cap B) = P(A)\times P(B|A)\]</span></p>
+</section>
+<section id="special-case-independent-events" class="level3">
+<h3 class="anchored" data-anchor-id="special-case-independent-events">Special Case (Independent Events)</h3>
+<p><span class="math display">\[P(A \cap B) = P(A) \times P(B)\]</span></p>
+</section>
+<section id="worked-example-sequential-dependent-sampling" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example-sequential-dependent-sampling">Worked Example: Sequential (Dependent) Sampling</h3>
+<p>A batch of 10 vaccine vials contains 2 defective vials. Two vials are selected <strong>without replacement</strong> for quality testing. What is the probability both are defective?</p>
+<p><strong>Step 1.</strong> <span class="math inline">\(P(\text{1st defective}) = 2/10 = 0.20\)</span>.</p>
+<p><strong>Step 2.</strong> Given the 1st is defective, 1 defective vial remains out of 9: <span class="math inline">\(P(\text{2nd defective}|\text{1st defective}) = 1/9 = 0.111\)</span>.</p>
+<p><strong>Step 3.</strong> Apply the multiplication rule: <span class="math display">\[P(\text{both defective}) = 0.20 \times 0.111 = 0.0222 \approx 2.2\%\]</span></p>
+</section>
+</section>
+<section id="tree-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="tree-diagrams">Tree Diagrams</h2>
+<p>Tree diagrams visually organize sequential/conditional probabilities and are especially useful for multi-stage experiments (they will be used again for diagnostic testing in Section 5).</p>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    Start(("Select&lt;br/&gt;Vial 1")) --&gt;|"P = 0.20&lt;br/&gt;Defective"| D1["1st Defective"]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P = 0.80&lt;br/&gt;Not Defective"| ND1["1st OK"]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 1/9&lt;br/&gt;Defective"| D1D2["Both Defective&lt;br/&gt;P = 0.20 × 0.111 = 0.022"]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    D1 --&gt;|"P = 8/9&lt;br/&gt;Not Defective"| D1ND2["1st Def, 2nd OK&lt;br/&gt;P = 0.20 × 0.889 = 0.178"]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 2/9&lt;br/&gt;Defective"| ND1D2["1st OK, 2nd Def&lt;br/&gt;P = 0.80 × 0.222 = 0.178"]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    ND1 --&gt;|"P = 7/9&lt;br/&gt;Not Defective"| ND1ND2["Neither Defective&lt;br/&gt;P = 0.80 × 0.778 = 0.622"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    Start(("Select&lt;br/&gt;Vial 1")) --&gt;|"P = 0.20&lt;br/&gt;Defective"| D1["1st Defective"]
+    Start --&gt;|"P = 0.80&lt;br/&gt;Not Defective"| ND1["1st OK"]
+    D1 --&gt;|"P = 1/9&lt;br/&gt;Defective"| D1D2["Both Defective&lt;br/&gt;P = 0.20 × 0.111 = 0.022"]
+    D1 --&gt;|"P = 8/9&lt;br/&gt;Not Defective"| D1ND2["1st Def, 2nd OK&lt;br/&gt;P = 0.20 × 0.889 = 0.178"]
+    ND1 --&gt;|"P = 2/9&lt;br/&gt;Defective"| ND1D2["1st OK, 2nd Def&lt;br/&gt;P = 0.80 × 0.222 = 0.178"]
+    ND1 --&gt;|"P = 7/9&lt;br/&gt;Not Defective"| ND1ND2["Neither Defective&lt;br/&gt;P = 0.80 × 0.778 = 0.622"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Check:</strong> The four end-branch probabilities should sum to 1: <span class="math inline">\(0.022+0.178+0.178+0.622 = 1.000\)</span> ✓.</p>
+</section>
+<section id="worked-example-combining-multiple-rules-clinical" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example-combining-multiple-rules-clinical">Worked Example Combining Multiple Rules (Clinical)</h2>
+<p>In a population, 10% of people have a certain risk gene (<span class="math inline">\(G\)</span>). Among those with the gene, 40% develop the disease (<span class="math inline">\(D\)</span>) by age 60; among those without the gene, only 5% develop the disease. Find the overall probability a randomly selected person develops the disease (this previews the <strong>Law of Total Probability</strong>, essential for Bayes’ Theorem in Section 5).</p>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    Start(("Population")) --&gt;|"P(G) = 0.10"| G["Has Gene"]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Start --&gt;|"P(Gᶜ) = 0.90"| Gc["No Gene"]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(D|G) = 0.40"| GD["Gene &amp; Disease&lt;br/&gt;P = 0.10×0.40 = 0.04"]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    G --&gt;|"P(Dᶜ|G) = 0.60"| GDc["Gene, No Disease&lt;br/&gt;P = 0.10×0.60 = 0.06"]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(D|Gᶜ) = 0.05"| GcD["No Gene, Disease&lt;br/&gt;P = 0.90×0.05 = 0.045"]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    Gc --&gt;|"P(Dᶜ|Gᶜ) = 0.95"| GcDc["No Gene, No Disease&lt;br/&gt;P = 0.90×0.95 = 0.855"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    Start(("Population")) --&gt;|"P(G) = 0.10"| G["Has Gene"]
+    Start --&gt;|"P(Gᶜ) = 0.90"| Gc["No Gene"]
+    G --&gt;|"P(D|G) = 0.40"| GD["Gene &amp; Disease&lt;br/&gt;P = 0.10×0.40 = 0.04"]
+    G --&gt;|"P(Dᶜ|G) = 0.60"| GDc["Gene, No Disease&lt;br/&gt;P = 0.10×0.60 = 0.06"]
+    Gc --&gt;|"P(D|Gᶜ) = 0.05"| GcD["No Gene, Disease&lt;br/&gt;P = 0.90×0.05 = 0.045"]
+    Gc --&gt;|"P(Dᶜ|Gᶜ) = 0.95"| GcDc["No Gene, No Disease&lt;br/&gt;P = 0.90×0.95 = 0.855"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Step 1.</strong> Multiply along each branch (multiplication rule for dependent events): <span class="math inline">\(P(G \cap D) = 0.04\)</span>, <span class="math inline">\(P(G^c \cap D) = 0.045\)</span>.</p>
+<p><strong>Step 2.</strong> Since “has gene” and “no gene” are mutually exclusive and exhaustive, add the two paths that end in disease (addition rule): <span class="math display">\[P(D) = P(G\cap D) + P(G^c \cap D) = 0.04+0.045 = 0.085 = 8.5\%\]</span></p>
+<p>This is the <strong>Law of Total Probability</strong>: <span class="math inline">\(P(D) = P(D|G)P(G) + P(D|G^c)P(G^c)\)</span>.</p>
+</section>
+<section id="bayes-theorem" class="level1">
+<h1>Bayes’ Theorem</h1>
+<section id="conditional-probability-review" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-probability-review">Conditional Probability Review</h2>
+<p>Recall from Section 4 that conditional probability is defined as: <span class="math display">\[P(B|A) = \frac{P(A\cap B)}{P(A)}\]</span></p>
+<p>By symmetry, we can also write: <span class="math display">\[P(A|B) = \frac{P(A\cap B)}{P(B)} \implies P(A\cap B) = P(A|B)\,P(B)\]</span></p>
+<p>Setting the two expressions for <span class="math inline">\(P(A \cap B)\)</span> equal to each other gives us the foundation for Bayes’ Theorem: <span class="math display">\[P(B|A)\,P(A) = P(A|B)\,P(B)\]</span></p>
+</section>
+<section id="bayes-rule---derivation" class="level2">
+<h2 class="anchored" data-anchor-id="bayes-rule---derivation">Bayes’ Rule - Derivation</h2>
+<p>Starting from <span class="math inline">\(P(B|A)\,P(A) = P(A|B)\,P(B)\)</span>, divide both sides by <span class="math inline">\(P(A)\)</span>:</p>
+<p><span class="math display">\[P(B|A) = \frac{P(A|B)\,P(B)}{P(A)}\]</span></p>
+<p>This is <strong>Bayes’ Theorem</strong>. In words: it lets us “reverse” a conditional probability — converting <span class="math inline">\(P(A|B)\)</span> (which we may know) into <span class="math inline">\(P(B|A)\)</span> (which we actually want to know).</p>
+<p>If <span class="math inline">\(P(A)\)</span> is not known directly, it can be expanded using the <strong>Law of Total Probability</strong> (introduced in Section 4), assuming <span class="math inline">\(B\)</span> and <span class="math inline">\(B^c\)</span> partition the sample space: <span class="math display">\[P(A) = P(A|B)\,P(B) + P(A|B^c)\,P(B^c)\]</span></p>
+<p>giving the most commonly used form of Bayes’ Theorem:</p>
+<p><span class="math display">\[\boxed{P(B|A) = \frac{P(A|B)\,P(B)}{P(A|B)\,P(B) + P(A|B^c)\,P(B^c)}}\]</span></p>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<p>Bayes’ Theorem updates our belief about event <span class="math inline">\(B\)</span> (e.g., “patient has disease”) after observing evidence <span class="math inline">\(A\)</span> (e.g., “test result is positive”), by combining:</p>
+<ul>
+<li><span class="math inline">\(P(B)\)</span> : the <strong>prior probability</strong> of <span class="math inline">\(B\)</span> (what we believed before seeing the evidence),</li>
+<li><span class="math inline">\(P(A|B)\)</span> : the <strong>likelihood</strong> of observing the evidence if <span class="math inline">\(B\)</span> is true,</li>
+</ul>
+<p>to produce <span class="math inline">\(P(B|A)\)</span> — the <strong>posterior probability</strong> of <span class="math inline">\(B\)</span> after seeing the evidence. This prior/likelihood/posterior framework is developed further in Section 6.</p>
+</section>
+</section>
+<section id="applications-medical-diagnosis-and-screening-tests" class="level2">
+<h2 class="anchored" data-anchor-id="applications-medical-diagnosis-and-screening-tests">Applications: Medical Diagnosis and Screening Tests</h2>
+<p>Bayes’ Theorem is the mathematical backbone of <strong>diagnostic testing</strong> in medicine and <strong>screening program evaluation</strong> in public health. It answers the clinically crucial question: <em>“Given that this patient tested positive, what is the probability they actually have the disease?”</em> — which is generally <strong>not</strong> the same as the test’s sensitivity.</p>
+<section id="the-confusion-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="the-confusion-matrix">The Confusion Matrix</h3>
+<p>Diagnostic test performance is organized in a <strong>2×2 confusion matrix (contingency table)</strong>, cross-classifying the true disease status against the test result:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 28%">
+<col style="width: 27%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Disease Present (D+)</th>
+<th>Disease Absent (D−)</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Test Positive (T+)</strong></td>
+<td>True Positive (TP)</td>
+<td>False Positive (FP)</td>
+<td>TP + FP</td>
+</tr>
+<tr class="even">
+<td><strong>Test Negative (T−)</strong></td>
+<td>False Negative (FN)</td>
+<td>True Negative (TN)</td>
+<td>FN + TN</td>
+</tr>
+<tr class="odd">
+<td><strong>Total</strong></td>
+<td>TP + FN</td>
+<td>FP + TN</td>
+<td><span class="math inline">\(N\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>False positive:</strong> Test says positive, but the patient does not actually have the disease (a “false alarm”).</li>
+<li><strong>False negative:</strong> Test says negative, but the patient actually has the disease (a “missed case”).</li>
+</ul>
+</section>
+<section id="key-diagnostic-test-measures" class="level3">
+<h3 class="anchored" data-anchor-id="key-diagnostic-test-measures">Key Diagnostic Test Measures</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Measure</th>
+<th>Formula</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sensitivity</strong> (True Positive Rate)</td>
+<td><span class="math inline">\(\dfrac{TP}{TP+FN}\)</span></td>
+<td>Among those <strong>with</strong> disease, proportion correctly identified as positive</td>
+</tr>
+<tr class="even">
+<td><strong>Specificity</strong> (True Negative Rate)</td>
+<td><span class="math inline">\(\dfrac{TN}{TN+FP}\)</span></td>
+<td>Among those <strong>without</strong> disease, proportion correctly identified as negative</td>
+</tr>
+<tr class="odd">
+<td><strong>Positive Predictive Value (PPV)</strong></td>
+<td><span class="math inline">\(\dfrac{TP}{TP+FP}\)</span></td>
+<td>Among those who <strong>test positive</strong>, proportion who truly have disease</td>
+</tr>
+<tr class="even">
+<td><strong>Negative Predictive Value (NPV)</strong></td>
+<td><span class="math inline">\(\dfrac{TN}{TN+FN}\)</span></td>
+<td>Among those who <strong>test negative</strong>, proportion who truly do not have disease</td>
+</tr>
+<tr class="odd">
+<td><strong>Prevalence</strong></td>
+<td><span class="math inline">\(\dfrac{TP+FN}{N}\)</span></td>
+<td>Proportion of the population with disease</td>
+</tr>
+<tr class="even">
+<td><strong>Positive Likelihood Ratio (LR+)</strong></td>
+<td><span class="math inline">\(\dfrac{\text{Sensitivity}}{1-\text{Specificity}}\)</span></td>
+<td>How much a positive result increases the odds of disease</td>
+</tr>
+<tr class="odd">
+<td><strong>Negative Likelihood Ratio (LR−)</strong></td>
+<td><span class="math inline">\(\dfrac{1-\text{Sensitivity}}{\text{Specificity}}\)</span></td>
+<td>How much a negative result decreases the odds of disease</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Sensitivity and specificity are intrinsic properties of the test</strong> and do not depend on disease prevalence. <strong>PPV and NPV, however, depend heavily on prevalence</strong>, the same test performs very differently (in terms of PPV) in a high-prevalence population (e.g., a specialist referral clinic) versus a low-prevalence population (e.g., mass community screening). This is precisely why Bayes’ Theorem is required to move from sensitivity/specificity to PPV/NPV.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="worked-example-full-manual-calculation" class="level2">
+<h2 class="anchored" data-anchor-id="worked-example-full-manual-calculation">Worked Example: Full Manual Calculation</h2>
+<p>A tuberculosis (TB) screening test has <strong>sensitivity = 90%</strong> and <strong>specificity = 95%</strong>. It is used to screen a population where the true <strong>prevalence of TB is 1%</strong>. Suppose we screen <span class="math inline">\(N = 10{,}000\)</span> people. Find the PPV and NPV, and interpret using Bayes’ Theorem.</p>
+<p><strong>Step 1: Determine the number with and without disease using prevalence:</strong> <span class="math display">\[\text{Diseased} = 0.01 \times 10{,}000 = 100 \qquad \text{Not diseased} = 9900\]</span></p>
+<p><strong>Step 2: Apply sensitivity to the diseased group:</strong> <span class="math display">\[TP = 0.90 \times 100 = 90 \qquad FN = 100-90=10\]</span></p>
+<p><strong>Step 3: Apply specificity to the non-diseased group:</strong> <span class="math display">\[TN = 0.95\times 9900 = 9405 \qquad FP = 9900-9405=495\]</span></p>
+<p><strong>Step 4: Completed confusion matrix:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>D+</th>
+<th>D−</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>T+</td>
+<td>90</td>
+<td>495</td>
+<td>585</td>
+</tr>
+<tr class="even">
+<td>T−</td>
+<td>10</td>
+<td>9405</td>
+<td>9415</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>100</td>
+<td>9900</td>
+<td>10,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Step 5: Calculate PPV using Bayes’ Theorem:</strong> <span class="math display">\[PPV = P(D+|T+) = \frac{P(T+|D+)P(D+)}{P(T+|D+)P(D+)+P(T+|D-)P(D-)} \]</span> <span class="math display">\[= \frac{(0.90)(0.01)}{(0.90)(0.01)+(0.05)(0.99)}\]</span> <span class="math display">\[PPV = \frac{0.009}{0.009+0.0495} = \frac{0.009}{0.0585} = 0.1538 \approx 15.4\%\]</span></p>
+<p><strong>Verification from the confusion matrix:</strong> <span class="math inline">\(PPV = TP/(TP+FP) = 90/585 = 0.1538\)</span></p>
+<p><strong>Step 6: Calculate NPV:</strong> <span class="math display">\[NPV = \frac{TN}{TN+FN} = \frac{9405}{9415} = 0.9989 \approx 99.9\%\]</span></p>
+<section id="interpretation-1" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-1">Interpretation</h3>
+<p>Even with a “good” test (90% sensitive, 95% specific), because TB prevalence is low (1%), only about <strong>15.4%</strong> of people who test positive actually have TB. The majority of positives (84.6%) are <strong>false positives</strong>. This counterintuitive result is one of the most important lessons in diagnostic testing and is a direct consequence of Bayes’ Theorem: <strong>low prevalence sharply lowers PPV</strong>, even for tests with high sensitivity and specificity. In contrast, the NPV is excellent (99.9%), a negative result is highly reassuring in this low-prevalence setting.</p>
+</section>
+<section id="likelihood-ratios-worked-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="likelihood-ratios-worked-calculation">Likelihood Ratios (Worked Calculation)</h3>
+<p><span class="math display">\[LR+ = \frac{\text{Sensitivity}}{1-\text{Specificity}} = \frac{0.90}{1-0.95} = \frac{0.90}{0.05} = 18\]</span> <span class="math display">\[LR- = \frac{1-\text{Sensitivity}}{\text{Specificity}} = \frac{1-0.90}{0.95} = \frac{0.10}{0.95} = 0.105\]</span></p>
+<p><strong>Interpretation:</strong> A positive result is 18 times more likely in a person with TB than without. A strong LR+ (values &gt; 10 are considered to provide strong evidence). A negative result’s LR− of 0.105 substantially reduces the likelihood of disease (values &lt; 0.1 are considered strong evidence against disease).</p>
+</section>
+</section>
+<section id="bayes-theorem-flowchart-diagnostic-testing" class="level2">
+<h2 class="anchored" data-anchor-id="bayes-theorem-flowchart-diagnostic-testing">Bayes’ Theorem Flowchart (Diagnostic Testing)</h2>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    Pop(("Population&lt;br/&gt;N = 10,000&lt;br/&gt;Prevalence = 1%")) --&gt; D["Diseased&lt;br/&gt;n = 100"]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    Pop --&gt; ND["Not Diseased&lt;br/&gt;n = 9,900"]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"Sensitivity = 90%"| TP["True Positive&lt;br/&gt;n = 90"]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    D --&gt;|"1 - Sensitivity = 10%"| FN["False Negative&lt;br/&gt;n = 10"]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"1 - Specificity = 5%"| FP["False Positive&lt;br/&gt;n = 495"]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    ND --&gt;|"Specificity = 95%"| TN["True Negative&lt;br/&gt;n = 9,405"]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    TP --&gt; PPV["PPV = 90 / (90+495) = 15.4%"]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    FP --&gt; PPV</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    TN --&gt; NPV["NPV = 9405 / (9405+10) = 99.9%"]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    FN --&gt; NPV</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    Pop(("Population&lt;br/&gt;N = 10,000&lt;br/&gt;Prevalence = 1%")) --&gt; D["Diseased&lt;br/&gt;n = 100"]
+    Pop --&gt; ND["Not Diseased&lt;br/&gt;n = 9,900"]
+    D --&gt;|"Sensitivity = 90%"| TP["True Positive&lt;br/&gt;n = 90"]
+    D --&gt;|"1 - Sensitivity = 10%"| FN["False Negative&lt;br/&gt;n = 10"]
+    ND --&gt;|"1 - Specificity = 5%"| FP["False Positive&lt;br/&gt;n = 495"]
+    ND --&gt;|"Specificity = 95%"| TN["True Negative&lt;br/&gt;n = 9,405"]
+    TP --&gt; PPV["PPV = 90 / (90+495) = 15.4%"]
+    FP --&gt; PPV
+    TN --&gt; NPV["NPV = 9405 / (9405+10) = 99.9%"]
+    FN --&gt; NPV
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="additional-worked-example-public-health-screening-program-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="additional-worked-example-public-health-screening-program-comparison">Additional Worked Example: Public Health Screening Program Comparison</h2>
+<p>Compare the same test (sensitivity 90%, specificity 95%) used in two settings: (1) general community screening, prevalence = 1%; (2) a high-risk clinic (e.g., HIV-positive patients, close TB contacts), prevalence = 20%.</p>
+<p><strong>Setting 2 calculation (prevalence = 20%, per 10,000 screened):</strong></p>
+<p><strong>Step 1.</strong> Diseased <span class="math inline">\(= 0.20\times10{,}000=2000\)</span>; Not diseased <span class="math inline">\(=8000\)</span>.</p>
+<p><strong>Step 2.</strong> <span class="math inline">\(TP = 0.90\times2000=1800\)</span>; <span class="math inline">\(FN=200\)</span>.</p>
+<p><strong>Step 3.</strong> <span class="math inline">\(TN=0.95\times8000=7600\)</span>; <span class="math inline">\(FP=400\)</span>.</p>
+<p><strong>Step 4.</strong> <span class="math inline">\(PPV = 1800/(1800+400) = 1800/2200 = 0.818 = 81.8\%\)</span>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Setting</th>
+<th>Prevalence</th>
+<th>PPV</th>
+<th>NPV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Community screening</td>
+<td>1%</td>
+<td>15.4%</td>
+<td>99.9%</td>
+</tr>
+<tr class="even">
+<td>High-risk clinic</td>
+<td>20%</td>
+<td>81.8%</td>
+<td>97.4% (calc: <span class="math inline">\(7600/7800\)</span>)</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>This is why public health screening programs <strong>target high-risk subgroups</strong> rather than screening entire low-prevalence populations indiscriminately, PPV improves dramatically as prevalence rises, even with an unchanged test.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="bayesian-inference" class="level1">
+<h1>Bayesian Inference</h1>
+<p>Section 5 applied Bayes’ Theorem to a binary event (disease present/absent). <strong>Bayesian inference</strong> generalizes this idea to estimate unknown <strong>parameters</strong> (like a population proportion or mean), treating them not as fixed unknown constants (as in frequentist statistics) but as quantities with their own probability distributions that get updated as data accumulate.</p>
+<section id="the-core-components" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-components">The Core Components</h2>
+<section id="prior" class="level3">
+<h3 class="anchored" data-anchor-id="prior">Prior</h3>
+<p>The <strong>prior distribution</strong>, <span class="math inline">\(P(\theta)\)</span>, represents our belief about a parameter <span class="math inline">\(\theta\)</span> <strong>before</strong> observing the current data. It may come from previous studies, expert opinion, or be deliberately “uninformative” (flat) if little is known in advance.</p>
+</section>
+<section id="likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="likelihood">Likelihood</h3>
+<p>The <strong>likelihood</strong>, <span class="math inline">\(P(\text{data}|\theta)\)</span>, quantifies how probable the observed data are, for each possible value of the parameter <span class="math inline">\(\theta\)</span>. It is the same likelihood function used in classical (frequentist) statistics, e.g., in maximum likelihood estimation.</p>
+</section>
+<section id="posterior" class="level3">
+<h3 class="anchored" data-anchor-id="posterior">Posterior</h3>
+<p>The <strong>posterior distribution</strong>, <span class="math inline">\(P(\theta|\text{data})\)</span>, represents our updated belief about <span class="math inline">\(\theta\)</span> <strong>after</strong> combining the prior with the observed data, via Bayes’ Theorem:</p>
+<p><span class="math display">\[P(\theta|\text{data}) = \frac{P(\text{data}|\theta)\,P(\theta)}{P(\text{data})} \propto P(\text{data}|\theta)\,P(\theta)\]</span></p>
+<p>In words: <strong>Posterior</strong> <span class="math inline">\(\propto\)</span> Likelihood <span class="math inline">\(\times\)</span> Prior. The denominator <span class="math inline">\(P(\text{data})\)</span> is a normalizing constant (the marginal probability of the data, integrated/summed over all possible <span class="math inline">\(\theta\)</span>) that ensures the posterior is a valid probability distribution.</p>
+</section>
+<section id="posterior-predictive-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="posterior-predictive-distribution">Posterior Predictive Distribution</h3>
+<p>The <strong>posterior predictive distribution</strong> is the probability distribution of a <strong>new, not-yet-observed</strong> data point, averaged over the uncertainty in the parameter as captured by the posterior distribution: <span class="math display">\[P(\tilde{y}|\text{data}) = \int P(\tilde{y}|\theta)\,P(\theta|\text{data})\,d\theta\]</span></p>
+<p>Unlike a frequentist prediction that plugs in a single point estimate of <span class="math inline">\(\theta\)</span>, the posterior predictive distribution properly accounts for <strong>both</strong> the inherent randomness in new data <strong>and</strong> our remaining uncertainty about <span class="math inline">\(\theta\)</span> itself — typically giving wider, more honest prediction intervals.</p>
+</section>
+</section>
+<section id="simple-numerical-example-estimating-a-disease-prevalence" class="level2">
+<h2 class="anchored" data-anchor-id="simple-numerical-example-estimating-a-disease-prevalence">Simple Numerical Example — Estimating a Disease Prevalence</h2>
+<p>A researcher wants to estimate the prevalence (<span class="math inline">\(\theta\)</span>) of a rare infection in a village. Based on similar villages studied previously, the researcher’s <strong>prior belief</strong> is centered around 10% prevalence, formalized as a Beta distribution: <span class="math inline">\(\theta \sim \text{Beta}(2, 18)\)</span> (prior mean <span class="math inline">\(= 2/(2+18) = 0.10\)</span>).</p>
+<p>A sample of <span class="math inline">\(n = 50\)</span> villagers is tested, and <span class="math inline">\(x = 8\)</span> test positive (this is the <strong>data/likelihood</strong>, modeled as Binomial).</p>
+<p><strong>Step 1: Prior:</strong> <span class="math inline">\(\text{Beta}(\alpha=2, \beta=18)\)</span>, prior mean <span class="math inline">\(=0.10\)</span>.</p>
+<p><strong>Step 2: Likelihood:</strong> Binomial with <span class="math inline">\(x=8\)</span> successes out of <span class="math inline">\(n=50\)</span>.</p>
+<p><strong>Step 3: Posterior:</strong> For a Binomial likelihood with a Beta prior (a “conjugate prior” pair), the posterior is also Beta, with parameters updated simply by adding the observed successes/failures: <span class="math display">\[\theta|\text{data} \sim \text{Beta}(\alpha + x,\ \beta + n - x) = \text{Beta}(2+8,\ 18+42) = \text{Beta}(10, 60)\]</span></p>
+<p><strong>Step 4: Posterior mean:</strong> <span class="math display">\[E[\theta|\text{data}] = \frac{10}{10+60} = \frac{10}{70} = 0.143 = 14.3\%\]</span></p>
+<p><strong>Interpretation:</strong> The posterior mean (14.3%) lies between the prior mean (10%) and the raw sample proportion (<span class="math inline">\(8/50=16\%\)</span>). The Bayesian estimate is a <strong>weighted compromise</strong> between prior belief and observed data, with the weight determined by the relative “strength” (sample size) of the prior versus the new data. As more data accumulate, the posterior increasingly reflects the observed data and less the prior.</p>
+</section>
+<section id="frequentist-vs.-bayesian-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="frequentist-vs.-bayesian-comparison">Frequentist vs.&nbsp;Bayesian Comparison</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Frequentist</th>
+<th>Bayesian</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>View of parameters</td>
+<td>Fixed, unknown constants</td>
+<td>Random variables with a probability distribution</td>
+</tr>
+<tr class="even">
+<td>Uses prior information?</td>
+<td>No</td>
+<td>Yes, explicitly via the prior distribution</td>
+</tr>
+<tr class="odd">
+<td>Key output</td>
+<td>Point estimate + confidence interval + p-value</td>
+<td>Posterior distribution (full distribution of belief)</td>
+</tr>
+<tr class="even">
+<td>Interval interpretation</td>
+<td>95% CI: if we repeated the study infinitely, 95% of such intervals would contain the true parameter</td>
+<td>95% Credible Interval: there is a 95% probability the true parameter lies in this interval, given the data and prior</td>
+</tr>
+<tr class="odd">
+<td>Probability interpretation</td>
+<td>Long-run frequency of repeatable events</td>
+<td>Degree of belief/uncertainty, updatable with new evidence</td>
+</tr>
+<tr class="even">
+<td>Handles small samples/rare events well?</td>
+<td>Can struggle (e.g., wide, unstable CIs)</td>
+<td>Can incorporate prior knowledge to stabilize estimates</td>
+</tr>
+<tr class="odd">
+<td>Computational approach</td>
+<td>Closed-form formulas, hypothesis tests</td>
+<td>Often requires simulation (e.g., MCMC) for complex models</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The <strong>frequentist confidence interval</strong> and the <strong>Bayesian credible interval</strong> often look numerically similar (especially with large samples and uninformative priors), but their <em>interpretations</em> are fundamentally different. The Bayesian interpretation: “there is a 95% probability the parameter lies in this range” is usually closer to what people <em>intuitively</em> (though incorrectly, in the frequentist framework) assume a confidence interval means. This distinction is revisited in Section 11.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="applications-in-epidemiology" class="level2">
+<h2 class="anchored" data-anchor-id="applications-in-epidemiology">Applications in Epidemiology</h2>
+<ul>
+<li><strong>Disease surveillance:</strong> Updating estimated outbreak size or reproduction number (<span class="math inline">\(R_t\)</span>) in real time as new case data arrive, using previous estimates as priors.</li>
+<li><strong>Diagnostic test evaluation:</strong> Combining sparse validation data with prior information from similar tests to estimate sensitivity/specificity, especially useful when validation samples are small.</li>
+<li><strong>Meta-analysis:</strong> Hierarchical Bayesian models combine evidence across multiple studies, treating study-specific effects as drawn from a common prior distribution.</li>
+<li><strong>Clinical trial monitoring:</strong> Bayesian adaptive designs update the probability that a treatment is superior as data accrue, allowing trials to stop early for efficacy or futility.</li>
+<li><strong>Small-area health estimation:</strong> Bayesian smoothing (e.g., disease mapping) borrows strength from neighboring regions as priors to stabilize rate estimates in small populations, where raw rates would be highly unstable.</li>
+</ul>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>A random experiment has a defined <strong>sample space</strong>; <strong>events</strong> are subsets of that space.</li>
+<li>The three <strong>probability axioms</strong> (non-negativity, normalization, additivity) form the mathematical foundation of all probability rules.</li>
+<li>Probability can be assigned via the <strong>classical</strong>, <strong>empirical</strong>, or <strong>subjective</strong> approach depending on the situation.</li>
+<li>The <strong>addition rule</strong> combines “or” probabilities; subtract the intersection unless events are mutually exclusive.</li>
+<li>The <strong>multiplication rule</strong> combines “and” probabilities; use conditional probability unless events are independent.</li>
+<li><strong>Conditional probability</strong>, <span class="math inline">\(P(B|A) = P(A\cap B)/P(A)\)</span>, is the gateway to Bayes’ Theorem, covered next in Section 5.</li>
+<li>Bayes’ Theorem, <span class="math inline">\(P(B|A) = \dfrac{P(A|B)P(B)}{P(A)}\)</span>, lets us “reverse” a conditional probability using the prior probability and likelihood.</li>
+<li>In diagnostic testing, Bayes’ Theorem converts <strong>sensitivity/specificity</strong> (properties of the test) into <strong>PPV/NPV</strong> (what clinicians and patients actually want to know), and critically depends on <strong>disease prevalence</strong>.</li>
+<li><strong>Sensitivity and specificity are independent of prevalence; PPV and NPV are not.</strong></li>
+<li><strong>Likelihood ratios</strong> summarize how much a test result shifts the probability of disease, independent of prevalence, and can be combined with pre-test odds to get post-test odds.</li>
+<li>Bayesian inference combines a <strong>prior</strong> belief with the <strong>likelihood</strong> of observed data to produce a <strong>posterior</strong> distribution: Posterior <span class="math inline">\(\propto\)</span> Likelihood <span class="math inline">\(\times\)</span> Prior.</li>
+<li>The <strong>posterior predictive distribution</strong> forecasts new data while properly accounting for parameter uncertainty.</li>
+<li>Bayesian and frequentist approaches often agree numerically with large samples and weak priors, but differ fundamentally in interpretation and in their ability to formally incorporate prior information.</li>
+<li>Bayesian methods are increasingly used in epidemiology for surveillance, small-area estimation, and adaptive clinical trial design.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Section2/05_descriptives.html" class="pagination-link" aria-label="Descriptive Statistics with R (Practical Part)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Section2/07_discrete_probability_distributions.html" class="pagination-link" aria-label="Discrete Probability Distributions">
+        <span class="nav-page-text"><span class="chapter-title">Discrete Probability Distributions</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/06_probability.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

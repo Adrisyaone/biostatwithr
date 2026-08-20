@@ -1,0 +1,878 @@
+---
+title: "Categorical data analysis"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
+```
+
+```{r, include=FALSE, warning=FALSE, message=FALSE, echo=FALSE}
+#load libraries and datasets
+library(tidyverse)
+library(sjPlot)
+library(performance)
+library(gtsummary)
+library(DescTools)   # BreslowDayTest()
+
+data <- readxl::read_excel("Section2/Categorical data analysis/Datasets/wcgs.xls")
+data$chd69  <- as.factor(data$chd69)
+data$smoke  <- as.factor(data$smoke)
+data$dibpat <- as.factor(data$dibpat)
+```
+
+This chapter reviews the core tools for analyzing categorical data using proportions, chi-square and Fisher's exact tests, McNemar's test for paired data, risk ratios and odds ratios, screening test characteristics, and stratified (Mantel-Haenszel) analysis. These methods answer the same substantive question that logistic regression answers later in this chapter — whether an outcome is associated with an exposure, and how strong that association is — but do so without fitting a model, and several of them (the odds ratio, the chi-square test, stratified analysis) reappear directly inside logistic regression once covariates are added. Examples below use the Western Collaborative Group Study (`wcgs`) data already introduced in this chapter, with ten-year coronary heart disease status (`chd69`) as the outcome.
+
+## Types of Categorical Data
+
+Categorical variables come in three forms, and knowing which one you have determines which test applies:
+
+-   **Binary**: exactly two categories (e.g., `chd69`: Yes/No)
+-   **Nominal**: more than two categories with no inherent order (e.g., blood type, `behpat`)
+-   **Ordinal**: more than two categories with a meaningful order but unequal or unknown spacing between them (e.g., pain severity: none/mild/moderate/severe)
+
+Two probability distributions underlie most of the methods in this section. The **binomial distribution** describes the number of "successes" in *n* independent trials with a constant probability of success, and applies whenever the outcome is binary. The **multinomial distribution** extends this to outcomes with more than two categories. Nearly every method below — proportions, chi-square tests, risk ratios, odds ratios — is a way of comparing observed binomial or multinomial counts to what would be expected under a null hypothesis.
+
+## Inference for a Single Proportion
+
+For a binary outcome observed in a sample of size $n$ with $x$ successes, the sample proportion is $\hat{p}=x/n$. When both $n\hat p$ and $n(1-\hat p)$ exceed 5, $\hat p$ is approximately normal, which justifies the Wald test and confidence interval:
+
+$$ Z_{stat}=\frac{\hat{p}-\pi_0}{\sqrt{\pi_0(1-\pi_0)/n}} \qquad \hat{p} \pm Z_{1-\alpha/2}\sqrt{\frac{\hat p(1-\hat p)}{n}} $$
+
+When the sample is small, or $\hat p$ is close to 0 or 1, the Wald interval is known to under-cover; the exact (Clopper-Pearson) interval or the **Agresti-Coull** interval (Agresti & Coull, 1998, *The American Statistician*, 52, 119-126) are preferred in that setting.
+
+```{r}
+# Overall proportion of CHD in the wcgs cohort
+table(data$chd69)
+x <- sum(data$chd69 == "Yes")
+n <- nrow(data)
+
+# One-sample test: is the CHD rate different from 10%?
+prop.test(x, n, p = 0.10, correct = FALSE)
+
+# Exact binomial test and confidence interval
+binom.test(x, n, p = 0.10)
+```
+
+### Interpretation
+
+Of the 3,154 participants, 257 developed CHD, giving $\hat p = 0.081$ (95% Wald CI: 7.2%, 9.1%). Testing against $\pi_0 = 0.10$ gives Z = -3.47, p = 0.0005, so the CHD rate in this cohort is significantly lower than 10%.
+
+For small subgroups the choice of interval matters more. Restricting to the youngest age category (`agec == "35-40"`, n = 543, 31 events, $\hat p = 0.057$), the Wald interval (3.8%, 7.7%) sits slightly lower than the exact interval (3.9%, 8.0%) — a reminder that the Wald method is not the recommended choice once $n$ or $\hat p$ is small.
+
+```{r}
+young <- data |> dplyr::filter(agec == "35-40")
+x2 <- sum(young$chd69 == "Yes"); n2 <- nrow(young)
+phat <- x2 / n2
+
+# Wald interval
+phat + c(-1, 1) * 1.96 * sqrt(phat * (1 - phat) / n2)
+
+# Exact (Clopper-Pearson) interval
+binom.test(x2, n2)$conf.int
+```
+
+## Comparing Two Independent Proportions
+
+To compare proportions between two independent groups, the Wald test statistic and confidence interval are:
+
+$$ Z_{stat}=\frac{(\hat p_1-\hat p_2)-\delta_0}{\sqrt{\dfrac{\hat p_1(1-\hat p_1)}{n_1}+\dfrac{\hat p_2(1-\hat p_2)}{n_2}}} \qquad (\hat p_1-\hat p_2)\pm Z_{1-\alpha/2}\sqrt{\frac{\hat p_1(1-\hat p_1)}{n_1}+\frac{\hat p_2(1-\hat p_2)}{n_2}} $$
+
+```{r}
+tab_sc <- table(data$smoke, data$chd69)[c("Yes","No"), c("Yes","No")]
+tab_sc  # rows = smoker, columns = chd69
+
+prop.test(tab_sc, correct = FALSE)
+```
+
+### Interpretation
+
+The CHD rate is 10.6% among smokers versus 5.9% among non-smokers, a difference of 4.7 percentage points (95% CI: 2.7, 6.6). The test statistic (Z ≈ 4.8, equivalent to the χ² statistic below) gives p \< 0.0001, so smokers have a significantly higher CHD rate than non-smokers in this cohort.
+
+## McNemar's Test for Matched Pairs {#sec-Mcnemar}
+
+The tests above assume independent samples. When the same subjects are measured twice (before/after, matched pairs, two raters), the two proportions are correlated and the ordinary two-proportion test no longer applies. McNemar's test instead uses only the *discordant* pairs — the cases where the two measurements disagree:
+
+$$ \chi^2_{stat}=\frac{(b-c)^2}{b+c}, \quad df=1 $$
+
+where $b$ and $c$ are the two off-diagonal (discordant) cell counts of the $2\times2$ paired table.
+
+```{r}
+# Illustrative matched-pairs example: outcome (improved/not) under two paired treatments
+pairs_tab <- matrix(c(2, 2, 6, 6), nrow = 2, byrow = TRUE,
+                     dimnames = list("Treatment B" = c("Improved", "Not improved"),
+                                      "Treatment A" = c("Improved", "Not improved")))
+pairs_tab
+
+mcnemar.test(pairs_tab, correct = FALSE)   # matches the hand formula above
+mcnemar.test(pairs_tab)                    # default applies Yates' continuity correction
+```
+
+### Interpretation
+
+Here $\chi^2=(2-6)^2/(2+6)=2$, df = 1, p = 0.157. There is not enough evidence that the two treatments differ in their probability of improvement.
+
+## Chi-Square Test of Independence {#sec-chisq}
+
+For two independent categorical variables laid out in an $r\times c$ contingency table, the chi-square test compares observed to expected cell counts under independence:
+
+$$ \chi^2_{stat}=\sum_{\text{all cells}}\frac{(f_o-f_e)^2}{f_e}, \qquad f_e=\frac{(\text{row total})(\text{column total})}{n}, \qquad df=(r-1)(c-1) $$
+
+The approximation is reliable when at least 80% of expected cell counts are $\ge5$ and none is below 1; otherwise use Fisher's exact test.
+
+```{r}
+chisq.test(tab_sc, correct = FALSE)              # standard chi-square test
+chisq.test(tab_sc, correct = FALSE)$expected      # check the >=5 rule
+chisq.test(tab_sc, correct = TRUE)               # Yates' continuity correction
+
+# Extending to an r x c table: behavior pattern (4 levels) by CHD status
+table(data$behpat, data$chd69)
+chisq.test(table(data$behpat, data$chd69))
+```
+
+### Interpretation
+
+For smoking status by CHD, $\chi^2=22.76$, df = 1, p \< 0.0001 (Yates-corrected: $\chi^2=22.15$, p \< 0.0001) — smoking status and CHD are not independent. The `behpat`-by-`chd69` table extends the same logic to a $4\times2$ table without changing the test statistic or its interpretation, only the degrees of freedom.
+
+## Fisher's Exact Test {#sec-fisher_exact}
+
+When one or more expected cell counts fall below 5, the chi-square approximation is unreliable. Fisher's exact test instead conditions on the observed row and column totals and computes the exact probability of the observed table (and all more extreme tables) from the hypergeometric distribution:
+
+$$ p(a)=\frac{\binom{a+b}{a}\binom{c+d}{c}}{\binom{n}{a+c}} $$
+
+Unlike the chi-square test, Fisher's exact test has no test statistic or critical value — only a p-value — and it remains valid even with very small samples, zero cells, or highly unbalanced tables.
+
+```{r}
+fisher.test(tab_sc)
+```
+
+### Interpretation
+
+Fisher's exact test gives p \< 0.0001 for the smoking/CHD table, agreeing with the chi-square result above (expected counts here are all well above 5, so either test is valid; Fisher's test is shown for comparison, and it is the correct choice whenever that condition fails).
+
+## Risk Ratio and Odds Ratio
+
+For a $2\times2$ table of exposure by disease,
+
+|           | Disease + | Disease − |
+|-----------|-----------|-----------|
+| Exposed   | a         | b         |
+| Unexposed | c         | d         |
+
+the **risk ratio** compares the probability of disease between exposed and unexposed groups, and the **odds ratio** compares the odds:
+
+$$ \hat{RR}=\frac{a/(a+b)}{c/(c+d)} \qquad \hat{OR}=\frac{ad}{bc} $$
+
+Both are tested and estimated on the log scale, since $\ln(\hat{RR})$ and $\ln(\hat{OR})$ are approximately normal:
+
+$$ SE[\ln(\hat{RR})]=\sqrt{\frac1a-\frac1{a+b}+\frac1c-\frac1{c+d}} \qquad SE[\ln(\hat{OR})]=\sqrt{\frac1a+\frac1b+\frac1c+\frac1d} $$
+
+```{r}
+a  <- tab_sc["Yes","Yes"]; b <- tab_sc["Yes","No"]
+c_ <- tab_sc["No","Yes"];  d <- tab_sc["No","No"]
+
+# Risk ratio and 95% CI
+RR <- (a/(a+b)) / (c_/(c_+d))
+se_lnRR <- sqrt(1/a - 1/(a+b) + 1/c_ - 1/(c_+d))
+c(RR = RR, exp(log(RR) + c(-1, 1) * 1.96 * se_lnRR))
+
+# Odds ratio and 95% CI
+OR <- (a*d) / (b*c_)
+se_lnOR <- sqrt(1/a + 1/b + 1/c_ + 1/d)
+c(OR = OR, exp(log(OR) + c(-1, 1) * 1.96 * se_lnOR))
+```
+
+::: callout-tip
+The odds ratio and risk ratio answer slightly different questions and are not interchangeable, although they converge when the outcome is rare (here CHD is uncommon enough — about 8% — that RR = 1.78 and OR = 1.88 are close). The odds ratio is the quantity produced directly by logistic regression coefficients after exponentiating, which is why it, rather than the risk ratio, carries over into the regression models later in this chapter.
+:::
+
+### Interpretation
+
+Smokers have 1.78 times the risk of developing CHD compared to non-smokers (95% CI: 1.40, 2.27), and 1.88 times the odds (95% CI: 1.44, 2.44). Both intervals exclude 1, confirming the association already identified by the chi-square and Fisher's exact tests.
+
+## Screening Test Characteristics
+
+Diagnostic and screening tests are evaluated against a $2\times2$ table of test result by true disease status:
+
+|        | Disease +           | Disease −           |
+|--------|---------------------|---------------------|
+| Test + | True Positive (TP)  | False Positive (FP) |
+| Test − | False Negative (FN) | True Negative (TN)  |
+
+$$ Se=P(+|D)=\frac{TP}{TP+FN} \qquad Sp=P(-|\bar D)=\frac{TN}{TN+FP} $$ $$ PPV=P(D|+)=\frac{TP}{TP+FP} \qquad NPV=P(\bar D|-)=\frac{TN}{TN+FN} $$
+
+Sensitivity and specificity are properties of the test itself and do not depend on how common the disease is. PPV and NPV, by contrast, depend heavily on disease prevalence — the same test performs very differently (in PPV terms) in a high-prevalence versus a low-prevalence population — and PPV/NPV cannot be validly calculated from a case-control sample where disease prevalence was fixed by the study design rather than observed.
+
+```{r}
+screen <- matrix(c(180, 16, 20, 184), nrow = 2, byrow = TRUE,
+                  dimnames = list(Test = c("Positive", "Negative"),
+                                   Disease = c("Yes", "No")))
+screen
+
+sensitivity <- screen["Positive","Yes"] / sum(screen[,"Yes"])
+specificity <- screen["Negative","No"]  / sum(screen[,"No"])
+ppv <- screen["Positive","Yes"] / sum(screen["Positive",])
+npv <- screen["Negative","No"]  / sum(screen["Negative",])
+round(c(Sensitivity = sensitivity, Specificity = specificity, PPV = ppv, NPV = npv), 3)
+```
+
+### Interpretation
+
+This hypothetical test has 90% sensitivity and 92% specificity, both comfortably above the commonly cited 80% threshold for a "good" screening test. In this sample (50% disease prevalence by design), PPV is 92% and NPV is 90%; in a lower-prevalence population, the same test's PPV would be lower even though sensitivity and specificity stay the same.
+
+## Stratified 2×2 Tables and the Mantel-Haenszel Method
+
+A crude (unstratified) odds ratio, like the one computed above for smoking and CHD, can be confounded by a third variable that is associated with both the exposure and the outcome. The Mantel-Haenszel approach addresses this by splitting the data into strata of a potential confounder, testing for association *within* each stratum, and then pooling the stratum-specific evidence into a single adjusted test and effect estimate.
+
+The Cochran-Mantel-Haenszel (CMH) test statistic, summed across $q$ strata, is:
+
+$$ Q_{MH}=\frac{\left[\sum_{h=1}^{q}(n_{h11}-m_{h11})\right]^2}{\sum_{h=1}^{q}v_{h11}}, \qquad m_{h11}=\frac{n_{h1.}n_{h.1}}{n_h}, \qquad v_{h11}=\frac{n_{h1.}n_{h2.}n_{h.1}n_{h.2}}{n_h^2(n_h-1)} $$
+
+and the Mantel-Haenszel estimate of a **common** odds ratio across strata is:
+
+$$ \hat\theta_{MH}=\frac{\sum_{h=1}^{q} n_{h11}n_{h22}/n_h}{\sum_{h=1}^{q} n_{h12}n_{h21}/n_h} $$
+
+Here we stratify the smoking/CHD association by behavior pattern (`dibpat`: Type A vs. Type B), a variable known in this cohort to be associated with both smoking and CHD risk.
+
+```{r}
+strat_tab <- xtabs(~ smoke + chd69 + dibpat, data = data)
+strat_tab
+
+# Stratum-specific odds ratios
+apply(strat_tab, 3, function(t) (t[1,1]*t[2,2]) / (t[1,2]*t[2,1]))
+
+# Cochran-Mantel-Haenszel test and common odds ratio
+mantelhaen.test(strat_tab, correct = FALSE)
+```
+
+### Test of Homogeneity (Breslow-Day Test)
+
+Before pooling stratum-specific odds ratios into a single MH estimate, it is important to check that the strata actually share a common odds ratio (i.e., that behavior pattern is a confounder rather than an effect modifier). The Breslow-Day test evaluates $H_0:\theta_1=\theta_2=\dots=\theta_q$ against a $\chi^2_{q-1}$ distribution.
+
+```{r}
+DescTools::BreslowDayTest(strat_tab)
+```
+
+### Interpretation
+
+The stratum-specific odds ratios (Type A: 1.58; Type B: 2.37) differ numerically, but the Breslow-Day test does not find this difference statistically significant ($\chi^2\approx1.9$, p = 0.16), so it is reasonable to pool them. The CMH test rejects independence after adjusting for behavior pattern ($Q_{MH}\approx19.5$, p \< 0.0001), and the Mantel-Haenszel common odds ratio is about 1.80 — close to the crude, unadjusted odds ratio of 1.88 computed earlier, indicating that behavior pattern is not a strong confounder of the smoking-CHD association in this cohort. Had the stratum-specific and crude odds ratios diverged sharply, that would signal confounding requiring an adjusted (or model-based) estimate rather than the crude one.
+
+### Simpson's Paradox
+
+Stratified analysis exists because an association observed in aggregated data can behave very differently — even reverse direction — once a confounder is taken into account. A classic illustration comes from a comparison of two kidney stone treatments (Charig et al., 1986, *BMJ*):
+
+```{r}
+kidney <- tibble::tribble(
+  ~Stratum,       ~Treatment, ~Success, ~Failure,
+  "Small stones", "A",         81,        6,
+  "Small stones", "B",        234,       36,
+  "Large stones", "A",        192,       71,
+  "Large stones", "B",         55,       25,
+  "Overall",       "A",       273,       77,
+  "Overall",       "B",       289,       61
+)
+kidney |> dplyr::mutate(Success_rate = round(Success / (Success + Failure), 3))
+```
+
+Treatment A has the higher success rate for both small stones (93% vs. 87%) and large stones (73% vs. 69%) individually, yet Treatment B has the higher success rate overall (83% vs. 78%). The reversal happens because stone size is a confounder: Treatment A was used disproportionately on harder-to-treat large stones, while Treatment B was used mostly on easier small stones, which drags the *unadjusted* success rate for B upward. This is exactly the scenario the CMH test and Mantel-Haenszel odds ratio are designed to guard against, and it is also the core motivation for adjusting for covariates in the multivariable logistic regression models that follow.
+
+# Logistic regression Analysis
+
+This chapter began with the foundational tools for analyzing categorical data directly from contingency tables — proportions, chi-square and Fisher's exact tests, McNemar's test, risk ratios and odds ratios, screening test characteristics, and Mantel-Haenszel stratified analysis — and now turns to regression-based approaches for binary, nominal, and ordinal outcomes. We begin with logistic regression (univariate, multivariable, and interaction models), and then cover five extensions of logistic regression: exact logistic regression, Firth's penalized logistic regression, generalized estimating equations (GEE), multinomial logistic regression, and ordinal logistic regression.
+
+Logistic regression is a type of regression analysis used when the dependent variable is binary or categorical. It models the probability of an event occurring by fitting a logistic function to the observed data. The logistic regression equation is:
+
+$$ P(Y=1) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X)}} $$
+
+-   $P(Y=1)$ : Probability of the event occurring
+-   $X$ : Independent variable
+-   $\beta_0$ : Y-intercept
+-   $\beta_1$ : Slope
+-   $e$ : Base of the natural logarithm
+
+Logistic regression is widely used in classification problems, such as predicting whether an email is spam or not, based on various features. It provides the probability of the event rather than predicting the exact outcome.
+
+Both linear and logistic regression play crucial roles in statistical modeling, each serving specific purposes based on the nature of the dependent variable.
+
+## **Univariate Logistic regression**
+
+```{r}
+model3<-glm(formula = chd69~agec,family = binomial(link="logit"),data = data)
+summary(model3)
+
+# Model plots in 2 by 2 arrangement
+par(mfrow=c(2,2))
+plot(model3)
+
+# Determine odds ratio and its 95% CI (process-1)
+exp(model3$coefficients) # odds ratio only
+exp(confint(model3)) # 95% CI of odds ratio
+cbind(oddsratio=exp(model3$coefficients),CI=exp(confint(model3))) # odds ratio with 95% CI
+
+
+# Determine odds ratio and its 95% CI (process-2)
+sjPlot::tab_model(model3)
+
+# Determine odds ratio and its 95% CI (process-3)
+gtsummary::tbl_regression(model3,exponentiate = T) |>
+  gtsummary::as_hux_xlsx("regression_table.xlsx") # It helps to extract the result to excel
+
+
+
+# Determine the AIC, BIC , RMSE of the model
+performance::model_performance(model3)
+
+# Prediction of new_data
+data_new<-data[seq(4,100,4),]
+
+# predict() function helps to predict the results from in the new data
+predict(model3,data_new)
+
+# Add predicted  value to the new data
+data_new$predicted<-predict(model3,data_new)
+
+# View head 10 of the data_new
+head(data_new[,c(1:11,23)], 10)
+
+```
+
+### Interpretation
+
+The `summary(model3)` output reports the log-odds coefficient for `agec`, its standard error, z-value, and p-value. Exponentiating the coefficient (`exp(model3$coefficients)`) converts it to an odds ratio: an OR greater than 1 indicates that CHD (`chd69`) becomes more likely as age category increases, while an OR less than 1 would indicate lower odds. A 95% confidence interval (`exp(confint(model3))`) that excludes 1 supports a statistically significant association at the 0.05 level. The `plot(model3)` diagnostic panels help check for influential observations and deviance residual patterns, and `performance::model_performance(model3)` reports fit statistics (AIC, BIC, and pseudo-R²) that are most useful for comparing this model against alternative specifications rather than for interpreting in isolation.
+
+## **Multivariable Logistic regression**
+
+```{r}
+model4<-glm(formula = chd69~sbp+agec+smoke+bmi,family = binomial(link="logit"),data = data)
+summary(model4)
+
+# Model plots in 2 by 2 arrangement
+par(mfrow=c(2,2))
+plot(model4)
+
+# Determine odds ratio and its 95% CI (process-1)
+exp(model4$coefficients) # odds ratio only
+exp(confint(model4)) # 95% CI of odds ratio
+cbind(oddsratio=exp(model4$coefficients),CI=exp(confint(model4))) # odds ratio with 95% CI
+
+# Generate sleek tables from the model and export
+sjPlot::tab_model(model4)
+gtsummary::tbl_regression(model4,exponentiate = T) |>
+  gtsummary::as_hux_xlsx("regression_table.xlsx")
+
+# Check model diagnostics
+performance::check_model(model4)
+
+
+# Determine the AIC, BIC, RMSE of the model
+performance::model_performance(model4)
+
+# Prediction of new_data
+data_new<-data[seq(4,100,4),]
+
+# predict() function helps to predict the results from in the new data
+predict(model4,data_new)
+
+# Add predicted  value to the new data
+data_new$predicted<-predict(model4,data_new)
+```
+
+### Interpretation
+
+In the multivariable model, each exponentiated coefficient represents the odds ratio for that predictor holding the other predictors (`sbp`, `agec`, `smoke`, `bmi`) constant. This adjustment is what distinguishes the multivariable estimates from the crude (unadjusted) odds ratio produced by the univariate model. `performance::check_model(model4)` produces a fuller diagnostic suite (linearity, homogeneity of variance proxies, influential observations, and collinearity) than the base `plot()` method, and is generally preferred for multivariable models.
+
+## **Interaction in logistic regression**
+
+An interaction term tests whether the effect of one predictor on the outcome depends on the level of another predictor. In `model5`, the term `sbp*agec` expands to the main effects of `sbp` and `agec` plus their product term (`sbp:agec`), allowing the effect of systolic blood pressure on CHD risk to vary across age categories.
+
+```{r}
+model5<-glm(formula = chd69~sbp*agec+smoke+bmi,family = binomial(link="logit"),data = data)
+summary(model5)
+
+# Odds ratio and 95% CI
+exp(model5$coefficients)
+exp(confint(model5))
+cbind(oddsratio=exp(model5$coefficients),CI=exp(confint(model5)))
+```
+
+::: callout-tip
+When an interaction term is included, the main-effect odds ratios for `sbp` and `agec` no longer have a simple standalone interpretation — they represent the effect only when the other interacting variable is held at its reference level (or zero). To interpret the joint effect, compute the combined odds ratio at specific, meaningful combinations of both variables (e.g., using the `emmeans` or `ggeffects` packages), or test whether the interaction coefficient itself is statistically significant.
+:::
+
+**Interpretation:** A significant p-value for the `sbp:agec` interaction term indicates that the relationship between systolic blood pressure and CHD risk differs across age categories, and the model should be interpreted and reported with that interaction in mind rather than through separate main-effect odds ratios.
+
+# Extension of Logistic regression
+
+```{r, include=FALSE, warning=FALSE,message=FALSE, echo=FALSE}
+#load libraries and datasets
+library(elrm) # for exact logistic regression
+library(logistf) # for Firth penalization logistic regression
+
+# install elrm package from archive of the cran
+# install.packages("https://cran.r-project.org/src/contrib/Archive/elrm/elrm_1.2.5.tar.gz", repo=NULL, type="source")
+# install.packages("logistf)
+```
+
+There are multiple extensions of logistic regression. Some of them are as follows:
+
+1.  Exact logistic regression
+2.  Firth Penalization logistic regression
+3.  Generalized estimating equation
+4.  Multinomial logistic regression
+5.  Ordinal logistic regression
+
+The details of each type of logistic regression are given below:
+
+## Exact logistic regression
+
+Exact logistic regression is an extension of logistic regression in which log odds of the binary outcome is modeled as a linear combination of the predictor variables. It is used in the following situations:
+
+1.  When the sample size is too small for a regular logistic regression (which uses the standard maximum-likelihood-based estimator)
+2.  When some of the cells formed by the outcome and categorical predictor variable have zero observations.
+3.  When sample size is adequate but the event is rare (sparse data)
+
+The estimates given by exact logistic regression do not depend on asymptotic results.
+
+Lets take a dataset and work on it
+
+```{r}
+dat <- read.table(text = "
+SN Complication Procedure
+1 Yes Old
+2 Yes Old
+3 Yes Old
+4 Yes Old
+5 Yes Old
+6 No New
+7 No New
+8 No New
+9 No New
+10 No New
+11 No New
+12 No New
+13 No New
+14 No New
+15 No New
+16 No New
+17 No New
+18 No New
+19 No New
+20 No New
+21 No New
+22 No New
+23 No New
+24 No New
+25 No New
+26 No New
+27 No New
+28 No New
+29 No New
+31 No New
+32 No New
+33 No New
+34 No New
+35 No New
+36 No New
+37 No Old
+38 No Old
+39 No Old
+40 No Old
+41 No Old
+42 No Old
+43 No Old
+44 No Old
+45 No Old
+46 No Old
+47 No Old
+48 No Old
+49 No Old
+50 No Old
+51 No Old
+52 No Old
+53 No Old
+54 No Old
+55 No Old
+56 No Old
+57 No Old
+58 No Old
+59 No Old
+60 No Old
+61 No Old
+", header = TRUE, stringsAsFactors = FALSE)
+```
+
+Lets generate a table between complication and procedure in the dataset.
+
+```{r}
+table(dat$Complication, dat$Procedure)
+```
+
+Code for exact logistic regression in R
+
+```{r}
+# Prepare data
+dat1 <- data.frame(procedure = c("New", "Old"), complication = c(0, 5), ntrials = c(30, 30))
+dat1$procedure <- factor(dat1$procedure, levels =c("Old", "New"), labels=c("Old", "New") )  # Ensure 'procedure' is a factor
+
+# Fit the empirical logistic regression model
+model <- elrm(formula = complication/ntrials ~ procedure, r=2,
+               interest = ~procedure, 
+               iter = 22000, 
+               dataset = dat1, 
+               burnIn = 2000)
+
+# Summarize the results
+summary(model)
+
+
+```
+
+In exact logistic regression there is complete separation, we have to use firth penalized method.
+
+## Firth Penalized Method
+
+It is a simple solution that can mitigate the bias caused by rare events in a dataset. It is applicable in the case of complete separation. Complete separation or perfect separation is the condition where one covariate/explanatory variable always or never occurs with the event of interest or outcome variable. It is seen most often when the event is rare, but it can also occur in non-rare events and even in large datasets. The evidence of complete separation includes:
+
+1.  Infinite estimates
+
+2.  Large standard error
+
+3.  Poor fit
+
+Firth logistic regression can be employed to handle complete separation by introducing penalty terms. It is more robust than traditional logistic regression in the presence of rare events or small sample sizes.
+
+In order to use this in R, we can use logistf package, which includes the `logistf()` function.
+
+```{r}
+library(logistf)
+
+# prepare data 
+dat$Complication<-as.factor(dat$Complication)
+dat$Procedure<-as.factor(dat$Procedure)
+model <- logistf(Complication~Procedure,data = dat)
+
+summary(model)
+
+sjPlot::tab_model(model)
+
+```
+
+## Generalized Estimating Equations (GEE)
+
+### Introduction
+
+Generalized Estimating Equations (GEE) extend the generalized linear model to correlated or clustered data, such as repeated measurements on the same subject over time, or observations nested within clusters (e.g., patients within clinics). Standard logistic regression assumes independent observations; when that assumption is violated, ignoring the correlation produces standard errors that are too small (or occasionally too large), leading to incorrect inference even though the coefficient estimates themselves may remain roughly unbiased.
+
+GEE addresses this by specifying a **working correlation structure** (e.g., independence, exchangeable, autoregressive AR(1), or unstructured) for the repeated observations within a cluster, and then uses a robust "sandwich" variance estimator that gives valid standard errors even if the working correlation structure is misspecified.
+
+Unlike mixed-effects (random-effects) models, which give subject-specific ("conditional") interpretations, GEE coefficients have a **population-averaged** interpretation: the odds ratio reflects the average effect of a predictor across the population, marginal over the repeated measurements.
+
+### When to use GEE
+
+1.  The outcome is measured repeatedly on the same subjects (longitudinal data) or subjects are clustered (e.g., by clinic, family, or region).
+2.  The scientific question concerns the population-averaged effect of predictors rather than subject-specific effects.
+3.  The primary interest is in correct standard errors and hypothesis tests rather than in modeling between-subject variability directly.
+
+### Fitting a GEE model in R
+
+We use the `geepack` package, which provides the `geeglm()` function. We will use the classic `respiratory` dataset included with `geepack`: a multi-center clinical trial in which patients were followed over four visits, with a binary respiratory status outcome recorded at each visit (clustered by patient `id`).
+
+```{r}
+library(geepack)
+
+# load the built-in respiratory dataset (repeated measures per patient)
+data(respiratory)
+head(respiratory)
+
+# Fit a GEE logistic model with an exchangeable working correlation,
+# since repeated visits within the same patient are correlated
+gee_model <- geeglm(outcome ~ treat + sex + baseline + age,
+                     id = id,
+                     data = respiratory,
+                     family = binomial(link = "logit"),
+                     corstr = "exchangeable")
+
+gee_model_summary<-summary(gee_model)
+
+# Odds ratio and 95% CI
+coef_est <- gee_model_summary$coefficients[, "Estimate"]
+se <- gee_model_summary$coefficients[, "Std.err"]
+
+lower <- coef_est - 1.96 * se
+upper <- coef_est + 1.96 * se
+
+CI <- cbind(Estimate = coef_est,
+            Lower95 = lower,
+            Upper95 = upper)
+
+exp(CI)
+```
+
+::: callout-tip
+Model comparison statistics such as AIC/BIC are not defined for GEE models in the usual likelihood-based sense (GEE is estimated via quasi-likelihood, not full likelihood). Use the QIC (Quasi-likelihood under the Independence model Criterion) instead, available via `MuMIn::QIC()` or `geepack::QIC()` depending on package version, to compare working correlation structures or nested predictor sets.
+:::
+
+**Interpretation:** The exponentiated coefficients from `gee_model` are population-averaged odds ratios. For example, the odds ratio for `treat` represents how much more (or less) likely a patient is to have the outcome of interest under the active treatment versus control, averaged across the population and adjusted for `sex`, `baseline` status, and `age`, while accounting for the within-patient correlation across the four visits.
+
+## Multinomial Logistic regression Analysis
+
+### Introduction
+
+It is the extension of the logistic regression model to accommodate a categorical outcome variable that has more than two categories. The multinomial logistic regression model for an outcome variable with G levels is as follows:
+
+$$ ln(\frac{P(Y=g|X)} {P(Y=0|X)}) = \alpha_k + \beta_1 X_1 +\beta_2X_2 +\beta_3X_3 +\dots +\beta_gX_g $$
+
+where g =1, 2, 3,... G-1
+
+X are the independent variables
+
+If there are n categories in the outcome variable, then there will be n-1 odds like ratio comparing with one reference group to each of the other categories.
+
+The exponentiated coefficient obtained from multinomial logistic regression is not a true odds ratio in the classical sense — it is an "odds-like" ratio comparing category *g* to the reference category, since it does not meet the strict definition of odds (ratio of success to failure) that applies to a two-category outcome.
+
+### Assumptions
+
+-   It assumes the outcome variable as nominal
+
+-   It doesn't account ordering in the outcome variables
+
+For the demonstration of multinomial logistic regression analysis, we will be using data from NDHS 2021. The sample data used can be downloaded from the [link here](https://drive.google.com/file/d/10ZTS_xTzaG432oBly6OFp2PvHBOgOpfO). The list of variables are as follows:
+
+-   `Combined2_1`: It is the outcome variable with four levels: Normal/Anemia only/Undernutrition Only/Coexistence
+
+-   `Wealth_quintile`: Wealth quintile
+
+-   `motheredu` : Mother's education
+
+-   `housedecision`: Mother's participation in household decision making
+
+-   `health_program`: Exposure of mother to health related program in TV/radio
+
+-   `age2`: Age of child
+
+-   `Sex`: Sex of child
+
+-   `Place_of_residence`: Place of residence of child
+
+-   `fatheredu`: Father's education level
+
+-   `Ecological_region`: Ecological belt
+
+-   `parity`: Parity
+
+-   `maternal_nut`: Mother's nutritional status
+
+-   `nt_wm_any_anem`: Mother's anemia status
+
+```{r}
+# load dataset
+dt<-readRDS("D:/Epi Biostat with R/Biostat_with_R/Section2/Categorical data analysis/Datasets/dt.RDS")
+
+# load libraries
+library(nnet) # "multinom()" function is from nnet
+library(sjPlot) # to make ready-made tables and charts
+library(ggeffects) # to plot models
+library(performance) # to check assumptions
+```
+
+The code to use multinomial logistic regression is as follows:
+
+```{r}
+mdel1<-multinom(formula = Combined2_1~Wealth_quintile+motheredu+housedecision+health_program+age2+Sex+Place_of_residence+fatheredu+Ecological_region+parity+maternal_nut+nt_wm_any_anem, data=dt)
+
+summary(mdel1)
+
+```
+
+In order to check assumptions of the model we can use performance package.
+
+```{r}
+# check for multi-collinearity
+performance::check_collinearity(mdel1)
+```
+
+We can use `tab_model()` from the sjPlot package to make a ready-made table and `plot_model()` from sjPlot to create a sleek chart.
+
+```{r}
+# readymade table
+tab_model(mdel1)
+
+# chart
+sjPlot::plot_model(mdel1,show.intercept = T, vline.color = "black", show.values = TRUE, terms = c("Wealth_quintilepoorer","Wealth_quintilemiddle", "Wealth_quintilericher","Wealth_quintilerichest", "motheredubasic","mothereduSecondary and Higher",  "housedecisionParticipation", "health_programYes" ),title = "Factors associated with co-existence of undernutrition and anemia", wrap.title = 1000)+
+  ggplot2::theme_bw()
+```
+
+## Ordinal Logistic regression Analysis
+
+### Introduction
+
+Ordinal logistic regression, extension of logistic regression, is a statistical method used to analyze the relationship between an ordinal dependent variable and one or more independent variables. An ordinal variable is a categorical variable for which there is a clear ordering of the category levels (a variable with ordered categories, such as “low,” “medium,” and “high”). The explanatory variables may be either continuous or categorical.
+
+Estimating ordinal logistic regression models with statistical software is not difficult, but the interpretation of the model output can be cumbersome.It can be used to model outcomes such as satisfaction levels or grades. The goal is to predict the probability of an observation belonging to a certain category or a higher category, based on the values of the independent variables
+
+### Assumptions
+
+There are five assumptions that when violated may result in invalid output. The five assumptions are:
+
+1.  The dependent variable is measured on an ordinal level.
+2.  One or more of the independent variables are either continuous, categorical or ordinal.
+3.  Independence of observations and the dependent variable should be mutually exclusive.
+4.  No multi-collinearity
+5.  Proportional Odds : a major assumption of ordinal logistic regression is the assumption of proportional odds: the effect of an independent variable is constant for each increase in the level of the response. Hence the output of an ordinal logistic regression will contain an intercept for each level of the response except one, and a single slope for each explanatory variable.
+
+### Advantages and Disadvantages of Ordinal logistic regression
+
+#### Advantages
+
+-   It handles ordered outcomes and retains the information of ordered outcome variable
+
+-   It results in fewer parameters compared to multinomial logistic regression
+
+-   It produces interpretable coefficients.
+
+#### Disadvantages
+
+-   It can only be used if it meets the proportional odds assumption
+
+-   Not available in common libraries
+
+Let's explore data to apply ordinal logistic regression analysis.
+
+### Dataset, variables, libraries
+
+**Dataset:** We have a subset of mental health data from NDHS 2022.
+
+**Outcome variable:** `PHQ9_Score` is the outcome variable. We will convert it to a categorical variable named `depression`. The categories of depression are Normal, Mild, Moderate, and Moderately severe to severe. We will convert it to an ordinal variable.
+
+**Independent variables:** In the following example we will take four variables: `Age, Religion, Wealth, and Location.`
+
+**Libraries:** We will use `tidyverse` (for data manipulation), `gsheet` (to import the dataset), `MASS` (to fit the ordinal logistic regression model), and `brant` (to test the proportional odds assumption) packages.
+
+#### Load libraries and import dataset
+
+```{r}
+# load library
+library(tidyverse) # for data manipulation
+library(gsheet) # to pull data from google sheet
+library(MASS) # to use functions for ordinal regression
+library(brant) # to test proportional odds assumption
+
+# import dataset
+data<-gsheet::gsheet2tbl('https://docs.google.com/spreadsheets/d/1Sdp2kz0BD5x3nXTk8KlK6LtVy1MWnb_hcWuo67mrWgs')
+
+glimpse(data)
+```
+
+#### Dataset preparation
+
+```{r}
+# Create categorical outcome variable depression
+data<-data |>
+  mutate(depression=case_when(PHQ9_Score<=4~0,
+                          PHQ9_Score>4 & PHQ9_Score<10~1,
+                        PHQ9_Score>=10 & PHQ9_Score<15~2,
+                        PHQ9_Score>=15 & PHQ9_Score<28~3))
+
+# converting depression variable to ordinal variable
+data$depression<-factor(data$depression, levels = c(0:3), labels=c("Normal", "Mild","Moderate","Moderately severe to severe"), ordered =T)
+
+```
+
+#### Ordinal logistic regression model
+
+The proportional odds model (cumulative logit model) is the most widely used ordinal logistic regression model. If the outcome variable M has k categories (M=0, 1, 2, 3, ..., k), there are k-1 ways to dichotomize the outcome variable. The odds of M\>=k is :
+
+$$ Odds (M \geq k) = \frac{P(M \geq k)}{1-P(M \geq k)} = \frac{P(M \geq k)}{P(M < k)} $$ where k =1, 2, 3,... k-1
+
+Under the proportional odds assumption, the odds ratio that compares categories \>=1 to \<1 is the same as the odds ratio that compares between \>=2 to \<2 or \>=3 to \<3. This assumption results in only one coefficient for a variable but k-1 intercepts.
+
+The general regression model for ordinal logistic regression is as follow:
+
+$$ ln(\frac{P(M \geq k)} {P(M < k)}) = \alpha_k + \beta_1 X_1 +\beta_2X_2 +\beta_3X_3 $$ where k =1, 2, 3,... k-1
+
+#### Ordinal logistic regression model preparation
+
+In a study to determine the association of depression (Normal/ mild/ moderate/ severe) with age (in years), religion (Hindu/ Non-Hindu), wealth quintile (richest/ richer/ middle/ poorer/ poorest), and location (rural/ urban), Lets create a theoretical model
+
+$$ ln(\frac{P(Depression \geq k)} {P(Depression < k)}) = \alpha_k + \beta_1 Age +\beta_2Religion +\beta_3Wealth + \beta_4Location $$
+
+The model in R can be created using `polr` function from the `MASS` package as shown below:
+
+```{r}
+# Lets fit proportional odds logistic regression model
+model1 <- polr(depression ~ Age+Religion+Wealth+Location, data = data, Hess = T)
+
+# See summary of the model
+summary(model1)
+```
+
+#### Calculate p-value of ordinal logistic regression
+
+In order to determine p-value for ordinal logistic regression, we can use the following code:
+
+```{r}
+# Generate coefficient table
+coeff_tab<-round(coef(summary(model1)),3)
+# As the p-value is missing, let's calculate the p-value table
+p <- pnorm(abs(coeff_tab[, "t value"]), lower.tail = F) * 2
+
+# combine tables of coefficient and p-values 
+cbind(coeff_tab, "p value" = round(p, 3))
+```
+
+#### Determine odds ratio and 95%CI
+
+To calculate the odds ratio and 95% confidence interval around the odds ratio, we can use confint function to generate 95% confidence interval around coefficients. The coefficients can be exponentiated to calculate odds ratio as shown in the code below.
+
+::: callout-tip
+If the model contains interaction term then you can't directly calculate odds ratio by exponentiation.
+:::
+
+```{r, warning=FALSE}
+# Calculation of confidence intervals
+conf_int <- round(confint(model1), 2)
+
+# log odds coefficients
+odds_ratio <- round(coef(model1), 2)
+
+# convert coefficients into odds ratio, combine with CIs
+cbind(round(exp(cbind(OR = odds_ratio, conf_int)), 2), "p-value"=round(p,3))
+```
+
+#### Checking proportional odds assumption
+
+The brant test was defined by Rollin Brant to test the parallel regression assumption. Assessing proportionality in the proportional odds model for ordinal logistic regression.
+
+```{r}
+# testing parallel regression assumption using Brant's test
+brant(model1)
+```
+
+Above is the Brant Test result for this dataset. We conclude that the parallel assumption holds since the probability (p-values) for all variables are greater than alpha=0.05. The output also contains an Omnibus variable, which stands for the whole model, and it is still greater than 0.05. Therefore the proportional odds assumption is not violated and the model is a valid model for this dataset.
+
+#### Checking multi-collinearity
+
+```{r}
+model2<- glm(PHQ9_Score~ Age+Religion+Wealth+Location, data = data, family = gaussian(link="identity"))
+
+performance::check_collinearity(model2)
+```
+
+Multicollinearity occurs when two or more predictors in the model are correlated and provide redundant information about the response. Multicollinearity was measured by variance inflation factors (VIF) and tolerance. If VIF value exceeding 4.0, or by tol- erance less than 0.2 then there is a problem with multicollinearity (Hair et al., 2010). Here in our model the VIF is lower than 4 so there is no presence of multi-co linearity.
+
+#### Interpretation of odds ratio
+
+```{r, warning=FALSE}
+cbind(round(exp(cbind(OR = odds_ratio, conf_int)), 2), "p-value"=round(p,3))
+```
+
+The odds of having a higher level of depression compared to a lower level is 1.01 (95% CI: 1.00 to 1.01) times higher for each additional year of age, after adjusting for religion, wealth, and place of residence. Compared to the middle wealth quintile, the odds of having a higher level of depression are 25% lower among participants from the richest wealth quintile (OR: 0.75; 95% CI: 0.63 to 0.89) and 32% higher among participants from the poorest wealth quintile (OR: 1.32; 95% CI: 1.15 to 1.51), after adjusting for age, religion, and place of residence.
+
+# Summary
+
+This chapter covered logistic regression and its major extensions for analyzing categorical outcomes. Standard binary logistic regression (univariate, multivariable, and with interaction terms) is appropriate for a binary outcome with independent observations. When the outcome is binary but the data are sparse or perfectly separated, exact logistic regression or Firth's penalized logistic regression provide more reliable estimates than standard maximum likelihood. When observations are clustered or repeated within subjects, generalized estimating equations (GEE) extend the logistic model to yield valid, population-averaged inference. When the outcome variable has more than two unordered categories, multinomial logistic regression is used, while ordinal logistic regression is preferred when the outcome categories have a natural order, provided the proportional odds assumption holds. Selecting among these methods depends primarily on the structure of the outcome variable (binary, nominal, or ordinal), the independence or clustering of observations, and the sample size and event frequency.

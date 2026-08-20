@@ -1,0 +1,178 @@
+---
+title: "Introduction to Biostatistics"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+## A brief history of Biostatistics
+
+Biostatistics developed through a long-running tension between **continuity and change**. The continuity derives from focusing on the group rather than the clinically distinct individual. The change derives from developments in statistical theory that have led to more sophisticated analyses[@matthews2016].
+
+**Ancient precedents.** The Hippocratic treatise *On Airs, Waters, and Places* (c. 400 BCE) linked seasonal climate changes to disease patterns. It was a qualitative work but it looked beyond individual and suggested geographical and environmental factor's role. It relied on naturalistic explaination rather than using dieties to account for illness. Another ancient forerunner of contemporary clinical trials is discussed in the Bible’s Book of Daniel. In this book, King Nebuchadnezzar of Babylon wanted some subjects to eat only meat and wine, and other jewish chidren to eat legumes and water for 10 days. Though this experiment was informal and did not use any comparative testing but they used comparison to test efficacy of a dietary intervention[@matthews2016].
+
+**18th century.** Smallpox inoculation debates introduced early risk-benefit reasoning. John Arbuthnot (1722) used mortality data to argue inoculation reduced death rates tenfold[@rusnock2002]. Later, Daniel Bernoulli and Jean d'Alembert clashed over whether probability math could capture real human decision-making around risk[@rusnock2002]. Separately, ship's surgeon James Lind ran what's regarded as the first true controlled clinical trial in 1757: dividing 12 scurvy-stricken sailors into six paired groups with differing diets, finding citrus fruit clearly superior[@collier2009].
+
+**19th century.** Pierre-Charles-Alexandre Louis pioneered the "numerical method," using hospital data to show bloodletting increased mortality, arguing statistics should replace physicians' intuitive judgment. Critics like Risueño d'Amador and François Double countered that population averages couldn't predict outcomes for any individual patient, a debate over whether medicine should serve scientific knowledge or personalized care. Jules Gavarret then added mathematical rigor, showing Louis's results carried what we'd now call a confidence interval, prescient work that nonetheless failed to gain contemporary followers, leaving disputes over statistical evidence unresolved for decades.
+
+**Founding the modern clinical trial.** Karl Pearson's Biometric School (UCL, 1893) formalized statistical techniques like correlation and goodness-of-fit testing and pushed their use in medicine. His student Major Greenwood became the first professor of epidemiology and vital statistics [@farewell2016]. Greenwood's own student, Austin Bradford Hill, designed the 1946 streptomycin tuberculosis trial, the first to use formal randomization, and later developed the Bradford Hill Criteria (1965) for judging whether an association reflects true causation[@doll1992].
+
+![Karl Pearson (1857-1936)](Pictures/Karl%20Pearson.png)
+
+## Introduction
+
+Biostatistics is the branch of statistics concerned with the collection, organization, analysis, interpretation, and presentation of data arising from the biological and health sciences, including medicine, epidemiology, public health, biology, and pharmacology. It applies mathematical and statistical principles to design studies, summarize data, test hypotheses, and draw valid conclusions about health-related phenomena — ranging from the effectiveness of a new drug to the spread of an infectious disease across a population. At its core, biostatistics provides the quantitative framework that allows researchers to distinguish real, meaningful patterns in health data from patterns that could plausibly have occurred by chance alone.
+
+### **Importance of Biostatistics**
+
+Think of **biostatistics** as the backbone of modern medicine and public health. Without it, most of what we know about diseases, treatments, and health policies would just be guesswork. Here's why it matters:
+
+-   It builds evidence-based medicine. Every time a doctor prescribes a drug based on "proven effectiveness," biostatistics is behind that proof.
+
+-   It separates real effects from chance. A patient may improve after treatment but was it the drug, or just luck? Statistics tells us the difference.
+
+-   It helps design better research. Before a study even begins, biostatistics decides how many people are needed, how they should be grouped, and how bias can be avoided.
+
+-   It powers public health planning. Governments use disease rates, death rates, and survey data to decide where hospitals, vaccines, or health campaigns are most needed.
+
+-   It ensures new drugs are safe. Regulatory bodies like the FDA require statistical proof before approving any new medicine or vaccine.
+
+-   It helps track and control epidemics. During outbreaks (like COVID-19), statistical models are used to predict spread and evaluate control measures.
+
+-   It supports personalized treatment. By analyzing patterns in patient data, statistics helps doctors predict who is at higher risk and tailor treatment accordingly.
+
+### Scope of Biostatistics
+
+Biostatistics is a vast field, touching almost every stage of medical and health research. Its scope can be understood as a journey from planning a study to interpreting its results:
+
+1.  **Planning the Study**\
+    Before any data is collected, biostatistics helps to decide the best way to conduct research — whether through a cohort study, case-control study, or a randomized controlled trial.
+
+2.  **Describing the Data**\
+    Once data is collected, it needs to be summarized using averages, percentages, and simple charts, so that patterns are easy to see.
+
+3.  **Drawing Conclusions**\
+    This is where biostatistics answers the big question: "Is this result real, or just by chance?" Tools like hypothesis testing, p-values, and confidence intervals are used here.
+
+4.  **Studying Disease Over Time**\
+    Especially important in chronic disease research which looks at how long patients survive, or how long it takes for a disease event to occur, using tools like Kaplan-Meier curves.
+
+5.  **Following People Over Time (Longitudinal Studies)**\
+    Some diseases develop slowly, so researchers study the same people repeatedly over months or years, using specialized statistical models.
+
+6.  **Measuring Disease in Populations**\
+    This includes calculating rates of disease occurrence and figuring out risk factors — essential for public health decision-making.
+
+7.  **Testing New Treatments**\
+    Biostatistics guides every phase of drug and vaccine testing from calculating the right sample size to monitoring safety during the trial.
+
+8.  **Handling Complex Surveys**\
+    National health surveys often use special sampling methods. Biostatistics ensures the results still represent the whole population accurately.
+
+9.  **Modern Applications**\
+    Today, biostatistics also supports genetic research and machine learning tools used for predicting disease risk.
+
+### Types of Biostatistics
+
+Biostatistics is broadly divided into two major types: **descriptive** and **analytical (or inferential) statistics**.
+
+#### Descriptive Statistics
+
+Descriptive statistics refers to the set of methods used to organize, summarize, and present data in a clear and meaningful way, without drawing conclusions that go beyond the data itself.
+
+::: callout-note
+**Definition:** Descriptive statistics is the branch of statistics concerned with **summarizing, organizing, and presenting** data using numbers, tables, and graphs, so that the essential features of a data set can be understood quickly and accurately.
+:::
+
+Descriptive statistics answers questions such as:
+
+-   What is the "typical" value in this data set? (measures of central tendency)
+-   How spread out or variable are the observations? (measures of dispersion)
+-   What is the shape of the distribution? Is it symmetric or skewed?
+-   How are categorical characteristics distributed across groups?
+
+Descriptive statistics is contrasted with **inferential statistics**, which uses sample data to draw conclusions, make predictions, or test hypotheses about a larger population (covered later in this book, beginning with Section 9). Descriptive statistics is almost always the **first step** in any statistical analysis before we can test hypotheses or build models, we must understand the basic structure of our data.
+
+**Example (Public Health):** Suppose a health department records the systolic blood pressure of 200 adults attending a community screening. Before running any hypothesis test, we would first describe the data: What is the mean blood pressure? What is the range? How many participants have blood pressure above 140 mmHg? These are all descriptive statistics questions.
+
+**Importance of Descriptive Statistics in Public Health**
+
+Descriptive statistics is foundational to public health practice and research for several reasons:
+
+1.  **Surveillance:** Public health surveillance systems (e.g., disease registries, vital statistics) rely on descriptive statistics — incidence rates, prevalence, mortality rates — to monitor population health over time.
+2.  **Needs assessment:** Descriptive statistics identify which populations are most affected by a disease or risk factor, guiding resource allocation.
+3.  **Hypothesis generation:** Patterns observed in descriptive data (e.g., a cluster of cases in a geographic area) often generate hypotheses that are later tested using inferential statistics.
+4.  **Communication:** Tables, graphs, and summary numbers translate complex data into a form that policymakers, clinicians, and the public can understand.
+5.  **Quality control and monitoring:** Hospitals and health systems use descriptive statistics (e.g., average length of stay, infection rates) to monitor quality of care.
+6.  **Baseline for comparison:** Before evaluating an intervention, descriptive statistics establish a baseline against which post-intervention data can be compared.
+
+**Applications of Descriptive Statistics**
+
+Common applications encountered in biostatistics and epidemiology include:
+
+-   Summarizing **demographic characteristics** of a study population in a "Table 1" of a research paper (age, sex, BMI, comorbidities).
+-   Calculating **prevalence** and **incidence** of diseases in a population.
+-   Describing the **distribution of a biomarker** (e.g., mean and SD of fasting glucose in a diabetes study).
+-   Creating **epidemic curves** to show the number of new cases of a disease over time during an outbreak.
+-   Producing **choropleth maps** showing the geographic distribution of disease rates.
+-   Reporting **vaccination coverage** rates across regions or age groups.
+-   Summarizing **clinical trial** baseline characteristics before comparing treatment arms.
+
+::: callout-important
+Descriptive statistics **describes** the data you have; it does **not** allow you to generalize findings to a broader population with a stated level of confidence which is done by analutical statistics. That is the role of inferential statistics, introduced starting in Section 9 of this chapter. Confusing the two — for example, treating a sample mean as if it were the population mean without accounting for sampling variability — is a common and important error to avoid.
+:::
+
+#### **Analytical (inferential) statistics**
+
+Analytical statistics by contrast, goes further by using sample data to draw conclusions, make predictions, or test hypotheses about a larger population. This branch includes techniques such as hypothesis testing, confidence interval estimation, regression analysis, survival analysis, and analysis of variance (ANOVA). Analytical statistics allow researchers to determine, for example, whether a difference in recovery rates between two treatment groups is statistically significant or likely due to chance, or to estimate the strength and direction of the relationship between a risk factor and a health outcome. Because analytical methods involve making inferences beyond the observed data, they require careful attention to study design, sample size, and the assumptions underlying each statistical test reinforcing why the historical development of rigorous statistical reasoning, discussed earlier, remains so central to sound biomedical research today.
+
+**Importance of Analytical Statistics**
+
+-   **Tests hypotheses scientifically** – helps confirm or reject assumptions using objective, mathematical methods rather than opinion or observation alone.
+
+-   **Establishes cause-and-effect relationships** – helps identify whether a risk factor (like smoking) is actually associated with a disease outcome (like lung cancer).
+
+-   **Reduces the role of chance and bias** – through significance testing (p-values, confidence intervals), it tells us whether a result is likely real or just random variation.
+
+-   **Supports decision-making in medicine** – guides whether a new drug, vaccine, or intervention should be adopted based on solid proof of effectiveness.
+
+-   **Allows generalization** – lets researchers apply conclusions from a small sample to a larger population with a known degree of confidence.
+
+-   **Strengthens research validity** – proper analytical methods control for confounding factors and bias, making study results more trustworthy.
+
+-   **Helps compare groups** – enables comparison between treatment vs. control groups, exposed vs. unexposed populations, etc.
+
+-   **Improves resource allocation** – governments and health organizations use analytical findings to prioritize where funding and interventions are most needed.
+
+-   **Enables risk prediction** – helps calculate the probability of disease occurrence based on various risk factors.
+
+-   **Forms the basis of evidence-based practice** – nearly every clinical guideline is built on findings validated through analytical statistical methods.
+
+**Applications of Analytical Statistics**
+
+1.  **Hypothesis Testing**\
+    Used to test whether a new treatment is significantly better than an existing one (e.g., t-test, chi-square test, ANOVA).
+2.  **Measures of Association**\
+    Calculating relative risk, odds ratio, and attributable risk to understand how strongly a factor is linked to a disease.
+3.  **Regression Analysis**\
+    Used to study the relationship between one outcome and multiple risk factors simultaneously (linear, logistic, Cox regression).
+4.  **Correlation Analysis**\
+    Determines whether two variables (e.g., blood pressure and age) move together, and how strongly.
+5.  **Survival Analysis**\
+    Applied in chronic disease and cancer research to study time-to-event outcomes, like time until death or relapse.
+6.  **Epidemiological Study Designs**\
+    Used in cohort and case-control studies to identify risk factors and calculate disease association.
+7.  **Clinical Trials**\
+    Applied to test whether new drugs or vaccines produce statistically significant improvements over placebo or standard treatment.
+8.  **Quality Control in Public Health Programs**\
+    Used to monitor whether a health intervention (like a vaccination drive) is producing the intended effect at a population level.
+9.  **Predictive Modeling**\
+    Helps forecast disease outbreaks or identify high-risk individuals using statistical/machine learning models.
+10. **Survey Data Analysis**\
+    Applied in large-scale health surveys to draw valid conclusions while accounting for complex sampling designs.
+
+
+## References

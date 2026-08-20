@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Comparing Two Paired (Matched) Measurements – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Section2/12_5_bivariate.html" rel="next">
+<link href="../Section2/12_3_bivariate.html" rel="prev">
+<link href="../cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/12_4_bivariate.html"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/06_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_1_Correlation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Association Between Two Numeric Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_2_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing a Sample Mean to a Fixed Value</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_3_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_4_bivariate.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_5_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling Technique</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation and power</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#sec-paired_t" id="toc-sec-paired_t" class="nav-link" data-scroll-target="#sec-paired_t">Comparing Two Paired (Matched) Measurements</a></li>
+  <li><a href="#sec-paired_t_test" id="toc-sec-paired_t_test" class="nav-link" data-scroll-target="#sec-paired_t_test">The Paired <span class="math inline">\(t\)</span>-Test</a>
+  <ul class="collapse">
+  <li><a href="#hypotheses" id="toc-hypotheses" class="nav-link" data-scroll-target="#hypotheses">Hypotheses</a></li>
+  <li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
+  <li><a href="#test-statistic" id="toc-test-statistic" class="nav-link" data-scroll-target="#test-statistic">Test statistic</a></li>
+  <li><a href="#confidence-interval-for-mu_d" id="toc-confidence-interval-for-mu_d" class="nav-link" data-scroll-target="#confidence-interval-for-mu_d">Confidence interval for <span class="math inline">\(\mu_d\)</span></a></li>
+  <li><a href="#connection-to-the-one-sample-t-test" id="toc-connection-to-the-one-sample-t-test" class="nav-link" data-scroll-target="#connection-to-the-one-sample-t-test">Connection to the one-sample <span class="math inline">\(t\)</span>-test</a></li>
+  </ul></li>
+  <li><a href="#manual-hand-calculation-of-the-paired-t-test" id="toc-manual-hand-calculation-of-the-paired-t-test" class="nav-link" data-scroll-target="#manual-hand-calculation-of-the-paired-t-test">Manual (Hand) Calculation of the Paired <span class="math inline">\(t\)</span>-Test</a>
+  <ul class="collapse">
+  <li><a href="#step-1-build-the-deviation-table" id="toc-step-1-build-the-deviation-table" class="nav-link" data-scroll-target="#step-1-build-the-deviation-table">Step 1: Build the deviation table</a></li>
+  <li><a href="#step-2-standard-deviation-and-standard-error-of-the-differences" id="toc-step-2-standard-deviation-and-standard-error-of-the-differences" class="nav-link" data-scroll-target="#step-2-standard-deviation-and-standard-error-of-the-differences">Step 2: Standard deviation and standard error of the differences</a></li>
+  <li><a href="#step-3-test-statistic-and-p-value" id="toc-step-3-test-statistic-and-p-value" class="nav-link" data-scroll-target="#step-3-test-statistic-and-p-value">Step 3: Test statistic and <span class="math inline">\(p\)</span>-value</a></li>
+  <li><a href="#step-4-95-confidence-interval" id="toc-step-4-95-confidence-interval" class="nav-link" data-scroll-target="#step-4-95-confidence-interval">Step 4: 95% confidence interval</a></li>
+  <li><a href="#step-5-verify-against-r" id="toc-step-5-verify-against-r" class="nav-link" data-scroll-target="#step-5-verify-against-r">Step 5: Verify against R</a></li>
+  </ul></li>
+  <li><a href="#sec-new_testw" id="toc-sec-new_testw" class="nav-link" data-scroll-target="#sec-new_testw">The Wilcoxon Signed-Rank Test for Paired Data</a>
+  <ul class="collapse">
+  <li><a href="#when-to-use-it-instead-of-the-paired-t-test" id="toc-when-to-use-it-instead-of-the-paired-t-test" class="nav-link" data-scroll-target="#when-to-use-it-instead-of-the-paired-t-test">When to use it instead of the paired <span class="math inline">\(t\)</span>-test</a></li>
+  <li><a href="#procedure" id="toc-procedure" class="nav-link" data-scroll-target="#procedure">Procedure</a></li>
+  </ul></li>
+  <li><a href="#manual-hand-calculation-of-the-wilcoxon-signed-rank-test" id="toc-manual-hand-calculation-of-the-wilcoxon-signed-rank-test" class="nav-link" data-scroll-target="#manual-hand-calculation-of-the-wilcoxon-signed-rank-test">Manual (Hand) Calculation of the Wilcoxon Signed-Rank Test</a>
+  <ul class="collapse">
+  <li><a href="#step-1-rank-the-absolute-differences-and-reattach-sign" id="toc-step-1-rank-the-absolute-differences-and-reattach-sign" class="nav-link" data-scroll-target="#step-1-rank-the-absolute-differences-and-reattach-sign">Step 1: Rank the absolute differences and reattach sign</a></li>
+  <li><a href="#step-2-sum-the-positive-and-negative-signed-ranks" id="toc-step-2-sum-the-positive-and-negative-signed-ranks" class="nav-link" data-scroll-target="#step-2-sum-the-positive-and-negative-signed-ranks">Step 2: Sum the positive and negative signed ranks</a></li>
+  <li><a href="#step-3-normal-approximation" id="toc-step-3-normal-approximation" class="nav-link" data-scroll-target="#step-3-normal-approximation">Step 3: Normal approximation</a></li>
+  <li><a href="#step-4-verify-against-r" id="toc-step-4-verify-against-r" class="nav-link" data-scroll-target="#step-4-verify-against-r">Step 4: Verify against R</a></li>
+  </ul></li>
+  <li><a href="#demonstration-in-r-using-the-full-wcgs-data-set" id="toc-demonstration-in-r-using-the-full-wcgs-data-set" class="nav-link" data-scroll-target="#demonstration-in-r-using-the-full-wcgs-data-set">Demonstration in R Using the Full WCGS Data Set</a>
+  <ul class="collapse">
+  <li><a href="#distribution-of-pulse-pressure-and-checking-the-actual-assumption-normality-of-the-differences" id="toc-distribution-of-pulse-pressure-and-checking-the-actual-assumption-normality-of-the-differences" class="nav-link" data-scroll-target="#distribution-of-pulse-pressure-and-checking-the-actual-assumption-normality-of-the-differences">Distribution of pulse pressure and checking the actual assumption (normality of the differences)</a></li>
+  <li><a href="#paired-t-test-on-the-full-sample" id="toc-paired-t-test-on-the-full-sample" class="nav-link" data-scroll-target="#paired-t-test-on-the-full-sample">Paired <span class="math inline">\(t\)</span>-test on the full sample</a></li>
+  <li><a href="#wilcoxon-signed-rank-test-on-the-full-sample" id="toc-wilcoxon-signed-rank-test-on-the-full-sample" class="nav-link" data-scroll-target="#wilcoxon-signed-rank-test-on-the-full-sample">Wilcoxon signed-rank test on the full sample</a></li>
+  <li><a href="#what-goes-wrong-if-pairing-is-ignored" id="toc-what-goes-wrong-if-pairing-is-ignored" class="nav-link" data-scroll-target="#what-goes-wrong-if-pairing-is-ignored">What goes wrong if pairing is ignored</a></li>
+  <li><a href="#comparison-table" id="toc-comparison-table" class="nav-link" data-scroll-target="#comparison-table">Comparison table</a></li>
+  </ul></li>
+  <li><a href="#a-practical-decision-process" id="toc-a-practical-decision-process" class="nav-link" data-scroll-target="#a-practical-decision-process">A Practical Decision Process</a></li>
+  <li><a href="#common-pitfalls" id="toc-common-pitfalls" class="nav-link" data-scroll-target="#common-pitfalls">Common Pitfalls</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/12_4_bivariate.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/12_4_bivariate.html"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="learning-objectives" class="level1 unnumbered">
+<h1 class="unnumbered">Learning Objectives</h1>
+<p>By the end of this chapter, you should be able to:</p>
+<ol type="1">
+<li>Recognise a <strong>paired (matched) design</strong> — where two measurements are linked because they come from the <em>same</em> subject (or a matched pair) — and explain why this is different from comparing two independent groups.</li>
+<li>State the hypotheses, assumptions, formula, and correct interpretation of the <strong>paired</strong> <span class="math inline">\(t\)</span>-test, and explain why it is mathematically identical to a one-sample <span class="math inline">\(t\)</span>-test performed on the differences.</li>
+<li>Calculate the paired <span class="math inline">\(t\)</span>-test <strong>by hand</strong>, including the deviation table used to obtain the standard deviation of the differences.</li>
+<li>State the assumptions, formula, and correct interpretation of the <strong>Wilcoxon signed-rank test</strong> as a paired/matched-samples procedure.</li>
+<li>Calculate the Wilcoxon signed-rank statistic <strong>by hand</strong> for paired data, including handling of tied ranks.</li>
+<li>Reproduce all procedures in <strong>R</strong>, using the WCGS data, and correctly explain why ignoring pairing (treating matched data as if it were two independent samples) produces the wrong standard error.</li>
+</ol>
+<hr>
+</section>
+<section id="sec-paired_t" class="level1">
+<h1>Comparing Two Paired (Matched) Measurements</h1>
+<p>A <strong>paired</strong> (or <strong>matched</strong>) design arises whenever two measurements are linked at the level of the individual observational unit — most commonly because the <em>same subject</em> contributes both values. Classic examples are “before vs.&nbsp;after treatment” on the same patient, or two raters scoring the same specimen. The defining statistical feature is not the timing of the measurements but the fact that the two values are <strong>correlated</strong>: knowing one tells you something about the other, because both come from the same source of between-subject variability.</p>
+<p>The WCGS data set does not contain a longitudinal before/after design, but it does contain something equally legitimate for a paired analysis: <strong>systolic blood pressure (<code>sbp</code>)</strong> and <strong>diastolic blood pressure (<code>dbp</code>)</strong>, both measured on the <em>same man at the same clinic visit</em>. These two numbers are far from independent — a man with an unusually high <code>sbp</code> for his age and build will tend to also have an unusually high <code>dbp</code>, because both partly reflect the same underlying vascular physiology. That within-subject correlation is precisely the situation the paired test is built to exploit, and it is worth confirming formally before proceeding:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Pearson's product-moment correlation
+#&gt; 
+#&gt; data:  wcgs$sbp and wcgs$dbp
+#&gt; t = 68, df = 3152, p-value &lt;2e-16
+#&gt; alternative hypothesis: true correlation is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  0.7585 0.7866
+#&gt; sample estimates:
+#&gt;    cor 
+#&gt; 0.7729</code></pre>
+</div>
+</div>
+<p>The correlation is strong and highly significant (<span class="math inline">\(r = 0.773\)</span>, <span class="math inline">\(95\%\)</span> CI <span class="math inline">\(0.758\)</span> to <span class="math inline">\(0.787\)</span>, <span class="math inline">\(p&lt;0.001\)</span>). Because <code>sbp</code> and <code>dbp</code> are this strongly linked within a person, a test that <strong>ignores</strong> the pairing (i.e., treats the two columns as if they came from two different, independent groups of men) throws away real information and — as we will demonstrate later in this chapter — produces the <em>wrong</em> standard error for the comparison.</p>
+<p>The paired difference itself is not merely a technical device here; it is a genuine, clinically meaningful quantity:</p>
+<p><span class="math display">\[
+d_i = \text{sbp}_i - \text{dbp}_i = \textbf{pulse pressure}
+\]</span></p>
+<p>Pulse pressure is a recognised cardiovascular measure related to arterial stiffness. Because systolic pressure is, by definition of the cardiac cycle, essentially always higher than diastolic pressure for a given person, we already know with near certainty that mean pulse pressure will be positive and that a paired test will reject <span class="math inline">\(H_0:\mu_d=0\)</span> — that direction is a matter of physiology, not a “finding.” The genuinely useful statistical content in this chapter is therefore twofold: (a) demonstrating paired-test technique on real, honestly-paired data, and (b) estimating the <strong>size and precision</strong> of mean pulse pressure in this cohort — a legitimate epidemiological quantity — while showing exactly how the paired approach correctly accounts for the sbp/dbp correlation that an independent two-sample test would ignore.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> dbp, <span class="at">y =</span> sbp)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Diastolic BP (mmHg)"</span>, <span class="at">y =</span> <span class="st">"Systolic BP (mmHg)"</span>) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-sbp-dbp-scatter" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sbp-dbp-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_4_bivariate_files/figure-html/fig-sbp-dbp-scatter-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sbp-dbp-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;21.1: Systolic vs.&nbsp;diastolic blood pressure, same subject, same visit — the visible positive association is exactly why these two measurements should be analysed as a paired sample.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Two procedures are commonly used for paired data:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test</th>
+<th>Assumes normality?</th>
+<th>Uses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Paired</strong> <span class="math inline">\(t\)</span>-test</td>
+<td>Yes, of the <em>differences</em> <span class="math inline">\(d_i\)</span> (or large <span class="math inline">\(n\)</span>)</td>
+<td>Raw differences</td>
+</tr>
+<tr class="even">
+<td><strong>Wilcoxon signed-rank test</strong></td>
+<td>No — only (approximate) symmetry of the differences</td>
+<td>Ranks of <span class="math inline">\(\lvert d_i\rvert\)</span></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="sec-paired_t_test" class="level1">
+<h1>The Paired <span class="math inline">\(t\)</span>-Test</h1>
+<section id="hypotheses" class="level2">
+<h2 class="anchored" data-anchor-id="hypotheses">Hypotheses</h2>
+<p><span class="math display">\[
+H_0: \mu_d = 0 \qquad H_1: \mu_d \ne 0
+\]</span></p>
+<p>where <span class="math inline">\(\mu_d\)</span> is the population mean of the paired differences <span class="math inline">\(d_i = x_{1i} - x_{2i}\)</span>.</p>
+</section>
+<section id="assumptions" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions">Assumptions</h2>
+<ol type="1">
+<li>The design is genuinely <strong>paired/matched</strong>: each <span class="math inline">\(d_i\)</span> comes from a single subject (or matched pair) contributing both measurements.</li>
+<li>The differences <span class="math inline">\(d_i\)</span> are <strong>independent across subjects</strong> (subject <span class="math inline">\(j\)</span>’s difference tells us nothing about subject <span class="math inline">\(k\)</span>’s) — independence is required <em>between</em> pairs, not within a pair (within a pair, correlation is expected and is exactly what pairing accounts for).</li>
+<li>The differences <span class="math inline">\(d_i\)</span> are <strong>(approximately) normally distributed</strong>, or <span class="math inline">\(n\)</span> is large enough for the Central Limit Theorem to apply to <span class="math inline">\(\bar d\)</span>. Critically, it is the distribution of the <em>differences</em> that must be checked — <strong>not</strong> the distributions of the two raw variables, which may each be non-normal even when their differences are well behaved (or vice versa).</li>
+</ol>
+</section>
+<section id="test-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="test-statistic">Test statistic</h2>
+<p><span id="eq-pairedt"><span class="math display">\[
+t = \frac{\bar d}{s_d/\sqrt n} \qquad \sim\; t_{(n-1)} \text{ under } H_0
+\tag{22.1}\]</span></span></p>
+<p>where <span class="math inline">\(\bar d = \frac{1}{n}\sum d_i\)</span> and <span class="math inline">\(s_d = \sqrt{\dfrac{\sum (d_i-\bar d)^2}{n-1}}\)</span> is the standard deviation of the differences.</p>
+</section>
+<section id="confidence-interval-for-mu_d" class="level2">
+<h2 class="anchored" data-anchor-id="confidence-interval-for-mu_d">Confidence interval for <span class="math inline">\(\mu_d\)</span></h2>
+<p><span class="math display">\[
+\bar d \pm t_{(1-\alpha/2,\;n-1)} \cdot \frac{s_d}{\sqrt n}
+\]</span></p>
+</section>
+<section id="connection-to-the-one-sample-t-test" class="level2">
+<h2 class="anchored" data-anchor-id="connection-to-the-one-sample-t-test">Connection to the one-sample <span class="math inline">\(t\)</span>-test</h2>
+<p>Compare <a href="#eq-pairedt" class="quarto-xref">Equation&nbsp;<span>22.1</span></a> with the one-sample <span class="math inline">\(t\)</span>-statistic from <a href="12_2_bivariate.html#sec-t_z_test">previous chapter</a>, <span class="math inline">\(t=(\bar x-\mu_0)/(s/\sqrt n)\)</span>. They are exactly the same formula: the paired <span class="math inline">\(t\)</span>-test <strong>is</strong> a one-sample <span class="math inline">\(t\)</span>-test applied to the single derived variable <span class="math inline">\(d_i\)</span>, tested against the fixed value <span class="math inline">\(\mu_0=0\)</span>. There is no new machinery here — only a new variable to feed into the familiar one-sample procedure. This is why, in R, <code>t.test(x1, x2, paired = TRUE)</code> and <code>t.test(x1 - x2, mu = 0)</code> give identical output, as we verify below.</p>
+<hr>
+</section>
+</section>
+<section id="manual-hand-calculation-of-the-paired-t-test" class="level1">
+<h1>Manual (Hand) Calculation of the Paired <span class="math inline">\(t\)</span>-Test</h1>
+<p>We draw a reproducible random subsample of <span class="math inline">\(n=10\)</span> men (<code>set.seed(444)</code>) and compute their pulse pressure <span class="math inline">\(d = \text{sbp}-\text{dbp}\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Random subsample (n = 10) with paired sbp, dbp, and difference d = sbp - dbp (pulse pressure)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: right;">sbp</th>
+<th style="text-align: right;">dbp</th>
+<th style="text-align: right;">d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">12386</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12457</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">60</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13213</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13262</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10274</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">54</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3075</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13479</td>
+<td style="text-align: right;">114</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3515</td>
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11490</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">46</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11200</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">56</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="step-1-build-the-deviation-table" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-build-the-deviation-table">Step 1: Build the deviation table</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Deviation table for the paired t-test</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">ID</th>
+<th style="text-align: right;">SBP</th>
+<th style="text-align: right;">DBP</th>
+<th style="text-align: right;">d</th>
+<th style="text-align: right;">d - dbar</th>
+<th style="text-align: right;">(d - dbar)^2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">12386</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">-8.4</td>
+<td style="text-align: right;">70.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12457</td>
+<td style="text-align: right;">162</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">11.6</td>
+<td style="text-align: right;">134.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13213</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">9.6</td>
+<td style="text-align: right;">92.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13262</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">-2.4</td>
+<td style="text-align: right;">5.76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10274</td>
+<td style="text-align: right;">138</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">5.6</td>
+<td style="text-align: right;">31.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3075</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">-12.4</td>
+<td style="text-align: right;">153.76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13479</td>
+<td style="text-align: right;">114</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">-4.4</td>
+<td style="text-align: right;">19.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3515</td>
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">-4.4</td>
+<td style="text-align: right;">19.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11490</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">-2.4</td>
+<td style="text-align: right;">5.76</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11200</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">7.6</td>
+<td style="text-align: right;">57.76</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><span class="math display">\[
+\bar d = \frac{\sum d_i}{n} = \frac{484}{10} = 48.4
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 590.4</code></pre>
+</div>
+</div>
+</section>
+<section id="step-2-standard-deviation-and-standard-error-of-the-differences" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-standard-deviation-and-standard-error-of-the-differences">Step 2: Standard deviation and standard error of the differences</h2>
+<p><span class="math display">\[
+s_d = \sqrt{\frac{\sum (d_i-\bar d)^2}{n-1}} = \sqrt{\frac{590.4}{9}} = 8.099
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;    n mean_d     sd_d    se_d
+#&gt; 1 10   48.4 8.099383 2.56125</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-test-statistic-and-p-value" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-test-statistic-and-p-value">Step 3: Test statistic and <span class="math inline">\(p\)</span>-value</h2>
+<p><span class="math display">\[
+t = \frac{\bar d}{s_d/\sqrt n} = \frac{48.4}{2.561}
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> dbar <span class="sc">/</span> se_d</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_d   <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p_val  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_stat), <span class="at">df =</span> df_d)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">t =</span> t_stat, <span class="at">df =</span> df_d, <span class="at">p_value =</span> p_val)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;      t df   p_value
+#&gt; 1 18.9  9 1.497e-08</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-95-confidence-interval" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-95-confidence-interval">Step 4: 95% confidence interval</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tcrit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> df_d)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ci    <span class="ot">&lt;-</span> dbar <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> tcrit <span class="sc">*</span> se_d</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">t_critical =</span> tcrit, <span class="at">lower =</span> ci[<span class="dv">1</span>], <span class="at">upper =</span> ci[<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   t_critical lower upper
+#&gt; 1      2.262 42.61 54.19</code></pre>
+</div>
+</div>
+</section>
+<section id="step-5-verify-against-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-verify-against-r">Step 5: Verify against R</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(sub<span class="sc">$</span>sbp, sub<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Paired t-test
+#&gt; 
+#&gt; data:  sub$sbp and sub$dbp
+#&gt; t = 19, df = 9, p-value = 1e-08
+#&gt; alternative hypothesis: true mean difference is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  42.61 54.19
+#&gt; sample estimates:
+#&gt; mean difference 
+#&gt;            48.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(sub<span class="sc">$</span>d, <span class="at">mu =</span> <span class="dv">0</span>)     <span class="co"># identical, confirming the one-sample-on-differences equivalence</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  One Sample t-test
+#&gt; 
+#&gt; data:  sub$d
+#&gt; t = 19, df = 9, p-value = 1e-08
+#&gt; alternative hypothesis: true mean is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  42.61 54.19
+#&gt; sample estimates:
+#&gt; mean of x 
+#&gt;      48.4</code></pre>
+</div>
+</div>
+<p>The hand-calculated <span class="math inline">\(\bar d = 48.4\)</span>, <span class="math inline">\(s_d = 8.099\)</span>, <span class="math inline">\(t = 18.90\)</span>, <span class="math inline">\(df = 9\)</span>, <span class="math inline">\(p = 1.50\times 10^{-8}\)</span> match R’s <code>t.test(sub$sbp, sub$dbp, paired = TRUE)</code> exactly, and <code>t.test(sub$d, mu = 0)</code> reproduces the identical output — confirming the equivalence stated above. Even in this tiny subsample, mean pulse pressure is enormous relative to its standard error (as physiology predicts), so the result is not remotely borderline.</p>
+<hr>
+</section>
+</section>
+<section id="sec-new_testw" class="level1">
+<h1>The Wilcoxon Signed-Rank Test for Paired Data</h1>
+<section id="when-to-use-it-instead-of-the-paired-t-test" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-it-instead-of-the-paired-t-test">When to use it instead of the paired <span class="math inline">\(t\)</span>-test</h2>
+<p>The Wilcoxon signed-rank test is the nonparametric counterpart to the paired <span class="math inline">\(t\)</span>-test (it is the <em>same</em> procedure introduced in <a href="#sec-paired_t">previous chapter</a> for one-sample data — applied here to the paired differences <span class="math inline">\(d_i = x_{1i}-x_{2i}\)</span> instead of <span class="math inline">\(x_i-\mu_0\)</span>). Prefer it when:</p>
+<ul>
+<li>The differences <span class="math inline">\(d_i\)</span> are <strong>clearly non-normal / skewed</strong>, or contain influential <strong>outliers</strong>.</li>
+<li>The outcome is <strong>ordinal</strong> rather than a proper interval scale.</li>
+<li>The sample size is <strong>small</strong>, so the Central Limit Theorem cannot be relied upon to rescue non-normal differences.</li>
+</ul>
+<p>It requires only that the distribution of the differences be <strong>(approximately) symmetric</strong> about its centre, a much weaker assumption than normality:</p>
+<p><span class="math display">\[
+H_0: \text{median}(d_i) = 0 \qquad H_1: \text{median}(d_i) \ne 0
+\]</span></p>
+</section>
+<section id="procedure" class="level2">
+<h2 class="anchored" data-anchor-id="procedure">Procedure</h2>
+<ol type="1">
+<li>Compute the differences <span class="math inline">\(d_i = x_{1i} - x_{2i}\)</span> for each pair.</li>
+<li><strong>Discard</strong> any <span class="math inline">\(d_i = 0\)</span> (exact ties between the pair), reducing <span class="math inline">\(n\)</span> accordingly.</li>
+<li>Rank the <strong>absolute</strong> differences <span class="math inline">\(\lvert d_i \rvert\)</span> from smallest (rank 1) to largest, giving <strong>tied</strong> absolute differences the average of the ranks they span.</li>
+<li>Attach back the original sign of <span class="math inline">\(d_i\)</span> to each rank.</li>
+<li>Sum the ranks of the positive differences (<span class="math inline">\(W^+\)</span>) and, separately, of the negative differences (<span class="math inline">\(W^-\)</span>); note <span class="math inline">\(W^+ + W^- = \dfrac{n(n+1)}{2}\)</span> always.</li>
+<li>The test statistic is (by one common textbook convention) <span class="math inline">\(W=\min(W^+,W^-)\)</span>; small values of <span class="math inline">\(W\)</span> are evidence against <span class="math inline">\(H_0\)</span>. R instead reports <span class="math inline">\(V=W^+\)</span> directly — equivalent information.</li>
+<li>For larger <span class="math inline">\(n\)</span>, use the normal approximation:</li>
+</ol>
+<p><span id="eq-wilcoxon-paired-z"><span class="math display">\[
+z = \frac{W-\mu_W}{\sigma_W}, \qquad
+\mu_W=\frac{n(n+1)}{4}, \qquad
+\sigma_W=\sqrt{\frac{n(n+1)(2n+1)}{24}}
+\tag{24.1}\]</span></span></p>
+<p>(software applies a downward correction to <span class="math inline">\(\sigma_W\)</span> for tied ranks, and often a <span class="math inline">\(0.5\)</span> continuity correction to the numerator).</p>
+<hr>
+</section>
+</section>
+<section id="manual-hand-calculation-of-the-wilcoxon-signed-rank-test" class="level1">
+<h1>Manual (Hand) Calculation of the Wilcoxon Signed-Rank Test</h1>
+<p>We reuse the <strong>same</strong> <span class="math inline">\(n=10\)</span> paired subsample from the previous section. Notice from the deviation table that two pairs share <span class="math inline">\(\lvert d\rvert = 44\)</span> (subjects with <span class="math inline">\(d=44,44\)</span>) and two share <span class="math inline">\(\lvert d\rvert = 46\)</span> (<span class="math inline">\(d=46,46\)</span>) — genuine ties in the absolute differences, giving a useful worked example of tie handling. Also notice that <strong>every</strong> <span class="math inline">\(d_i\)</span> is positive: as discussed above, this is expected on physiological grounds (sbp exceeds dbp for essentially every subject) and is not itself informative — the interesting content is in the ranks’ magnitudes, not their signs.</p>
+<section id="step-1-rank-the-absolute-differences-and-reattach-sign" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-rank-the-absolute-differences-and-reattach-sign">Step 1: Rank the absolute differences and reattach sign</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Ranking of absolute paired differences (n = 10)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">ID</th>
+<th style="text-align: right;">d</th>
+<th style="text-align: right;"><span class="math inline">\(\lvert d\rvert\)</span></th>
+<th style="text-align: right;">Rank of <span class="math inline">\(\lvert d\rvert\)</span></th>
+<th style="text-align: right;">Signed rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">12386</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">2.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12457</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">10.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13213</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">9.0</td>
+<td style="text-align: right;">9.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13262</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">5.5</td>
+<td style="text-align: right;">5.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10274</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">7.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3075</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">1.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13479</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3515</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11490</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">5.5</td>
+<td style="text-align: right;">5.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11200</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">8.0</td>
+<td style="text-align: right;">8.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="step-2-sum-the-positive-and-negative-signed-ranks" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-sum-the-positive-and-negative-signed-ranks">Step 2: Sum the positive and negative signed ranks</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   W+ W- sum (check) expected n(n+1)/2
+#&gt; 1 55  0          55                55</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(W^+=55\)</span>, <span class="math inline">\(W^-=0\)</span> — every difference is positive, so all of the rank mass falls on the positive side; the two sums correctly add to <span class="math inline">\(n(n+1)/2=55\)</span>. Using the min-statistic convention, <span class="math inline">\(W=\min(55,0)=0\)</span>.</p>
+</section>
+<section id="step-3-normal-approximation" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-normal-approximation">Step 3: Normal approximation</h2>
+<p><span class="math display">\[
+\mu_W = \frac{n(n+1)}{4} = \frac{10\times 11}{4} = 27.5,
+\qquad
+\sigma_W = \sqrt{\frac{n(n+1)(2n+1)}{24}} = \sqrt{\frac{10\times 11\times 21}{24}} = \sqrt{96.25} = 9.811
+\]</span></p>
+<p><span class="math display">\[
+z = \frac{W-\mu_W}{\sigma_W} = \frac{0-27.5}{9.811}
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   mu_W  sigma_W W        z     p_value
+#&gt; 1 27.5 9.810708 0 -2.80306 0.005062032</code></pre>
+</div>
+</div>
+<p>By hand (uncorrected normal approximation): <span class="math inline">\(z=-2.803\)</span>, two-sided <span class="math inline">\(p\approx 0.0051\)</span>.</p>
+</section>
+<section id="step-4-verify-against-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-verify-against-r">Step 4: Verify against R</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(sub<span class="sc">$</span>sbp, sub<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)                  <span class="co"># default: continuity-corrected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Wilcoxon signed rank test with continuity correction
+#&gt; 
+#&gt; data:  sub$sbp and sub$dbp
+#&gt; V = 55, p-value = 0.006
+#&gt; alternative hypothesis: true location shift is not equal to 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(sub<span class="sc">$</span>sbp, sub<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">correct =</span> <span class="cn">FALSE</span>) <span class="co"># matches the hand normal approximation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Wilcoxon signed rank test
+#&gt; 
+#&gt; data:  sub$sbp and sub$dbp
+#&gt; V = 55, p-value = 0.005
+#&gt; alternative hypothesis: true location shift is not equal to 0</code></pre>
+</div>
+</div>
+<p>R reports <span class="math inline">\(V=55\)</span> — exactly our <span class="math inline">\(W^+\)</span>. Without the continuity correction, <span class="math inline">\(p=0.00500\)</span>, matching our hand calculation (<span class="math inline">\(p\approx0.0051\)</span>) closely (the tiny remaining gap is R’s additional variance correction for the tied ranks at <span class="math inline">\(3.5\)</span> and <span class="math inline">\(5.5\)</span>); with the continuity correction (R’s default), <span class="math inline">\(p=0.00586\)</span>. Both are far below <span class="math inline">\(0.05\)</span>, and both agree with the paired <span class="math inline">\(t\)</span>-test: pulse pressure is significantly different from zero even in this <span class="math inline">\(n=10\)</span> subsample — again, an expected physiological result, with the genuinely interesting information residing in the <em>size</em> of the effect rather than its direction.</p>
+<hr>
+</section>
+</section>
+<section id="demonstration-in-r-using-the-full-wcgs-data-set" class="level1">
+<h1>Demonstration in R Using the Full WCGS Data Set</h1>
+<section id="distribution-of-pulse-pressure-and-checking-the-actual-assumption-normality-of-the-differences" class="level2">
+<h2 class="anchored" data-anchor-id="distribution-of-pulse-pressure-and-checking-the-actual-assumption-normality-of-the-differences">Distribution of pulse pressure and checking the actual assumption (normality of the differences)</h2>
+<p>The assumption that matters for the paired <span class="math inline">\(t\)</span>-test is normality of <span class="math inline">\(d_i = \text{sbp}_i-\text{dbp}_i\)</span> — <strong>not</strong> normality of <code>sbp</code> or <code>dbp</code> individually.</p>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>wcgs<span class="sc">$</span>pulse_pressure <span class="ot">&lt;-</span> wcgs<span class="sc">$</span>sbp <span class="sc">-</span> wcgs<span class="sc">$</span>dbp</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> pulse_pressure)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Pulse pressure = SBP - DBP (mmHg)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>pulse_pressure, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(wcgs<span class="sc">$</span>pulse_pressure, <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-pulse-pressure" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pulse-pressure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-pulse-pressure" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-pulse-pressure-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-pulse-pressure-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_4_bivariate_files/figure-html/fig-pulse-pressure-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%" data-ref-parent="fig-pulse-pressure">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-pulse-pressure-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Histogram of pulse pressure
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-pulse-pressure" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-pulse-pressure-2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-pulse-pressure-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="12_4_bivariate_files/figure-html/fig-pulse-pressure-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%" data-ref-parent="fig-pulse-pressure">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-pulse-pressure-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Normal Q-Q plot of pulse pressure
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pulse-pressure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;26.1: Distribution of pulse pressure (sbp - dbp) in the full WCGS cohort (n = 3,154).
+</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>pulse_pressure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Shapiro-Wilk normality test
+#&gt; 
+#&gt; data:  wcgs$pulse_pressure
+#&gt; W = 0.94, p-value &lt;2e-16</code></pre>
+</div>
+</div>
+<p>The histogram is unimodal and reasonably symmetric with a slight right skew, and the Q-Q plot shows only modest departure from the reference line in the tails. Shapiro-Wilk nonetheless rejects exact normality (<span class="math inline">\(p&lt;0.001\)</span>) — but with <span class="math inline">\(n=3{,}154\)</span>, Shapiro-Wilk is well known to detect even trivially small deviations from normality as “significant” (a large-<span class="math inline">\(n\)</span> oversensitivity we have flagged in previous chapters). Combined with <span class="math inline">\(n\)</span> being very large (so the Central Limit Theorem applies comfortably to <span class="math inline">\(\bar d\)</span> regardless of the shape of individual differences) and the mild skew visible in the plots, the paired <span class="math inline">\(t\)</span>-test remains entirely appropriate here; we run the Wilcoxon test alongside it as a robustness check.</p>
+</section>
+<section id="paired-t-test-on-the-full-sample" class="level2">
+<h2 class="anchored" data-anchor-id="paired-t-test-on-the-full-sample">Paired <span class="math inline">\(t\)</span>-test on the full sample</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Paired t-test
+#&gt; 
+#&gt; data:  wcgs$sbp and wcgs$dbp
+#&gt; t = 267, df = 3153, p-value &lt;2e-16
+#&gt; alternative hypothesis: true mean difference is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  46.28 46.96
+#&gt; sample estimates:
+#&gt; mean difference 
+#&gt;           46.62</code></pre>
+</div>
+</div>
+<p>Mean pulse pressure is <span class="math inline">\(46.62\)</span> mmHg (<span class="math inline">\(95\%\)</span> CI <span class="math inline">\(46.28\)</span> to <span class="math inline">\(46.96\)</span>), <span class="math inline">\(t(3153)=267.4\)</span>, <span class="math inline">\(p&lt;0.001\)</span>. With <span class="math inline">\(n=3{,}154\)</span>, this huge <span class="math inline">\(t\)</span>-statistic is not remarkable in itself (the direction was guaranteed); what is useful is the tight confidence interval — we can state mean pulse pressure in this cohort to within about <span class="math inline">\(\pm0.34\)</span> mmHg.</p>
+</section>
+<section id="wilcoxon-signed-rank-test-on-the-full-sample" class="level2">
+<h2 class="anchored" data-anchor-id="wilcoxon-signed-rank-test-on-the-full-sample">Wilcoxon signed-rank test on the full sample</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Wilcoxon signed rank test with continuity correction
+#&gt; 
+#&gt; data:  wcgs$sbp and wcgs$dbp
+#&gt; V = 5e+06, p-value &lt;2e-16
+#&gt; alternative hypothesis: true location shift is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  46 46
+#&gt; sample estimates:
+#&gt; (pseudo)median 
+#&gt;             46</code></pre>
+</div>
+</div>
+<p>The Wilcoxon test gives an estimated (pseudo)median difference (the Hodges-Lehmann estimator) of <span class="math inline">\(46.0\)</span> mmHg, <span class="math inline">\(95\%\)</span> CI <span class="math inline">\((46.00, 46.00)\)</span> — reported to more decimal places by R as <span class="math inline">\(45.99997\)</span> to <span class="math inline">\(46.00004\)</span>, i.e.&nbsp;an extremely tight interval given the huge <span class="math inline">\(n\)</span> — and <span class="math inline">\(p&lt;0.001\)</span>. The <span class="math inline">\(t\)</span>-test mean (<span class="math inline">\(46.62\)</span>) and the Wilcoxon pseudomedian (<span class="math inline">\(46.0\)</span>) are close but not identical, consistent with the mild right skew seen in the histogram; both procedures agree emphatically on the substantive conclusion.</p>
+</section>
+<section id="what-goes-wrong-if-pairing-is-ignored" class="level2">
+<h2 class="anchored" data-anchor-id="what-goes-wrong-if-pairing-is-ignored">What goes wrong if pairing is ignored</h2>
+<p>Suppose, mistakenly, that <code>sbp</code> and <code>dbp</code> were treated as two independent samples rather than paired measurements on the same men (i.e., an (incorrect) unpaired/Welch two-sample test):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">FALSE</span>, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt;  Welch Two Sample t-test
+#&gt; 
+#&gt; data:  wcgs$sbp and wcgs$dbp
+#&gt; t = 146, df = 5382, p-value &lt;2e-16
+#&gt; alternative hypothesis: true difference in means is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  45.99 47.24
+#&gt; sample estimates:
+#&gt; mean of x mean of y 
+#&gt;    128.63     82.02</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>se_paired   <span class="ot">&lt;-</span> <span class="fu">unname</span>((<span class="fu">t.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>conf.int[<span class="dv">2</span>] <span class="sc">-</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">t.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>estimate) <span class="sc">/</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">3153</span>))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>se_unpaired <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">sd</span>(wcgs<span class="sc">$</span>sbp)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="fu">length</span>(wcgs<span class="sc">$</span>sbp) <span class="sc">+</span> <span class="fu">sd</span>(wcgs<span class="sc">$</span>dbp)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="fu">length</span>(wcgs<span class="sc">$</span>dbp))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>se_unpaired <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se_unpaired)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">design =</span> <span class="fu">c</span>(<span class="st">"Paired (correct)"</span>, <span class="st">"Independent (incorrect)"</span>),</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">SE =</span> <span class="fu">c</span>(se_paired, se_unpaired))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;                    design     SE
+#&gt; 1        Paired (correct) 0.1743
+#&gt; 2 Independent (incorrect) 0.3201</code></pre>
+</div>
+</div>
+<p>The point estimate of the mean difference is unchanged (<span class="math inline">\(46.62\)</span> mmHg either way, since both are just <span class="math inline">\(\bar{\text{sbp}}-\bar{\text{dbp}}\)</span>), but the standard error nearly <strong>doubles</strong> when the (incorrect) independent-samples approach is used (<span class="math inline">\(SE\approx0.320\)</span> vs.&nbsp;the correct paired <span class="math inline">\(SE\approx0.174\)</span>), and correspondingly the (incorrect) <span class="math inline">\(t\)</span>-statistic drops from <span class="math inline">\(267.4\)</span> to <span class="math inline">\(145.6\)</span> and the confidence interval widens. This is exactly the cost of throwing away the strong positive within-subject correlation (<span class="math inline">\(r=0.773\)</span>) confirmed at the start of the chapter: the independent-samples formula assumes zero correlation between the two sets of values and so overstates the combined uncertainty. In general, whenever two measurements are legitimately paired, using an independent-samples test does not just lose power — it computes the wrong standard error for the design that was actually used to collect the data.</p>
+</section>
+<section id="comparison-table" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-table">Comparison table</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">t.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>wt <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(wcgs<span class="sc">$</span>sbp, wcgs<span class="sc">$</span>dbp, <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Test =</span> <span class="fu">c</span>(<span class="st">"Paired t-test"</span>, <span class="st">"Wilcoxon signed-rank"</span>),</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(<span class="fu">unname</span>(tt<span class="sc">$</span>estimate), <span class="fu">unname</span>(wt<span class="sc">$</span>estimate)),</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">CI_lower =</span> <span class="fu">c</span>(tt<span class="sc">$</span>conf.int[<span class="dv">1</span>], wt<span class="sc">$</span>conf.int[<span class="dv">1</span>]),</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">CI_upper =</span> <span class="fu">c</span>(tt<span class="sc">$</span>conf.int[<span class="dv">2</span>], wt<span class="sc">$</span>conf.int[<span class="dv">2</span>]),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Statistic =</span> <span class="fu">c</span>(<span class="fu">unname</span>(tt<span class="sc">$</span>statistic), <span class="fu">unname</span>(wt<span class="sc">$</span>statistic)),</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_or_NA =</span> <span class="fu">c</span>(<span class="fu">unname</span>(tt<span class="sc">$</span>parameter), <span class="cn">NA</span>),</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value =</span> <span class="fu">c</span>(<span class="fu">signif</span>(tt<span class="sc">$</span>p.value, <span class="dv">3</span>), <span class="fu">signif</span>(wt<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Test"</span>, <span class="st">"Estimate (mean or pseudomedian)"</span>, <span class="st">"95% CI lower"</span>, <span class="st">"95% CI upper"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Statistic (t or V)"</span>, <span class="st">"df"</span>, <span class="st">"p-value"</span>),</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Paired t-test vs. Wilcoxon signed-rank test for pulse pressure (sbp - dbp), full WCGS cohort"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tbl-summary-paired" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-summary-paired-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;26.1: Paired t-test vs.&nbsp;Wilcoxon signed-rank test for pulse pressure (sbp - dbp), full WCGS cohort
+</figcaption>
+<div aria-describedby="tbl-summary-paired-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<caption>Paired t-test vs.&nbsp;Wilcoxon signed-rank test for pulse pressure (sbp - dbp), full WCGS cohort</caption>
+<colgroup>
+<col style="width: 18%">
+<col style="width: 28%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 17%">
+<col style="width: 4%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Test</th>
+<th style="text-align: right;">Estimate (mean or pseudomedian)</th>
+<th style="text-align: right;">95% CI lower</th>
+<th style="text-align: right;">95% CI upper</th>
+<th style="text-align: right;">Statistic (t or V)</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Paired t-test</td>
+<td style="text-align: right;">46.62</td>
+<td style="text-align: right;">46.28</td>
+<td style="text-align: right;">46.96</td>
+<td style="text-align: right;">267.4</td>
+<td style="text-align: right;">3153</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wilcoxon signed-rank</td>
+<td style="text-align: right;">46.00</td>
+<td style="text-align: right;">46.00</td>
+<td style="text-align: right;">46.00</td>
+<td style="text-align: right;">4975435.0</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="a-practical-decision-process" class="level1">
+<h1>A Practical Decision Process</h1>
+<ol type="1">
+<li>Confirm the design is genuinely <strong>paired/matched</strong> (same subject or matched unit contributes both values) — if not, use the independent-groups methods of the previous chapter instead.</li>
+<li>Compute the differences <span class="math inline">\(d_i\)</span> and <strong>check their distribution</strong> (histogram, Q-Q plot; Shapiro-Wilk interpreted cautiously in large samples) — not the distributions of the two raw variables.</li>
+<li>Choose accordingly:</li>
+</ol>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Differences approximately normal (or large <span class="math inline">\(n\)</span>)?</th>
+<th>Recommended test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Yes</td>
+<td>Paired <span class="math inline">\(t\)</span>-test</td>
+</tr>
+<tr class="even">
+<td>No (skewed, outlier-prone, ordinal, or small <span class="math inline">\(n\)</span> with clear non-normality)</td>
+<td>Wilcoxon signed-rank test</td>
+</tr>
+</tbody>
+</table>
+<ol start="4" type="1">
+<li>Report the <strong>estimate and confidence interval</strong> (mean difference or pseudomedian), not just the <span class="math inline">\(p\)</span>-value — especially important in a paired design where a large <span class="math inline">\(n\)</span> can make even a small, physiologically uninteresting difference “significant.”</li>
+</ol>
+<hr>
+</section>
+<section id="common-pitfalls" class="level1">
+<h1>Common Pitfalls</h1>
+<ul>
+<li><strong>Mistaking a paired design for an independent one.</strong> As shown above, running an (incorrect) independent two-sample test on data that is actually paired ignores the within-subject correlation and produces the wrong (here, nearly doubled) standard error — it does not just cost power, it computes the wrong quantity for the design used.</li>
+<li><strong>Checking normality of the raw variables instead of the differences.</strong> The paired <span class="math inline">\(t\)</span>-test’s normality assumption applies to <span class="math inline">\(d_i=x_{1i}-x_{2i}\)</span>, not to <code>sbp</code> or <code>dbp</code> individually; a variable can be skewed on its own while its paired differences with another correlated variable are well behaved, or vice versa.</li>
+<li><strong>Forgetting to drop or correctly handle zero differences and ties in the Wilcoxon test.</strong> Exact zero differences (<span class="math inline">\(d_i=0\)</span>) must be removed and <span class="math inline">\(n\)</span> reduced accordingly; tied <span class="math inline">\(\lvert d_i\rvert\)</span> values must receive averaged ranks, and software applies a variance correction for ties that a naive hand calculation may omit.</li>
+<li><strong>Over-interpreting a physiologically (or logically) guaranteed direction as a “finding.”</strong> Because SBP essentially always exceeds DBP within a person, obtaining <span class="math inline">\(p&lt;0.001\)</span> for <span class="math inline">\(H_0:\mu_d=0\)</span> tells us nothing we didn’t already know — the informative output of this analysis is the <strong>size and precision</strong> of mean pulse pressure (<span class="math inline">\(46.6\)</span> mmHg, tight CI), not its sign.</li>
+<li><strong>Confusing statistical and clinical/physiological significance.</strong> With <span class="math inline">\(n=3{,}154\)</span>, the confidence interval for mean pulse pressure is extremely tight; always report and interpret the magnitude and CI, not only whether <span class="math inline">\(p&lt;0.05\)</span>.</li>
+</ul>
+<hr>
+</section>
+<section id="summary" class="level1">
+<h1>Summary</h1>
+<ul>
+<li>A <strong>paired (matched) design</strong> links two measurements at the level of the individual subject; the WCGS <code>sbp</code> and <code>dbp</code> values, measured on the same man at the same visit, are strongly correlated (<span class="math inline">\(r=0.773\)</span>) and constitute a legitimate paired sample, even though the study was not a before/after design.</li>
+<li>The <strong>paired</strong> <span class="math inline">\(t\)</span>-test tests <span class="math inline">\(H_0:\mu_d=0\)</span> on the differences <span class="math inline">\(d_i=x_{1i}-x_{2i}\)</span> and is mathematically identical to a one-sample <span class="math inline">\(t\)</span>-test applied to those differences (<span class="math inline">\(t=\bar d/(s_d/\sqrt n)\)</span>); on our <span class="math inline">\(n=10\)</span> hand-calculation subsample, <span class="math inline">\(t=18.90\)</span>, <span class="math inline">\(df=9\)</span>, <span class="math inline">\(p=1.50\times10^{-8}\)</span>, matching R exactly.</li>
+<li>The <strong>Wilcoxon signed-rank test</strong> is the nonparametric counterpart, requiring only symmetry of the differences; in the same subsample, <span class="math inline">\(W^+=55\)</span>, <span class="math inline">\(W^-=0\)</span>, normal-approximation <span class="math inline">\(z=-2.80\)</span>, <span class="math inline">\(p\approx0.0051\)</span>, closely matching R’s uncorrected result (<span class="math inline">\(p=0.00500\)</span>).</li>
+<li>On the <strong>full cohort</strong> (<span class="math inline">\(n=3{,}154\)</span>), mean pulse pressure is <span class="math inline">\(46.62\)</span> mmHg (<span class="math inline">\(95\%\)</span> CI <span class="math inline">\(46.28\)</span> to <span class="math inline">\(46.96\)</span>; Wilcoxon pseudomedian <span class="math inline">\(46.0\)</span> mmHg) — a precise, clinically interpretable estimate.</li>
+<li>Treating <code>sbp</code> and <code>dbp</code> as <strong>independent</strong> rather than paired nearly doubles the standard error (<span class="math inline">\(0.320\)</span> vs.&nbsp;<span class="math inline">\(0.174\)</span>) for the identical point estimate, illustrating concretely why pairing must be respected in the analysis whenever it is present in the data-collection design.</li>
+</ul>
+<hr>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<ul>
+<li>Rosner B. <em>Fundamentals of Biostatistics</em>. 8th ed.&nbsp;Cengage Learning.</li>
+<li>Daniel WW, Cross CL. <em>Biostatistics: A Foundation for Analysis in the Health Sciences</em>. 11th ed.&nbsp;Wiley.</li>
+<li>Bland M. <em>An Introduction to Medical Statistics</em>. 4th ed.&nbsp;Oxford University Press.</li>
+<li>Wilcoxon F. “Individual Comparisons by Ranking Methods.” <em>Biometrics Bulletin</em>. 1945;1(6):80-83.</li>
+<li>Rosenman RH, et al.&nbsp;“A predictive study of coronary heart disease: the Western Collaborative Group Study.” <em>JAMA</em>. 1964;189:15-22. (Original WCGS study.)</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Section2/12_3_bivariate.html" class="pagination-link" aria-label="Comparing Two Independent Group Means">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Comparing Two Independent Group Means</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Section2/12_5_bivariate.html" class="pagination-link" aria-label="Comparing Three or more Independent Group Means">
+        <span class="nav-page-text"><span class="chapter-title">Comparing Three or more Independent Group Means</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/12_4_bivariate.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

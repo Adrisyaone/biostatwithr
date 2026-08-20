@@ -1,0 +1,512 @@
+---
+title: "Comparing Two Independent Group Means"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
+```
+
+```{r}
+#| label: setup
+#| include: false
+library(readxl)
+library(ggplot2)
+library(knitr)
+library(car)
+
+options(digits = 4)
+wcgs <- readxl::read_excel("Section2/Categorical data analysis/Datasets/wcgs.xls")
+wcgs$dibpat <- factor(wcgs$dibpat, levels = c("Type A", "Type B"))
+wcgs$chd69  <- factor(wcgs$chd69,  levels = c("No", "Yes"))
+```
+
+# Learning Objectives {.unnumbered}
+
+By the end of this chapter, you should be able to:
+
+1.  State the situation in which the means of **two independent groups** are compared, and translate a research question into $H_0$/$H_1$.
+2.  State the assumptions, formula, and correct interpretation of **Student's (pooled-variance) two-sample** $t$-test.
+3.  State when **Welch's** $t$-test should be used instead, and explain how it differs from Student's test.
+4.  Calculate both test statistics **by hand** from raw data, including the pooled variance and Welch-Satterthwaite degrees of freedom.
+5.  State the assumptions, formula, and correct interpretation of the **Mann-Whitney U test** (Wilcoxon rank-sum test), the nonparametric alternative.
+6.  Calculate the Mann-Whitney $U$ statistic **by hand**, including handling of tied ranks.
+7.  Reproduce all three procedures in **R**, using the WCGS data, and correctly choose among them based on formal checks of normality and variance homogeneity.
+
+------------------------------------------------------------------------
+
+# Comparing Two Independent Groups
+
+A very common design in health research compares a numeric outcome between **two separate, non-overlapping groups** of subjects — for example, smokers vs. non-smokers, treatment vs. control, or (as in this chapter) Type A vs. Type B behaviour pattern. The word "independent" here means the two samples consist of **different individuals** with no natural pairing between them (contrast this with the *paired* designs covered in a later chapter).
+
+We will use two grouping variables already present in the WCGS data:
+
+-   **`dibpat`** — behaviour pattern, dichotomised as **Type A** ($n=1{,}589$) vs. **Type B** ($n=1{,}565$) — nearly equal group sizes, a good case to illustrate Student's test.
+-   **`chd69`** — whether the subject had a coronary heart disease event by the end of follow-up, **No** ($n=2{,}897$) vs. **Yes** ($n=257$) — very unequal group sizes together with unequal variances and skew, a good case to illustrate Welch's test and the Mann-Whitney U test.
+
+```{r}
+#| label: fig-box-intro
+#| fig-cap: "Two independent-groups comparisons used throughout this chapter."
+#| fig-subcap:
+#|   - "Weight by behaviour pattern (dibpat)"
+#|   - "Cholesterol by CHD event status (chd69)"
+#| layout-ncol: 2
+ggplot(wcgs, aes(x = dibpat, y = weight, fill = dibpat)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  labs(x = "Behaviour pattern", y = "Weight (lb)") +
+  theme_minimal(base_size = 12)
+
+ggplot(wcgs, aes(x = chd69, y = chol, fill = chd69)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  labs(x = "CHD event by 1969", y = "Cholesterol (mg/dL)") +
+  theme_minimal(base_size = 12)
+```
+
+Three procedures are commonly used:
+
+| Test | Assumes equal variances? | Assumes (approx.) normality? | Uses |
+|------------------|------------------|------------------|------------------|
+| **Student's (pooled)** $t$-test | Yes | Yes, in each group | Raw values |
+| **Welch's** $t$-test | No | Yes, in each group | Raw values |
+| **Mann-Whitney U** (Wilcoxon rank-sum) | No | No | Ranks of the pooled values |
+
+------------------------------------------------------------------------
+
+# Student's Two-Sample $t$-Test (Equal Variances) {#sec-ind_t_test}
+
+## Hypotheses
+
+$$
+H_0: \mu_1=\mu_2 \qquad H_1: \mu_1\ne\mu_2
+$$
+
+## Assumptions
+
+1.  The outcome is **continuous numeric**.
+2.  The two samples are **independent** of each other, and observations **within** each sample are independent (a random sample from each population).
+3.  Each population is (approximately) **normally distributed**, or each $n$ is large enough for the Central Limit Theorem to apply.
+4.  The two populations have **equal variances** ($\sigma_1^2=\sigma_2^2$) — often checked with an $F$-test (`var.test()`) or, preferably with non-normal data, **Levene's test**.
+
+## Test statistic
+
+The two sample variances are combined into a single **pooled variance** estimate:
+
+$$
+s_p^2=\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}
+$$ {#eq-pooledvar}
+
+$$
+t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2\left(\dfrac1{n_1}+\dfrac1{n_2}\right)}}
+\qquad \sim\; t_{(n_1+n_2-2)} \text{ under } H_0
+$$ {#eq-studentt}
+
+## Confidence interval for $\mu_1-\mu_2$
+
+$$
+(\bar x_1-\bar x_2)\pm t_{(1-\alpha/2,\;n_1+n_2-2)}\sqrt{s_p^2\left(\frac1{n_1}+\frac1{n_2}\right)}
+$$
+
+------------------------------------------------------------------------
+
+# Manual (Hand) Calculation of Student's $t$-Test
+
+We draw reproducible random subsamples of $n=8$ men from each behaviour-pattern group and compare **weight** (lb).
+
+```{r}
+#| label: student-manual-sample
+set.seed(111)
+A <- wcgs[wcgs$dibpat == "Type A", c("id", "weight")]
+B <- wcgs[wcgs$dibpat == "Type B", c("id", "weight")]
+sA <- as.data.frame(A[sample(nrow(A), 8), ])
+sB <- as.data.frame(B[sample(nrow(B), 8), ])
+kable(sA, caption = "Type A subsample (n = 8)")
+kable(sB, caption = "Type B subsample (n = 8)")
+```
+
+## Step 1: Compute each group's mean and variance
+
+```{r}
+#| label: student-manual-stats
+x1 <- sA$weight; x2 <- sB$weight
+n1 <- length(x1); n2 <- length(x2)
+m1 <- mean(x1); m2 <- mean(x2)
+v1 <- var(x1);  v2 <- var(x2)
+
+data.frame(Group = c("Type A","Type B"), n = c(n1,n2),
+           Mean = c(m1,m2), Variance = c(v1,v2), SD = c(sd(x1), sd(x2)))
+```
+
+## Step 2: Pool the variances
+
+$$
+s_p^2=\frac{(8-1)(31.93)+(8-1)(616.27)}{8+8-2}=\frac{7(31.93)+7(616.27)}{14}
+$$
+
+```{r}
+#| label: student-manual-pooled
+sp2 <- ((n1 - 1) * v1 + (n2 - 1) * v2) / (n1 + n2 - 2)
+sp2
+```
+
+## Step 3: Compute the test statistic
+
+$$
+t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2(1/n_1+1/n_2)}}=\frac{166.75-183.375}{\sqrt{324.10\times(1/8+1/8)}}
+$$
+
+```{r}
+#| label: student-manual-t
+se_pooled <- sqrt(sp2 * (1/n1 + 1/n2))
+t_pooled  <- (m1 - m2) / se_pooled
+df_pooled <- n1 + n2 - 2
+p_pooled  <- 2 * pt(-abs(t_pooled), df = df_pooled)
+data.frame(SE = se_pooled, t = t_pooled, df = df_pooled, p_value = p_pooled)
+```
+
+## Step 4: Verify against R
+
+```{r}
+#| label: student-manual-verify
+t.test(x1, x2, var.equal = TRUE)
+```
+
+The hand-calculated $t=-1.847$, $df=14$, $p=0.086$ match R's `t.test(..., var.equal = TRUE)` exactly. At the $5\%$ level we do **not** reject $H_0$ in this small subsample.
+
+::: callout-note
+Look closely at the two group variances above: $31.9$ vs. $616.3$ — a nearly $20$-fold difference, purely a feature of this small, randomly drawn $n=8$ subsample (the *full-population* variance ratio, shown later, is actually close to $1$). This is exactly why we should never eyeball a handful of numbers and assume equal variances — a formal test, on adequate sample sizes, is needed.
+:::
+
+------------------------------------------------------------------------
+
+# Welch's $t$-Test (Unequal Variances)
+
+## When to use it
+
+Use Welch's test instead of Student's when the assumption of equal population variances is doubtful — either because a formal test (an $F$-test or, more robustly, Levene's test) rejects equal variances, or as a **safe default**: many statisticians now recommend using Welch's test routinely, since it performs almost identically to Student's test when variances *are* equal, but avoids the inflated Type I error that Student's test can produce when variances differ, especially with **unequal sample sizes**.
+
+## Test statistic
+
+Welch's test does not pool the variances; each group contributes its own variance to the standard error:
+
+$$
+t=\frac{\bar x_1-\bar x_2}{\sqrt{\dfrac{s_1^2}{n_1}+\dfrac{s_2^2}{n_2}}}
+$$ {#eq-welcht}
+
+The degrees of freedom are **not** simply $n_1+n_2-2$; instead the **Welch-Satterthwaite approximation** is used, which can take non-integer values:
+
+$$
+df_{Welch}=\frac{\left(\dfrac{s_1^2}{n_1}+\dfrac{s_2^2}{n_2}\right)^2}
+{\dfrac{(s_1^2/n_1)^2}{n_1-1}+\dfrac{(s_2^2/n_2)^2}{n_2-1}}
+$$ {#eq-welchdf}
+
+------------------------------------------------------------------------
+
+# Manual (Hand) Calculation of Welch's $t$-Test {#sec-welch_t}
+
+Using the **same** two subsamples as above.
+
+## Step 1: Compute the (unpooled) standard error
+
+$$
+SE=\sqrt{\frac{31.93}{8}+\frac{616.27}{8}}
+$$
+
+```{r}
+#| label: welch-manual-se
+se_welch <- sqrt(v1/n1 + v2/n2)
+se_welch
+```
+
+**Notice** that because $n_1=n_2=8$ here, $SE_{Welch}=\sqrt{(s_1^2+s_2^2)/n}$ is numerically **identical** to $SE_{pooled}=\sqrt{s_p^2 \times 2/n}$ from the Student's test above — this is a general fact whenever the two sample sizes are equal. What differs between the two tests, in this equal-$n$ case, is entirely the **degrees of freedom**.
+
+## Step 2: Welch-Satterthwaite degrees of freedom
+
+$$
+df_{Welch}=\frac{(31.93/8+616.27/8)^2}{\dfrac{(31.93/8)^2}{7}+\dfrac{(616.27/8)^2}{7}}
+$$
+
+```{r}
+#| label: welch-manual-df
+df_welch <- (v1/n1 + v2/n2)^2 / ( (v1/n1)^2/(n1-1) + (v2/n2)^2/(n2-1) )
+df_welch
+```
+
+Because Group B's variance so dominates Group A's in this subsample, $df_{Welch}=7.72$ — pulled down close to $n_2-1=7$ (Welch's df is always between $\min(n_1,n_2)-1$ and $n_1+n_2-2$; the more unequal the variances, the closer it moves to the smaller group's own df).
+
+## Step 3: Test statistic and $p$-value
+
+```{r}
+#| label: welch-manual-t
+t_welch <- (m1 - m2) / se_welch
+p_welch <- 2 * pt(-abs(t_welch), df = df_welch)
+data.frame(t = t_welch, df = df_welch, p_value = p_welch)
+```
+
+## Step 4: Verify against R
+
+```{r}
+#| label: welch-manual-verify
+t.test(x1, x2, var.equal = FALSE)
+```
+
+The hand-calculated values match R's default `t.test()` (Welch's is R's default for two-sample tests) exactly: $t=-1.847$ (identical to Student's, as expected with equal $n$), but $df=7.72$ (much smaller than Student's $14$), giving a **wider, more conservative** $p$-value ($0.103$ vs. $0.086$) and a **wider** confidence interval. This illustrates precisely why Welch's test matters even when the two $t$-statistics coincide: unequal variances erode the effective degrees of freedom, and ignoring that (as Student's test does) can overstate precision.
+
+## Choosing between them: check variance homogeneity formally
+
+```{r}
+#| label: var-check-weight
+var.test(weight ~ dibpat, data = wcgs)          # F-test (sensitive to non-normality)
+leveneTest(weight ~ dibpat, data = wcgs)         # Levene's test (robust to non-normality)
+```
+
+On the **full** cohort, both the $F$-test ($p=0.32$) and Levene's test ($p=0.55$) agree the weight variances in Type A and Type B do **not** differ significantly — confirming that our small subsample's apparent $20$-fold variance difference above was simply sampling noise, and that Student's and Welch's tests should (and, as we will see, do) give essentially the same answer on the full data.
+
+------------------------------------------------------------------------
+
+# Mann-Whitney U Test (Wilcoxon Rank-Sum Test) {#sec-manwhitney_u}
+
+## When to use it
+
+Use the Mann-Whitney U test (equivalently, the Wilcoxon rank-sum test — the same procedure under two names) instead of a $t$-test when:
+
+-   The outcome is **ordinal**, or numeric but **clearly non-normal / skewed** in one or both groups.
+-   There are **influential outliers**.
+-   Sample sizes are **small and unequal**, compounding concerns about non-normality.
+
+It tests whether observations from one group tend to be **systematically larger** than observations from the other (a shift in location/distribution), without assuming a particular distributional shape.
+
+$$
+H_0: \text{the two populations have the same distribution (no location shift)}
+$$
+
+## Procedure
+
+1.  Combine the two samples and **rank all** $n_1+n_2$ values together from smallest (rank 1) to largest, giving tied values the average of the ranks they span.
+2.  Sum the ranks in each group: $R_1$ (group 1) and $R_2$ (group 2); note $R_1+R_2=\dfrac{(n_1+n_2)(n_1+n_2+1)}{2}$.
+3.  Convert each rank sum to a $U$ statistic: $$
+    U_1=R_1-\frac{n_1(n_1+1)}{2}, \qquad U_2=R_2-\frac{n_2(n_2+1)}{2}
+    $$ {#eq-mwu} and note $U_1+U_2=n_1n_2$ always.
+4.  The test statistic is conventionally $U=\min(U_1,U_2)$ (R's `wilcox.test()` reports $W$, which equals $U$ for the first-listed group).
+5.  For small samples, compare $U$ to exact tables; for larger samples, use the normal approximation: $$
+    z=\frac{U-\mu_U}{\sigma_U}, \qquad \mu_U=\frac{n_1n_2}{2}, \qquad \sigma_U=\sqrt{\frac{n_1n_2(n_1+n_2+1)}{12}}
+    $$ {#eq-mwuz} (software also applies a tie correction to $\sigma_U$ and often a continuity correction).
+
+------------------------------------------------------------------------
+
+# Manual (Hand) Calculation of the Mann-Whitney U Test
+
+We draw reproducible random subsamples of $n=8$ men from each CHD-event group (restricted to those with complete cholesterol) and compare **total cholesterol** — a variable we already know is right-skewed, with the CHD-event group additionally containing a genuine extreme outlier ($645$ mg/dL, the maximum value in the entire cohort), making this a strong case for a rank-based test.
+
+```{r}
+#| label: mwu-manual-sample
+set.seed(222)
+Y <- wcgs[wcgs$chd69 == "Yes" & !is.na(wcgs$chol), c("id", "chol")]
+N <- wcgs[wcgs$chd69 == "No"  & !is.na(wcgs$chol), c("id", "chol")]
+sY <- as.data.frame(Y[sample(nrow(Y), 8), ])
+sN <- as.data.frame(N[sample(nrow(N), 8), ])
+kable(sY, caption = "CHD = Yes subsample (n = 8)")
+kable(sN, caption = "CHD = No subsample (n = 8)")
+```
+
+## Step 1: Pool, rank, and tabulate
+
+Note the value $220$ occurs twice (both in the "Yes" group), so both receive the average rank $(5+6)/2=5.5$.
+
+```{r}
+#| label: mwu-manual-ranks
+g1 <- sY$chol; g2 <- sN$chol
+n1 <- length(g1); n2 <- length(g2)
+allvals <- c(g1, g2)
+grp <- c(rep("Yes", n1), rep("No", n2))
+rk  <- rank(allvals)
+
+tab <- data.frame(chol = allvals, group = grp, rank = rk)
+tab <- tab[order(tab$chol), ]
+kable(tab, row.names = FALSE, caption = "Combined, ranked cholesterol values")
+```
+
+## Step 2: Sum the ranks in each group
+
+```{r}
+#| label: mwu-manual-sums
+R1 <- sum(rk[grp == "Yes"])
+R2 <- sum(rk[grp == "No"])
+data.frame(Group = c("Yes","No"), Rank_sum = c(R1,R2),
+           Total = R1 + R2, Expected = (n1+n2)*(n1+n2+1)/2)
+```
+
+## Step 3: Convert to $U$
+
+$$
+U_1=R_1-\frac{n_1(n_1+1)}{2}=79-36=43, \qquad U_2=R_2-\frac{n_2(n_2+1)}{2}=57-36=21
+$$
+
+```{r}
+#| label: mwu-manual-u
+#| echo: false
+U1 <- R1 - n1*(n1+1)/2
+U2 <- R2 - n2*(n2+1)/2
+U  <- min(U1, U2)
+data.frame(U1 = U1, U2 = U2, `U1+U2` = U1+U2, `n1*n2` = n1*n2,
+           U_test_statistic = U, check.names = FALSE)
+```
+
+## Step 4: Normal approximation
+
+$$
+\mu_U=\frac{8\times8}{2}=32, \qquad \sigma_U=\sqrt{\frac{8\times8\times17}{12}}=9.522
+$$
+
+```{r}
+#| label: mwu-manual-z
+#| echo: false
+mu_U    <- n1*n2/2
+sigma_U <- sqrt(n1*n2*(n1+n2+1)/12)
+z_manual <- (U - mu_U) / sigma_U
+p_manual <- 2 * pnorm(-abs(z_manual))
+data.frame(mu_U, sigma_U, z = z_manual, p_value = p_manual)
+```
+
+## Step 5: Verify against R
+
+```{r}
+#| label: mwu-manual-verify
+wilcox.test(g1, g2)                       # default: continuity-corrected
+wilcox.test(g1, g2, correct = FALSE)      # matches the hand normal-approximation
+```
+
+R's $W=43$ is exactly our $U_1$ (the "Yes" group is the first argument). Without the continuity correction, $p=0.248$ matches our hand calculation; with it (R's default), $p=0.270$. Neither reaches significance in this small subsample — but note the extreme value ($645$) did **not** distort the result, because the Mann-Whitney test uses only its rank (the largest), unlike a $t$-test where it would inflate the group variance and mean substantially.
+
+------------------------------------------------------------------------
+
+# Demonstration in R Using the Full WCGS Data Set
+
+## Comparison 1: Weight by behaviour pattern (`dibpat`) — the "equal-variance" case
+
+```{r}
+#| label: fig-weight-normcheck
+#| fig-cap: "Weight distributions by behaviour pattern — both reasonably symmetric."
+ggplot(wcgs, aes(x = weight, fill = dibpat)) +
+  geom_histogram(binwidth = 5, alpha = 0.6, position = "identity", colour = "white") +
+  labs(x = "Weight (lb)", y = "Count", fill = "Behaviour pattern") +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+#| label: full-weight-tests
+t.test(weight ~ dibpat, data = wcgs, var.equal = TRUE)   # Student's
+t.test(weight ~ dibpat, data = wcgs, var.equal = FALSE)  # Welch's
+```
+
+**Interpretation:** Student's and Welch's tests give virtually identical results ($t=2.39$, $df=3152$ vs. $df=3151.7$, both $p\approx0.017$), exactly as expected given the near-equal variances confirmed earlier. Type A men weigh, on average, $1.80$ lb more than Type B men ($95\%$ CI $0.32$ to $3.27$ lb) — statistically significant given the large sample, though a modest effect in absolute terms.
+
+## Comparison 2: Cholesterol by CHD event status (`chd69`) — the "unequal-variance, skewed" case
+
+```{r}
+#| label: fig-chol-box
+#| fig-cap: "Cholesterol by CHD event status, showing greater spread, right skew, and outliers in the CHD = Yes group."
+ggplot(wcgs, aes(x = chd69, y = chol, fill = chd69)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  labs(x = "CHD event by 1969", y = "Cholesterol (mg/dL)") +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+#| label: full-chol-variance-normality
+var.test(chol ~ chd69, data = wcgs)
+leveneTest(chol ~ chd69, data = wcgs)
+shapiro.test(wcgs$chol[wcgs$chd69 == "Yes"])
+shapiro.test(wcgs$chol[wcgs$chd69 == "No"])
+```
+
+Here the $F$-test suggests unequal variances ($p<0.001$), while Levene's test (more robust to the non-normality also confirmed by both Shapiro-Wilk tests) does not reach significance ($p=0.24$) — a useful reminder that the classical $F$-test for variances is itself sensitive to non-normality, and Levene's test is generally the more trustworthy diagnostic when normality is in doubt. Given the clear skew and an extreme outlier in the CHD = Yes group, this is a case for reporting **both** Welch's test and a nonparametric test.
+
+```{r}
+#| label: full-chol-tests
+t.test(chol ~ chd69, data = wcgs, var.equal = TRUE)   # Student's
+t.test(chol ~ chd69, data = wcgs, var.equal = FALSE)  # Welch's
+wilcox.test(chol ~ chd69, data = wcgs, conf.int = TRUE)
+```
+
+**Interpretation:** All three tests agree in direction and significance, but notice how much more the degrees of freedom (and hence the standard error) shift here than in the weight example: Student's test uses $df=3140$, while Welch's drops to $df=290.3$ — because the much smaller, more variable CHD = Yes group ($n=257$) now genuinely dominates the uncertainty. Mean cholesterol is $25.8$ mg/dL higher in men who went on to have a CHD event ($95\%$ CI, Welch: $19.6$ to $32.1$), and the Mann-Whitney/Hodges-Lehmann shift estimate is a very similar $24.0$ mg/dL — both parametric and nonparametric approaches point to the same clinically recognisable finding (higher cholesterol preceding CHD events), giving us confidence the conclusion is not an artefact of the skew.
+
+## Summary table across several variable pairs
+
+```{r}
+#| label: tbl-summary-twogroup
+pairs_list <- list(
+  list(outcome = "weight", group = "dibpat"),
+  list(outcome = "sbp",    group = "dibpat"),
+  list(outcome = "chol",   group = "chd69"),
+  list(outcome = "sbp",    group = "chd69"),
+  list(outcome = "weight", group = "smoke")
+)
+
+results <- do.call(rbind, lapply(pairs_list, function(p) {
+  f  <- as.formula(paste(p$outcome, "~", p$group))
+  d  <- wcgs[!is.na(wcgs[[p$outcome]]), ]
+  st <- t.test(f, data = d, var.equal = TRUE)
+  we <- t.test(f, data = d, var.equal = FALSE)
+  mw <- wilcox.test(f, data = d)
+  data.frame(Outcome = p$outcome, Group = p$group,
+             Student_t = round(unname(st$statistic), 2), Student_df = round(unname(st$parameter),1),
+             Student_p = signif(st$p.value, 3),
+             Welch_t = round(unname(we$statistic), 2), Welch_df = round(unname(we$parameter), 1),
+             Welch_p = signif(we$p.value, 3),
+             MannWhitney_W = unname(mw$statistic), MW_p = signif(mw$p.value, 3))
+}))
+kable(results)
+```
+
+------------------------------------------------------------------------
+
+# A Practical Decision Process
+
+1.  **Plot the data** (boxplots, histograms) for each group.
+2.  **Check normality** within each group (Q-Q plots; Shapiro-Wilk for smaller $n$, interpreted cautiously for large $n$).
+3.  **Check variance homogeneity** (Levene's test is generally preferred over the $F$-test, since it is far less sensitive to non-normality).
+4.  Choose accordingly:
+
+| Normality? | Equal variances? | Recommended test |
+|----|----|----|
+| Yes | Yes | Student's (pooled-variance) $t$-test |
+| Yes | No | Welch's $t$-test |
+| No (or small, skewed, or outlier-prone) | — | Mann-Whitney U test |
+
+Many statisticians now recommend simply **defaulting to Welch's test** for two-group comparisons (it is R's default), since it costs almost nothing when variances are equal and protects against the inflated false-positive rate of Student's test when they are not.
+
+------------------------------------------------------------------------
+
+# Common Pitfalls
+
+-   **Assuming equal variances without checking.** Especially with unequal group sizes, ignoring unequal variances (using Student's test when Welch's is warranted) can distort the Type I error rate — the larger group's variance can dominate misleadingly.
+-   **Using the** $F$-test to check variance equality on non-normal data. As seen above, the $F$-test can itself mislead when the data are skewed; prefer Levene's test.
+-   **Over-relying on Shapiro-Wilk in large samples.** With $n$ in the thousands, trivial deviations from normality become "significant" — always inspect the plot as well.
+-   **Letting outliers dominate a** $t$-test. A single extreme value (like the $645$ mg/dL cholesterol reading here) can materially shift a group's mean and variance; the Mann-Whitney test is far more robust to this.
+-   **Interpreting the Mann-Whitney test as strictly a median comparison.** It formally tests for a general **distributional/location shift**; it approximates a median comparison well only when the two distributions have similar shape and spread.
+-   **Confusing statistical and clinical significance.** With WCGS's large $n$, even modest mean differences (e.g., $1.8$ lb in weight) become statistically significant — always report and interpret the effect size and CI, not just the $p$-value.
+
+------------------------------------------------------------------------
+
+# Summary
+
+-   To compare the means of **two independent groups**, first assess normality and variance homogeneity within each group.
+-   **Student's pooled-variance** $t$-test is appropriate when both groups are approximately normal with similar variances (as with weight by behaviour pattern in the WCGS data: $t=2.39$, $p=0.017$, essentially identical to Welch's result).
+-   **Welch's** $t$-test relaxes the equal-variance assumption and is a safe general default; it diverges most from Student's test when variances and sample sizes are both unequal (as with cholesterol by CHD status: Student's $df=3140$ vs. Welch's $df=290.3$, though both still reach the same substantive conclusion here).
+-   The **Mann-Whitney U test** (Wilcoxon rank-sum test) compares two groups using ranks rather than raw values, requiring no distributional assumption beyond independence — it is the method of choice for skewed data, small samples, or data with outliers, and agreed closely with the parametric tests in our cholesterol example (Hodges-Lehmann shift $24.0$ mg/dL vs. mean difference $25.8$ mg/dL).
+
+------------------------------------------------------------------------
+
+# References {.unnumbered}
+
+-   Rosner B. *Fundamentals of Biostatistics*. 8th ed. Cengage Learning.
+-   Daniel WW, Cross CL. *Biostatistics: A Foundation for Analysis in the Health Sciences*. 11th ed. Wiley.
+-   Bland M. *An Introduction to Medical Statistics*. 4th ed. Oxford University Press.
+-   Welch BL. "The generalization of 'Student's' problem when several different population variances are involved." *Biometrika*. 1947;34(1-2):28-35.
+-   Mann HB, Whitney DR. "On a Test of Whether one of Two Random Variables is Stochastically Larger than the Other." *Annals of Mathematical Statistics*. 1947;18(1):50-60.
+-   Rosenman RH, et al. "A predictive study of coronary heart disease: the Western Collaborative Group Study." *JAMA*. 1964;189:15-22. (Original WCGS study.)

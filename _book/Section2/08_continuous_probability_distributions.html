@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Continuous Probability Distributions – Biostatistics with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../Section2/09_Sampling distribution.html" rel="next">
+<link href="../Section2/07_discrete_probability_distributions.html" rel="prev">
+<link href="../cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-46f4cc9626f044588a66931b604fc9c8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-4a990d8dcb58f517c7c86712b8f2ac7c.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f524101b5d1cb1deb615440f12630413.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b7a59ac9f7e3a770d9eeb162b88b5d40.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/08_continuous_probability_distributions.html"><span class="chapter-title">Continuous Probability Distributions</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Biostatistics with R</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/Adrisyaone" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Biostatistics-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter1/01_introductions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter2/02_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-1</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/Chapter3/03_basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basics in R: Part-2 (Data cleaning)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../section1/chapter4/04_data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Data and variables</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biostatistics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/01_introduction_to_Biostat.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to Biostatistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/02_Data_types.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Types of data and scales of measurement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/03_measures_central_tendency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Central Tendency</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/04_measures_of_dispersion.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Measures of Dispersion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/05_descriptives.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Descriptive Statistics with R (Practical Part)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/06_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/07_discrete_probability_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/08_continuous_probability_distributions.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Continuous Probability Distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/09_Sampling distribution.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/10_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/11_intro_hypothesis_testing.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Hypothesis Testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic statistical tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_1_Correlation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Association Between Two Numeric Variables</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_2_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing a Sample Mean to a Fixed Value</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_3_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_4_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Two Paired (Matched) Measurements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/12_5_bivariate.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparing Three or more Independent Group Means</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Numerical data analysis/13_linear_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Linear regression Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Categorical data analysis/14_Categorical_data_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Categorical data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Count data analysis/15_Poisson_regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Count Data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Survival analysis/16_Survival_analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Survival Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/17_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sampling Technique</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../Section2/Sample size calculation/18_Sample_size_calculation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Sample Size estimation and power</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#probability-density-function-pdf" id="toc-probability-density-function-pdf" class="nav-link active" data-scroll-target="#probability-density-function-pdf">Probability Density Function (PDF)</a></li>
+  <li><a href="#cumulative-distribution-function-cdf" id="toc-cumulative-distribution-function-cdf" class="nav-link" data-scroll-target="#cumulative-distribution-function-cdf">Cumulative Distribution Function (CDF)</a></li>
+  <li><a href="#expected-value-and-variance" id="toc-expected-value-and-variance" class="nav-link" data-scroll-target="#expected-value-and-variance">Expected Value and Variance</a></li>
+  <li><a href="#uniform-distribution" id="toc-uniform-distribution" class="nav-link" data-scroll-target="#uniform-distribution">Uniform Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition">Definition</a></li>
+  <li><a href="#pdf-and-cdf" id="toc-pdf-and-cdf" class="nav-link" data-scroll-target="#pdf-and-cdf">PDF and CDF</a></li>
+  <li><a href="#parameters-mean-variance" id="toc-parameters-mean-variance" class="nav-link" data-scroll-target="#parameters-mean-variance">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties">Properties</a></li>
+  <li><a href="#applications-public-health-example" id="toc-applications-public-health-example" class="nav-link" data-scroll-target="#applications-public-health-example">Applications / Public Health Example</a></li>
+  <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example">Worked Example</a></li>
+  <li><a href="#r-code-and-graph" id="toc-r-code-and-graph" class="nav-link" data-scroll-target="#r-code-and-graph">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#normal-gaussian-distribution" id="toc-normal-gaussian-distribution" class="nav-link" data-scroll-target="#normal-gaussian-distribution">Normal (Gaussian) Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-1" id="toc-definition-1" class="nav-link" data-scroll-target="#definition-1">Definition</a></li>
+  <li><a href="#pdf" id="toc-pdf" class="nav-link" data-scroll-target="#pdf">PDF</a></li>
+  <li><a href="#parameters-mean-variance-1" id="toc-parameters-mean-variance-1" class="nav-link" data-scroll-target="#parameters-mean-variance-1">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1">Properties</a></li>
+  <li><a href="#applications-public-health-example-1" id="toc-applications-public-health-example-1" class="nav-link" data-scroll-target="#applications-public-health-example-1">Applications / Public Health Example</a></li>
+  <li><a href="#r-code-and-graph-1" id="toc-r-code-and-graph-1" class="nav-link" data-scroll-target="#r-code-and-graph-1">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#standard-normal-distribution" id="toc-standard-normal-distribution" class="nav-link" data-scroll-target="#standard-normal-distribution">Standard Normal Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-2" id="toc-definition-2" class="nav-link" data-scroll-target="#definition-2">Definition</a></li>
+  <li><a href="#pdf-1" id="toc-pdf-1" class="nav-link" data-scroll-target="#pdf-1">PDF</a></li>
+  <li><a href="#worked-example-manual-calculation" id="toc-worked-example-manual-calculation" class="nav-link" data-scroll-target="#worked-example-manual-calculation">Worked Example (Manual Calculation)</a></li>
+  <li><a href="#r-code-and-graph-2" id="toc-r-code-and-graph-2" class="nav-link" data-scroll-target="#r-code-and-graph-2">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#exponential-distribution" id="toc-exponential-distribution" class="nav-link" data-scroll-target="#exponential-distribution">Exponential Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-3" id="toc-definition-3" class="nav-link" data-scroll-target="#definition-3">Definition</a></li>
+  <li><a href="#pdf-and-cdf-1" id="toc-pdf-and-cdf-1" class="nav-link" data-scroll-target="#pdf-and-cdf-1">PDF and CDF</a></li>
+  <li><a href="#parameters-mean-variance-2" id="toc-parameters-mean-variance-2" class="nav-link" data-scroll-target="#parameters-mean-variance-2">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-2" id="toc-properties-2" class="nav-link" data-scroll-target="#properties-2">Properties</a></li>
+  <li><a href="#applications-public-health-example-2" id="toc-applications-public-health-example-2" class="nav-link" data-scroll-target="#applications-public-health-example-2">Applications / Public Health Example</a></li>
+  <li><a href="#worked-example-1" id="toc-worked-example-1" class="nav-link" data-scroll-target="#worked-example-1">Worked Example</a></li>
+  <li><a href="#r-code-and-graph-3" id="toc-r-code-and-graph-3" class="nav-link" data-scroll-target="#r-code-and-graph-3">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#gamma-distribution" id="toc-gamma-distribution" class="nav-link" data-scroll-target="#gamma-distribution">Gamma Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-4" id="toc-definition-4" class="nav-link" data-scroll-target="#definition-4">Definition</a></li>
+  <li><a href="#pdf-2" id="toc-pdf-2" class="nav-link" data-scroll-target="#pdf-2">PDF</a></li>
+  <li><a href="#parameters-mean-variance-3" id="toc-parameters-mean-variance-3" class="nav-link" data-scroll-target="#parameters-mean-variance-3">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-3" id="toc-properties-3" class="nav-link" data-scroll-target="#properties-3">Properties</a></li>
+  <li><a href="#applications-public-health-example-3" id="toc-applications-public-health-example-3" class="nav-link" data-scroll-target="#applications-public-health-example-3">Applications / Public Health Example</a></li>
+  <li><a href="#r-code-and-graph-4" id="toc-r-code-and-graph-4" class="nav-link" data-scroll-target="#r-code-and-graph-4">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#chi-square-distribution" id="toc-chi-square-distribution" class="nav-link" data-scroll-target="#chi-square-distribution">Chi-Square Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-5" id="toc-definition-5" class="nav-link" data-scroll-target="#definition-5">Definition</a></li>
+  <li><a href="#parameters-mean-variance-4" id="toc-parameters-mean-variance-4" class="nav-link" data-scroll-target="#parameters-mean-variance-4">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-4" id="toc-properties-4" class="nav-link" data-scroll-target="#properties-4">Properties</a></li>
+  <li><a href="#applications-public-health-example-4" id="toc-applications-public-health-example-4" class="nav-link" data-scroll-target="#applications-public-health-example-4">Applications / Public Health Example</a></li>
+  <li><a href="#r-code-and-graph-5" id="toc-r-code-and-graph-5" class="nav-link" data-scroll-target="#r-code-and-graph-5">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#students-t-distribution" id="toc-students-t-distribution" class="nav-link" data-scroll-target="#students-t-distribution">Student’s t-Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-6" id="toc-definition-6" class="nav-link" data-scroll-target="#definition-6">Definition</a></li>
+  <li><a href="#parameters-mean-variance-5" id="toc-parameters-mean-variance-5" class="nav-link" data-scroll-target="#parameters-mean-variance-5">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-5" id="toc-properties-5" class="nav-link" data-scroll-target="#properties-5">Properties</a></li>
+  <li><a href="#applications-public-health-example-5" id="toc-applications-public-health-example-5" class="nav-link" data-scroll-target="#applications-public-health-example-5">Applications / Public Health Example</a></li>
+  <li><a href="#r-code-and-graph-6" id="toc-r-code-and-graph-6" class="nav-link" data-scroll-target="#r-code-and-graph-6">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#f-distribution" id="toc-f-distribution" class="nav-link" data-scroll-target="#f-distribution">F Distribution</a>
+  <ul class="collapse">
+  <li><a href="#definition-7" id="toc-definition-7" class="nav-link" data-scroll-target="#definition-7">Definition</a></li>
+  <li><a href="#parameters-mean-variance-6" id="toc-parameters-mean-variance-6" class="nav-link" data-scroll-target="#parameters-mean-variance-6">Parameters, Mean, Variance</a></li>
+  <li><a href="#properties-6" id="toc-properties-6" class="nav-link" data-scroll-target="#properties-6">Properties</a></li>
+  <li><a href="#applications-public-health-example-6" id="toc-applications-public-health-example-6" class="nav-link" data-scroll-target="#applications-public-health-example-6">Applications / Public Health Example</a></li>
+  <li><a href="#r-code-and-graph-7" id="toc-r-code-and-graph-7" class="nav-link" data-scroll-target="#r-code-and-graph-7">R Code and Graph</a></li>
+  </ul></li>
+  <li><a href="#comparison-table-continuous-distributions" id="toc-comparison-table-continuous-distributions" class="nav-link" data-scroll-target="#comparison-table-continuous-distributions">Comparison Table: Continuous Distributions</a></li>
+  <li><a href="#decision-guide-which-continuous-distribution-should-i-use" id="toc-decision-guide-which-continuous-distribution-should-i-use" class="nav-link" data-scroll-target="#decision-guide-which-continuous-distribution-should-i-use">Decision Guide: Which Continuous Distribution Should I Use?</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/08_continuous_probability_distributions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../Section2/01_introduction_to_Biostat.html">Biostatistics</a></li><li class="breadcrumb-item"><a href="../Section2/08_continuous_probability_distributions.html"><span class="chapter-title">Continuous Probability Distributions</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Continuous Probability Distributions</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="probability-density-function-pdf" class="level2">
+<h2 class="anchored" data-anchor-id="probability-density-function-pdf">Probability Density Function (PDF)</h2>
+<p>For a <strong>continuous random variable</strong>, probability is not assigned to individual points (which each have probability zero) but to <strong>intervals</strong>, via the <strong>probability density function (PDF)</strong>, <span class="math inline">\(f(x)\)</span>. The probability that <span class="math inline">\(X\)</span> falls between <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> is the area under the curve: <span class="math display">\[P(a \le X \le b) = \int_a^b f(x)\,dx\]</span></p>
+<p>A valid PDF satisfies <span class="math inline">\(f(x) \ge 0\)</span> for all <span class="math inline">\(x\)</span>, and <span class="math inline">\(\int_{-\infty}^{\infty} f(x)\,dx = 1\)</span> (total area under the curve equals 1).</p>
+</section>
+<section id="cumulative-distribution-function-cdf" class="level2">
+<h2 class="anchored" data-anchor-id="cumulative-distribution-function-cdf">Cumulative Distribution Function (CDF)</h2>
+<p><span class="math display">\[F(x) = P(X \le x) = \int_{-\infty}^{x} f(t)\,dt\]</span></p>
+<p><span class="math inline">\(F(x)\)</span> gives the cumulative probability up to <span class="math inline">\(x\)</span>, and is used to find percentiles and probabilities directly.</p>
+</section>
+<section id="expected-value-and-variance" class="level2">
+<h2 class="anchored" data-anchor-id="expected-value-and-variance">Expected Value and Variance</h2>
+<p><span class="math display">\[E(X) = \mu = \int_{-\infty}^{\infty} x f(x)\,dx \qquad Var(X) = \sigma^2 = \int_{-\infty}^{\infty}(x-\mu)^2 f(x)\,dx\]</span></p>
+<hr>
+</section>
+<section id="uniform-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="uniform-distribution">Uniform Distribution</h2>
+<section id="definition" class="level3">
+<h3 class="anchored" data-anchor-id="definition">Definition</h3>
+<p>All values in an interval <span class="math inline">\([a,b]\)</span> are <strong>equally likely</strong>.</p>
+</section>
+<section id="pdf-and-cdf" class="level3">
+<h3 class="anchored" data-anchor-id="pdf-and-cdf">PDF and CDF</h3>
+<p><span class="math display">\[f(x) = \frac{1}{b-a}, \quad a \le x \le b \qquad \]</span> <span class="math display">\[F(x) = \frac{x-a}{b-a}\]</span></p>
+</section>
+<section id="parameters-mean-variance" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(a\)</span> = minimum, <span class="math inline">\(b\)</span> = maximum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(\dfrac{a+b}{2}\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(\dfrac{(b-a)^2}{12}\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties" class="level3">
+<h3 class="anchored" data-anchor-id="properties">Properties</h3>
+<p>Constant (flat) density; symmetric about the midpoint <span class="math inline">\((a+b)/2\)</span>.</p>
+</section>
+<section id="applications-public-health-example" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example">Applications / Public Health Example</h3>
+<p>Modeling a patient’s arrival time within a clinic’s operating hours as “equally likely” across the interval; simulation studies (uniform random number generation is the basis for simulating other distributions).</p>
+</section>
+<section id="worked-example" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example">Worked Example</h3>
+<p>Appointment arrival times are uniformly distributed between 8:00 AM (<span class="math inline">\(a=0\)</span>) and 5:00 PM (<span class="math inline">\(b=9\)</span> hours). What is the probability a patient arrives in the first hour? <span class="math display">\[P(0\le X\le1) = \frac{1-0}{9-0} = 0.111 \approx 11.1\%\]</span></p>
+</section>
+<section id="r-code-and-graph" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">9</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dunif, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">9</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"skyblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Uniform(0, 9)"</span>, <span class="at">x =</span> <span class="st">"Hours after 8:00 AM"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/uniform-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="normal-gaussian-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="normal-gaussian-distribution">Normal (Gaussian) Distribution</h2>
+<section id="definition-1" class="level3">
+<h3 class="anchored" data-anchor-id="definition-1">Definition</h3>
+<p>The most important distribution in statistics is a normal or Gaussian distribution. It is a symmetric, bell-shaped distribution characterized fully by its mean and standard deviation. Many biological measurements (height, blood pressure, IQ) are approximately Normal, and the Normal distribution is central to the Central Limit Theorem underlying most inferential methods (Sections 9-11).</p>
+</section>
+<section id="pdf" class="level3">
+<h3 class="anchored" data-anchor-id="pdf">PDF</h3>
+<p><span class="math display">\[f(x) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad -\infty&lt;x&lt;\infty\]</span></p>
+</section>
+<section id="parameters-mean-variance-1" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-1">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(\mu\)</span> = mean, <span class="math inline">\(\sigma\)</span> = standard deviation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(\mu\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-1" class="level3">
+<h3 class="anchored" data-anchor-id="properties-1">Properties</h3>
+<ul>
+<li><p>Symmetric, bell-shaped, unimodal</p></li>
+<li><p>Mean = Median = Mode.</p></li>
+<li><p>Defined by the empirical rule:</p>
+<ul>
+<li><p>~68% of values fall within <span class="math inline">\(\mu\pm1\sigma\)</span></p></li>
+<li><p>~95% within <span class="math inline">\(\mu\pm2\sigma\)</span></p></li>
+<li><p>~99.7% within <span class="math inline">\(\mu\pm3\sigma\)</span></p></li>
+</ul></li>
+<li><p>Notation: <span class="math inline">\(X\sim N(\mu,\sigma^2)\)</span>.</p></li>
+</ul>
+</section>
+<section id="applications-public-health-example-1" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-1">Applications / Public Health Example</h3>
+<p>Birth weight, height, blood pressure, cholesterol levels are frequently modeled as approximately Normal; the sampling distribution of the sample mean is approximately Normal for large <span class="math inline">\(n\)</span> (Central Limit Theorem), justifying most confidence intervals and hypothesis tests in Sections 7.</p>
+</section>
+<section id="r-code-and-graph-1" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-1">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">160</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">mean =</span> <span class="dv">100</span>, <span class="at">sd =</span> <span class="dv">15</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"tomato"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Normal(mean = 100, SD = 15)"</span>, <span class="at">x =</span> <span class="st">"X"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/normal-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="standard-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="standard-normal-distribution">Standard Normal Distribution</h2>
+<section id="definition-2" class="level3">
+<h3 class="anchored" data-anchor-id="definition-2">Definition</h3>
+<p>The special case of the Normal distribution with <span class="math inline">\(\mu=0\)</span> and <span class="math inline">\(\sigma=1\)</span>, denoted <span class="math inline">\(Z \sim N(0,1)\)</span>. Any Normal variable can be converted (“standardized”) to the standard Normal using the <strong>z-score</strong>: <span class="math display">\[Zscore = \frac{X-\mu}{\sigma}\]</span></p>
+</section>
+<section id="pdf-1" class="level3">
+<h3 class="anchored" data-anchor-id="pdf-1">PDF</h3>
+<p><span class="math display">\[f(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}\]</span></p>
+</section>
+<section id="worked-example-manual-calculation" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example-manual-calculation">Worked Example (Manual Calculation)</h3>
+<p>Adult male height is Normally distributed with <span class="math inline">\(\mu=170\)</span> cm, <span class="math inline">\(\sigma=7\)</span> cm. What proportion of men are taller than 180 cm?</p>
+<p><strong>Step 1:</strong> Compute the z-score: <span class="math inline">\(z = \dfrac{180-170}{7} = 1.43\)</span></p>
+<p><strong>Step 2:</strong> Look up (or compute via software) <span class="math inline">\(P(Z&gt;1.43)\)</span>: from the standard Normal table, <span class="math inline">\(P(Z\le1.43)=0.9236\)</span>, so <span class="math inline">\(P(Z&gt;1.43) = 1-0.9236=0.0764\)</span></p>
+<p><strong>Step 3:</strong> Interpretation: approximately <strong>7.6%</strong> of adult men are taller than 180 cm.</p>
+<p><strong>In R:</strong> <code>1 - pnorm(180, mean = 170, sd = 7)</code> returns 0.0764.</p>
+</section>
+<section id="r-code-and-graph-2" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-2">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm, <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"gray70"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlim =</span> <span class="fu">c</span>(<span class="fl">1.43</span>, <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Standard Normal Z ~ N(0,1); shaded area = P(Z &gt; 1.43)"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"z"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/stdnormal-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="exponential-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="exponential-distribution">Exponential Distribution</h2>
+<section id="definition-3" class="level3">
+<h3 class="anchored" data-anchor-id="definition-3">Definition</h3>
+<p>Models the <strong>waiting time (or distance)</strong> until the next event in a process where events occur at a constant average rate — the continuous analogue of the Geometric distribution, closely related to the Poisson process.</p>
+</section>
+<section id="pdf-and-cdf-1" class="level3">
+<h3 class="anchored" data-anchor-id="pdf-and-cdf-1">PDF and CDF</h3>
+<p><span class="math display">\[f(x) = \lambda e^{-\lambda x}, \quad x\ge0 \qquad F(x) = 1-e^{-\lambda x}\]</span></p>
+</section>
+<section id="parameters-mean-variance-2" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-2">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(\lambda\)</span> = rate parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(1/\lambda\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(1/\lambda^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-2" class="level3">
+<h3 class="anchored" data-anchor-id="properties-2">Properties</h3>
+<ul>
+<li><p>Right-skewed;</p></li>
+<li><p>Exhibits the <strong>memoryless property</strong>: <span class="math inline">\(P(X&gt;s+t\mid X&gt;s)=P(X&gt;t)\)</span></p>
+<p>[The remaining waiting time does not depend on how long you have already waited]</p></li>
+</ul>
+</section>
+<section id="applications-public-health-example-2" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-2">Applications / Public Health Example</h3>
+<p>Time between successive patient arrivals at an emergency department; survival time in simple constant-hazard survival models; time until equipment failure in a medical device.</p>
+</section>
+<section id="worked-example-1" class="level3">
+<h3 class="anchored" data-anchor-id="worked-example-1">Worked Example</h3>
+<p>Patients arrive at an ED at an average rate of <span class="math inline">\(\lambda=3\)</span> per hour. What is the probability the next patient arrives within 10 minutes (1/6 hour)?</p>
+<p><strong>Step 1:</strong> <span class="math inline">\(F(x) = 1-e^{-\lambda x}\)</span>, with <span class="math inline">\(\lambda=3\)</span>, <span class="math inline">\(x=1/6\)</span></p>
+<p><strong>Step 2:</strong> <span class="math inline">\(\lambda x = 3\times(1/6) = 0.5\)</span></p>
+<p><strong>Step 3:</strong> <span class="math display">\[P(X\le 1/6) = 1-e^{-0.5} = 1-0.6065=0.3935\approx39.4\%\]</span></p>
+</section>
+<section id="r-code-and-graph-3" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-3">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dexp, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">rate =</span> <span class="dv">3</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"darkgreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Exponential(rate = 3 per hour)"</span>, <span class="at">x =</span> <span class="st">"Hours until next arrival"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/exponential-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="gamma-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="gamma-distribution">Gamma Distribution</h2>
+<section id="definition-4" class="level3">
+<h3 class="anchored" data-anchor-id="definition-4">Definition</h3>
+<p>Generalizes the Exponential distribution to model the <strong>waiting time until the</strong> <span class="math inline">\(k\)</span>-th event in a Poisson process (analogous to how Negative Binomial generalizes Geometric in the discrete case).</p>
+</section>
+<section id="pdf-2" class="level3">
+<h3 class="anchored" data-anchor-id="pdf-2">PDF</h3>
+<p><span class="math display">\[f(x) = \frac{\lambda^k x^{k-1}e^{-\lambda x}}{\Gamma(k)}, \quad x&gt;0\]</span> where <span class="math inline">\(\Gamma(k)\)</span> is the Gamma function (for integer <span class="math inline">\(k\)</span>, <span class="math inline">\(\Gamma(k)=(k-1)!\)</span>).</p>
+</section>
+<section id="parameters-mean-variance-3" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-3">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(k\)</span> (shape), <span class="math inline">\(\lambda\)</span> (rate)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(k/\lambda\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(k/\lambda^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-3" class="level3">
+<h3 class="anchored" data-anchor-id="properties-3">Properties</h3>
+<ul>
+<li><p>Right-skewed for small <span class="math inline">\(k\)</span>, approaching Normal shape as <span class="math inline">\(k\)</span> increases</p></li>
+<li><p>Exponential distribution is the special case at <span class="math inline">\(k=1\)</span></p></li>
+<li><p>Chi-square distribution (below) is also a special case of the Gamma.</p></li>
+</ul>
+</section>
+<section id="applications-public-health-example-3" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-3">Applications / Public Health Example</h3>
+<p>Modeling time until <span class="math inline">\(k\)</span> disease relapses occur; modeling right-skewed cost or length-of-stay data in health economics; modeling total rainfall or time until <span class="math inline">\(k\)</span>-th case in an outbreak.</p>
+</section>
+<section id="r-code-and-graph-4" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-4">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dgamma, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">shape =</span> <span class="dv">3</span>, <span class="at">rate =</span> <span class="dv">1</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"orchid"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Gamma(shape = 3, rate = 1)"</span>, <span class="at">x =</span> <span class="st">"X"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/gamma-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>A Common Thread: Degrees of Freedom</strong></p>
+<p>Starting with the Chi-square distribution below, a new kind of parameter appears: <strong>degrees of freedom</strong> (df, often denoted <span class="math inline">\(k\)</span>, <span class="math inline">\(\nu\)</span>, or <span class="math inline">\(d\)</span>). Unlike <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> for the Normal distribution, degrees of freedom don’t describe a population directly - they describe how much <em>independent information</em> went into building the statistic whose distribution we’re describing.</p>
+<p>Each of the next three distributions uses df in a slightly different way, because each arises from a different kind of calculation:</p>
+<ul>
+<li><strong>Chi-square:</strong> <span class="math inline">\(k\)</span> independent standard Normal variables are squared and summed, df simply counts how many independent squared terms went into the sum.</li>
+<li><strong>Student’s t:</strong> built from a sample of size <span class="math inline">\(n\)</span>, where one piece of information is used up estimating the sample mean before the sample SD can be estimated — df reflects what’s left over (<span class="math inline">\(n-1\)</span>).</li>
+<li><strong>F:</strong> the ratio of two chi-square variables, each already carrying its own df — so the F distribution needs two df values, one for each piece of the ratio (<span class="math inline">\(d_1, d_2\)</span>).</li>
+</ul>
+<p>The pattern to notice across all three: <strong>more degrees of freedom means more independent information, which means less uncertainty, which means the distribution’s shape settles down and moves closer to Normal.</strong> A chi-square with <span class="math inline">\(k=2\)</span> is sharply right-skewed; a chi-square with <span class="math inline">\(k=50\)</span> looks almost symmetric. A <span class="math inline">\(t\)</span>-distribution with <span class="math inline">\(\nu=3\)</span> has dramatically heavier tails than the Normal; by <span class="math inline">\(\nu=100\)</span> the two are nearly indistinguishable. This is the same idea in every case, just counted differently depending on how the statistic was built.</p>
+<p><em>Why</em> degrees of freedom take the specific value they do and in particular, why estimating a mean from a sample “costs” exactly one degree of freedom, leaving <span class="math inline">\(n-1\)</span>, is explained in detail in the chapter , once we’ve introduced how sample statistics are used to estimate unknown population parameters. For now, it’s enough to recognize df as a dial that controls how heavy-tailed or skewed these distributions are, and that larger df always means a distribution closer to something familiar and symmetric.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="chi-square-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="chi-square-distribution">Chi-Square Distribution</h2>
+<section id="definition-5" class="level3">
+<h3 class="anchored" data-anchor-id="definition-5">Definition</h3>
+<p>The distribution of the <strong>sum of squares of</strong> <span class="math inline">\(k\)</span> independent standard Normal variables; a special case of the Gamma distribution (<span class="math inline">\(k\)</span> degrees of freedom, rate <span class="math inline">\(=1/2\)</span>). Central to goodness-of-fit tests, tests of independence in contingency tables, and the sampling distribution of the sample variance.</p>
+<p><span class="math display">\[X = \sum_{i=1}^{k} Z_i^2 \sim \chi^2_k\]</span></p>
+</section>
+<section id="parameters-mean-variance-4" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-4">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(k\)</span> = degrees of freedom</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(k\)</span></td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(2k\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-4" class="level3">
+<h3 class="anchored" data-anchor-id="properties-4">Properties</h3>
+<ul>
+<li><p>Right-skewed, especially for small <span class="math inline">\(k\)</span></p></li>
+<li><p>Becomes more symmetric (approaching Normal) as <span class="math inline">\(k\)</span> increases</p></li>
+<li><p>Always non-negative.</p></li>
+</ul>
+</section>
+<section id="applications-public-health-example-4" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-4">Applications / Public Health Example</h3>
+<p>Chi-square test of independence for contingency tables (e.g., testing association between vaccination status and infection outcome); goodness-of-fit tests; constructing confidence intervals for a population variance.</p>
+</section>
+<section id="r-code-and-graph-5" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-5">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">20</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dchisq, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">df =</span> <span class="dv">4</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"chocolate"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Chi-square(df = 4)"</span>, <span class="at">x =</span> <span class="st">"X"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/chisq-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="students-t-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="students-t-distribution">Student’s t-Distribution</h2>
+<section id="definition-6" class="level3">
+<h3 class="anchored" data-anchor-id="definition-6">Definition</h3>
+<p>Similar in shape to the standard Normal, but with <strong>heavier tails</strong>, used when estimating a population mean with an <strong>unknown population variance</strong> and a small sample size (the sample SD, <span class="math inline">\(s\)</span>, is used in place of <span class="math inline">\(\sigma\)</span>).</p>
+<p><span class="math display">\[t = \frac{\bar{x}-\mu}{s/\sqrt{n}} \sim t_{n-1}\]</span></p>
+</section>
+<section id="parameters-mean-variance-5" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-5">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(\nu\)</span> (degrees of freedom, typically <span class="math inline">\(n-1\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(0\)</span> (for <span class="math inline">\(\nu&gt;1\)</span>)</td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td><span class="math inline">\(\dfrac{\nu}{\nu-2}\)</span> (for <span class="math inline">\(\nu&gt;2\)</span>)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-5" class="level3">
+<h3 class="anchored" data-anchor-id="properties-5">Properties</h3>
+<ul>
+<li><p>Symmetric, bell-shaped, centered at 0</p></li>
+<li><p>Heavier tails than the standard Normal, especially for small <span class="math inline">\(\nu\)</span>; converges to the standard Normal as <span class="math inline">\(\nu\to\infty\)</span> (in practice, <span class="math inline">\(t\)</span> and <span class="math inline">\(Z\)</span> are nearly identical for <span class="math inline">\(\nu&gt;30\)</span>).</p></li>
+</ul>
+</section>
+<section id="applications-public-health-example-5" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-5">Applications / Public Health Example</h3>
+<p>The basis for the <strong>one-sample and two-sample t-tests</strong> and t-based confidence intervals for means (used throughout later chapters) when sample sizes are small and population SD is unknown, the standard situation in most clinical studies.</p>
+</section>
+<section id="r-code-and-graph-6" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-6">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dt, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">df =</span> <span class="dv">5</span>), <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"t (df=5)"</span>)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> dnorm, <span class="fu">aes</span>(<span class="at">color =</span> <span class="st">"Standard Normal"</span>)) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Student's t (df = 5) vs Standard Normal"</span>, <span class="at">x =</span> <span class="st">"x"</span>, <span class="at">y =</span> <span class="st">"Density"</span>, <span class="at">color =</span> <span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/tdist-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="f-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="f-distribution">F Distribution</h2>
+<section id="definition-7" class="level3">
+<h3 class="anchored" data-anchor-id="definition-7">Definition</h3>
+<p>The distribution of the <strong>ratio of two independent chi-square variables</strong>, each divided by their own degrees of freedom, used to compare two variances, and as the basis for ANOVA (Analysis of Variance).</p>
+<p><span class="math display">\[F = \frac{\chi^2_{d_1}/d_1}{\chi^2_{d_2}/d_2} \sim F_{d_1,d_2}\]</span></p>
+</section>
+<section id="parameters-mean-variance-6" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-mean-variance-6">Parameters, Mean, Variance</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 84%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th><span class="math inline">\(d_1\)</span> (numerator df), <span class="math inline">\(d_2\)</span> (denominator df)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean</td>
+<td><span class="math inline">\(\dfrac{d_2}{d_2-2}\)</span> (for <span class="math inline">\(d_2&gt;2\)</span>)</td>
+</tr>
+<tr class="even">
+<td>Variance</td>
+<td>Complex expression involving both <span class="math inline">\(d_1,d_2\)</span> (for <span class="math inline">\(d_2&gt;4\)</span>)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="properties-6" class="level3">
+<h3 class="anchored" data-anchor-id="properties-6">Properties</h3>
+<p>Right-skewed, always non-negative; shape depends on both degrees of freedom; approaches Normal-like shape as both <span class="math inline">\(d_1,d_2\)</span> grow large.</p>
+</section>
+<section id="applications-public-health-example-6" class="level3">
+<h3 class="anchored" data-anchor-id="applications-public-health-example-6">Applications / Public Health Example</h3>
+<p>Comparing variability between two treatment groups (F-test for equal variances); the basis of <strong>ANOVA</strong>, used to compare means across three or more groups (e.g., comparing mean recovery time across three treatment protocols).</p>
+</section>
+<section id="r-code-and-graph-7" class="level3">
+<h3 class="anchored" data-anchor-id="r-code-and-graph-7">R Code and Graph</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>)), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> df, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">df1 =</span> <span class="dv">5</span>, <span class="at">df2 =</span> <span class="dv">20</span>), <span class="at">geom =</span> <span class="st">"area"</span>, <span class="at">fill =</span> <span class="st">"gold"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"F(df1 = 5, df2 = 20)"</span>, <span class="at">x =</span> <span class="st">"F"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08_continuous_probability_distributions_files/figure-html/fdist-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="comparison-table-continuous-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="comparison-table-continuous-distributions">Comparison Table: Continuous Distributions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th>Range</th>
+<th>Parameters</th>
+<th>Mean</th>
+<th>Variance</th>
+<th>Shape</th>
+<th>Typical Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Uniform</td>
+<td><span class="math inline">\([a,b]\)</span></td>
+<td><span class="math inline">\(a, b\)</span></td>
+<td><span class="math inline">\((a+b)/2\)</span></td>
+<td><span class="math inline">\((b-a)^2/12\)</span></td>
+<td>Flat</td>
+<td>Equally likely outcomes</td>
+</tr>
+<tr class="even">
+<td>Normal</td>
+<td><span class="math inline">\((-\infty,\infty)\)</span></td>
+<td><span class="math inline">\(\mu,\sigma\)</span></td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td>Symmetric, bell</td>
+<td>Biological measurements, CLT</td>
+</tr>
+<tr class="odd">
+<td>Standard Normal</td>
+<td><span class="math inline">\((-\infty,\infty)\)</span></td>
+<td>none (<span class="math inline">\(\mu=0,\sigma=1\)</span>)</td>
+<td>0</td>
+<td>1</td>
+<td>Symmetric, bell</td>
+<td>z-scores, standardization</td>
+</tr>
+<tr class="even">
+<td>Exponential</td>
+<td><span class="math inline">\([0,\infty)\)</span></td>
+<td><span class="math inline">\(\lambda\)</span></td>
+<td><span class="math inline">\(1/\lambda\)</span></td>
+<td><span class="math inline">\(1/\lambda^2\)</span></td>
+<td>Right-skewed</td>
+<td>Waiting times, survival</td>
+</tr>
+<tr class="odd">
+<td>Gamma</td>
+<td><span class="math inline">\([0,\infty)\)</span></td>
+<td><span class="math inline">\(k,\lambda\)</span></td>
+<td><span class="math inline">\(k/\lambda\)</span></td>
+<td><span class="math inline">\(k/\lambda^2\)</span></td>
+<td>Right-skewed</td>
+<td>Time to <span class="math inline">\(k\)</span>-th event, cost data</td>
+</tr>
+<tr class="even">
+<td>Chi-square</td>
+<td><span class="math inline">\([0,\infty)\)</span></td>
+<td><span class="math inline">\(k\)</span> (df)</td>
+<td><span class="math inline">\(k\)</span></td>
+<td><span class="math inline">\(2k\)</span></td>
+<td>Right-skewed</td>
+<td>Variance tests, goodness-of-fit</td>
+</tr>
+<tr class="odd">
+<td>Student’s t</td>
+<td><span class="math inline">\((-\infty,\infty)\)</span></td>
+<td><span class="math inline">\(\nu\)</span> (df)</td>
+<td>0</td>
+<td><span class="math inline">\(\nu/(\nu-2)\)</span></td>
+<td>Symmetric, heavy tails</td>
+<td>Small-sample mean inference</td>
+</tr>
+<tr class="even">
+<td>F</td>
+<td><span class="math inline">\([0,\infty)\)</span></td>
+<td><span class="math inline">\(d_1,d_2\)</span> (df)</td>
+<td><span class="math inline">\(d_2/(d_2-2)\)</span></td>
+<td>complex</td>
+<td>Right-skewed</td>
+<td>ANOVA, variance ratio tests</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="decision-guide-which-continuous-distribution-should-i-use" class="level2">
+<h2 class="anchored" data-anchor-id="decision-guide-which-continuous-distribution-should-i-use">Decision Guide: Which Continuous Distribution Should I Use?</h2>
+<div class="cell" data-layout-align="default">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    Q1{"What are you modeling?"} --&gt; Q2["A single continuous&lt;br/&gt;measurement, symmetric,&lt;br/&gt;bell-shaped?"]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt; Q3["Waiting time / time-to-event?"]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt; Q4["A test statistic for&lt;br/&gt;inference?"]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    Q1 --&gt; Q5["All outcomes&lt;br/&gt;equally likely in a range?"]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    Q2 --&gt;|Yes| Normal["Use Normal&lt;br/&gt;(or Standard Normal if standardized)"]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|"Time to 1st event"| Expo["Use Exponential"]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    Q3 --&gt;|"Time to k-th event"| Gam["Use Gamma"]</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    Q5 --&gt;|Yes| Unif["Use Uniform"]</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    Q4 --&gt; Q6{"Comparing a mean,&lt;br/&gt;small n, sigma unknown?"}</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    Q4 --&gt; Q7{"Testing a variance or&lt;br/&gt;categorical association?"}</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    Q4 --&gt; Q8{"Comparing variances&lt;br/&gt;across 3+ groups (ANOVA)?"}</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    Q6 --&gt;|Yes| Tdist["Use Student's t"]</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    Q7 --&gt;|Yes| Chisq["Use Chi-square"]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    Q8 --&gt;|Yes| Fdist["Use F distribution"]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    Q1{"What are you modeling?"} --&gt; Q2["A single continuous&lt;br/&gt;measurement, symmetric,&lt;br/&gt;bell-shaped?"]
+    Q1 --&gt; Q3["Waiting time / time-to-event?"]
+    Q1 --&gt; Q4["A test statistic for&lt;br/&gt;inference?"]
+    Q1 --&gt; Q5["All outcomes&lt;br/&gt;equally likely in a range?"]
+    Q2 --&gt;|Yes| Normal["Use Normal&lt;br/&gt;(or Standard Normal if standardized)"]
+    Q3 --&gt;|"Time to 1st event"| Expo["Use Exponential"]
+    Q3 --&gt;|"Time to k-th event"| Gam["Use Gamma"]
+    Q5 --&gt;|Yes| Unif["Use Uniform"]
+    Q4 --&gt; Q6{"Comparing a mean,&lt;br/&gt;small n, sigma unknown?"}
+    Q4 --&gt; Q7{"Testing a variance or&lt;br/&gt;categorical association?"}
+    Q4 --&gt; Q8{"Comparing variances&lt;br/&gt;across 3+ groups (ANOVA)?"}
+    Q6 --&gt;|Yes| Tdist["Use Student's t"]
+    Q7 --&gt;|Yes| Chisq["Use Chi-square"]
+    Q8 --&gt;|Yes| Fdist["Use F distribution"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Continuous distributions use a <strong>PDF</strong> (density, area = probability) and <strong>CDF</strong> (cumulative probability) rather than a PMF.</li>
+<li>The <strong>Normal distribution</strong> is central to biostatistics because of the Central Limit Theorem; the <strong>Standard Normal</strong> enables z-score based probability calculations.</li>
+<li>The <strong>Exponential</strong> and <strong>Gamma</strong> distributions model waiting times, closely paralleling the discrete Geometric and Negative Binomial distributions.</li>
+<li>The <strong>Chi-square</strong>, <strong>Student’s t</strong>, and <strong>F distributions</strong> are not typically used to model raw data directly — they arise as <strong>sampling distributions of test statistics</strong>, and are the foundation of the hypothesis testing methods introduced in Sections 9-11 and developed throughout the rest of this book.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../Section2/07_discrete_probability_distributions.html" class="pagination-link" aria-label="Discrete Probability Distributions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Discrete Probability Distributions</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../Section2/09_Sampling distribution.html" class="pagination-link" aria-label="Sampling distribution and Central Limit theorem">
+        <span class="nav-page-text"><span class="chapter-title">Sampling distribution and Central Limit theorem</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Adrisyaone/edit/main/Section2/08_continuous_probability_distributions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Adrisyaone/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

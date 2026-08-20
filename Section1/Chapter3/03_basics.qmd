@@ -1,11 +1,15 @@
 ---
+title: "Basics in R: Part-2 (Data cleaning)"
 output:
   pdf_document:
     number_sections: yes
   html_document: default
+editor_options:
+  chunk_output_type: console
+editor: 
+  markdown: 
+    wrap: sentence
 ---
-
-# Basics in R: Part-2
 
 ```{r, include=FALSE}
 library(dplyr)
@@ -19,11 +23,45 @@ data <- as_factor(data, only_labelled = TRUE)
 
 ```
 
-## Basic data processing in R
+Data cleaning is a foundational step in any statistical analysis, as raw datasets are rarely structured in a form that is immediately ready for exploration or modeling.
+This chapter builds on the foundations introduced in Part 1 and focuses on practical, hands-on techniques for cleaning and manipulating data in R.
+Data cleaning in R involves several core operations, including:
 
-### Generate datasets from vectors
+-   Generate dataset from vectors
 
-The datasets are the two dimensional array whereas vectors are the one dimensional array. The vector is the fundamental data structure used to store the data of the same types. We can convert vectors to dataframe using `data.frame( )` In order to create vectors, we can use some important functions like `c( )`, `seq( )`, and `rep( )`.
+-   Data manpulation
+
+    -   Filtering
+
+    -   Selection
+
+    -   Grouping
+
+    -   Computing variable
+
+    -   Conditional computing
+
+    -   renaming the variables
+
+    -   Merge and join datasets
+
+    -   Appending rows
+
+    -   Data transformation
+
+    -   Create functions
+
+    -   Use Loops
+
+    -   Split text
+
+    -   Missing data handling
+
+## Generate datasets from vectors
+
+The datasets are the two dimensional array whereas vectors are the one dimensional array.
+The vector is the fundamental data structure used to store the data of the same types.
+We can convert vectors to dataframe using `data.frame( )` In order to create vectors, we can use some important functions like `c( )`, `seq( )`, and `rep( )`.
 
 Lets create 3 vectors and combine them to create dataframe.
 
@@ -33,14 +71,16 @@ age<-c(34,45,32,56,54,67,65,89,23,34)
 sex <- c(rep("Male",5), rep("Female",5))
 
 
-dt<-data.frame(id, age, sex)
+dt<-data.frame(id, age, sex) # make dataframe out of three vectors
 
-class(dt)
+class(dt) # check class of object dt
 ```
 
-### Data manipulation
+## Data manipulation
 
-Data manipulation in R involves various operations that transform and prepare data for analysis. The process includes tasks such as filtering rows, selecting variables, sorting, aggregating, merging, and reshaping data. In order to learn about data manipulation, lets explore mental health related data from Nepal Demographic and Health survey 2022 which is in the google drive.
+Data manipulation in R involves various operations that transform and prepare data for analysis.
+The process includes tasks such as filtering rows, selecting variables, sorting, aggregating, merging, and reshaping data.
+In order to learn about data manipulation, lets explore mental health related data from Nepal Demographic and Health survey 2022 which is in the google drive.
 
 ```{r}
 # install.packages('gsheet')
@@ -49,7 +89,10 @@ Data manipulation in R involves various operations that transform and prepare da
 data<-gsheet::gsheet2tbl('https://docs.google.com/spreadsheets/d/1Sdp2kz0BD5x3nXTk8KlK6LtVy1MWnb_hcWuo67mrWgs')
 ```
 
-1.  **Filtering:** Filtering data in R is a common operation where you select a subset of rows based on certain conditions. Here's how you can filter data:
+### Filtering
+
+Filtering data in R is a common operation where you select a subset of rows based on certain conditions.
+Here's how you can filter data:
 
 ```{r}
 # Filters dataset by Sex and only includes the data of females (Using base commands)
@@ -67,7 +110,9 @@ dtFn <- data |>
   filter(Sex == "Female" & PHQ9_Score > 10)
 ```
 
-2.  **Selecting variables:** Variables selection from the pool of variables is important to work efficiently.
+### Selecting variables
+
+Variables selection from the pool of variables is important to work efficiently.
 
 ```{r, eval=FALSE}
 # Selecting variables (age, sex and PHQ9_scores) (Using base commands and variable names)
@@ -93,7 +138,9 @@ sel_dt3 <- data |>
   dplyr::select(Education:disability)
 ```
 
-**3. Sorting :** Dataset can be sorted in ascending and descending order using functions like `order( )` from base R or `arrange( )` from dplyr.
+### Sorting
+
+Dataset can be sorted in ascending and descending order using functions like `order( )` from base R or `arrange( )` from dplyr.
 
 ```{r}
     sel_dt<- data[, c("Age","Sex","PHQ9_Score")] 
@@ -108,7 +155,11 @@ sel_dt3 <- data |>
      
 ```
 
-**4. Grouping:** Another common operation in R is grouping. Grouping is where you split the data into groups based on one or more variables. Functions or summaries can then be applied to each group.
+### Grouping
+
+Another common operation in R is grouping.
+Grouping is where you split the data into groups based on one or more variables.
+Functions or summaries can then be applied to each group.
 
 ```{r, message=FALSE, warning=FALSE, eval=FALSE}
 # Using base commands
@@ -122,14 +173,24 @@ data |>
 
 ```
 
-**5. Computing a new variable:** There are various instances during data manipulation and analysis where you might need to compute new variables and this task is always specific to need. Here's how you can compute new variables:
+### Computing a new variable
+
+There are various instances during data manipulation and analysis where you might need to compute new variables and this task is always specific to need.
+Here's how you can compute new variables:
 
 ```{r, message=FALSE, warning=FALSE}
+# direct computation
+data$Sam_wt <- data$Sampling_weight/1000
 
+# using mutate function
+data |> 
+  mutate(Sam_wt=Sampling_weight/1000) # for example, lets divide sampling wt variable by 1000
 
 ```
 
-**6. Conditional computing:** There are various built-in functions in R and some come with specific packages, that facilitate conditional operations in R.
+### Conditional computing
+
+There are various built-in functions in R and some come with specific packages, that facilitate conditional operations in R.
 
 ```{r}
 # Using base commands
@@ -145,7 +206,8 @@ table(data$agecat)
 ```
 
 ::: callout-note
-`ifelse` is a conditional function in R which takes in a certain condition and returns (or conducts a specified operations) certain values when the condition is `TRUE` or `FALSE`. In the above example, we recoded the variable Age into age categories.
+`ifelse` is a conditional function in R which takes in a certain condition and returns (or conducts a specified operations) certain values when the condition is `TRUE` or `FALSE`.
+In the above example, we recoded the variable Age into age categories.
 :::
 
 ```{r}
@@ -165,13 +227,17 @@ data <- data |>
 table(data$agecat.dplyr)
 ```
 
-**7. Renaming columns or variables:** Some operations may require you to rename the columns or variables. Here's how you can do this in R.
+### Renaming columns or variables
+
+Some operations may require you to rename the columns or variables.
+Here's how you can do this in R.
 
 ```{r}
 # Using base commands
 colnames(data)[17] # Printing the 17th column name
 colnames(data)[which(colnames(data) == "Wealth")] <- "Wealth.Quintile" # We want to change "Wealth" to "Wealth.Quintile"
 colnames(data)[17] # Check if the column name is changed.
+
 
 # Using dplyr, let's rename Health_insurance to Health.Insurance
 colnames(data)[18]
@@ -181,7 +247,10 @@ colnames(data)[18]
 
 ```
 
-**8. Merging dataframes:** Merging datasets is a fundamental task in data analysis, enabling res./0 earchers and analysts to combine different data sources into a single dataset for comprehensive analysis. Before diving into specific functions, it's essential to understand some key concepts: a) Types of merge and b) key columns.
+### Merging dataframes
+
+Merging datasets is a fundamental task in data analysis, enabling res./0 earchers and analysts to combine different data sources into a single dataset for comprehensive analysis.
+Before diving into specific functions, it's essential to understand some key concepts: a) Types of merge and b) key columns.
 
 **Types of Merges**
 
@@ -193,15 +262,18 @@ colnames(data)[18]
 
     -   **Full Outer Join:** Returns rows with matching values and those that do not match, filling missing matches with NA.
 
-    -   **Left Outer Join:** Returns all rows from the left dataset and the matched rows from the right dataset. Rows in the left dataset without a match in the right dataset have NA for the right dataset’s columns.
+    -   **Left Outer Join:** Returns all rows from the left dataset and the matched rows from the right dataset.
+        Rows in the left dataset without a match in the right dataset have NA for the right dataset’s columns.
 
-    -   **Right Outer Join:** Returns all rows from the right dataset and the matched rows from the left dataset. Rows in the right dataset without a match in the left dataset have NA for the left dataset’s columns.
+    -   **Right Outer Join:** Returns all rows from the right dataset and the matched rows from the left dataset.
+        Rows in the right dataset without a match in the left dataset have NA for the left dataset’s columns.
 
 -   **Cross Join:** Returns the Cartesian product of both datasets, combining each row of the first dataset with each row of the second dataset.
 
 **Key Columns**
 
-Key columns are the variables used to match rows between two datasets. It's crucial that these variables have the same type (e.g., both are integers or both are character) and ideally have the same name in both datasets for ease of merging.
+Key columns are the variables used to match rows between two datasets.
+It's crucial that these variables have the same type (e.g., both are integers or both are character) and ideally have the same name in both datasets for ease of merging.
 
 To learn about different dataset merging methods, lets create dummy data frames and practice.
 
@@ -290,7 +362,12 @@ rigjndt1 <- right_join(dt1, dt2, c("IDs"="id"))
 rigjndt1
 ```
 
-**7. Appending rows:** Appending rows involves stacking datasets vertically, adding rows of one dataset below another. It is crucial that the datasets share the same structure, meaning they should have the same columns in the same order, and these columns should have compatible types across the datasets being combined. It requires **a) Column Matching:** The columns in the datasets must match in name and data type. If they do not match exactly, adjustments might be necessary before appending, and **b) Order of Rows:** The order in which datasets are appended can impact the analysis, especially if the data is time-sensitive.
+### Appending rows
+
+Appending rows involves stacking datasets vertically, adding rows of one dataset below another.
+It is crucial that the datasets share the same structure, meaning they should have the same columns in the same order, and these columns should have compatible types across the datasets being combined.
+It requires **a) Column Matching:** The columns in the datasets must match in name and data type.
+If they do not match exactly, adjustments might be necessary before appending, and **b) Order of Rows:** The order in which datasets are appended can impact the analysis, especially if the data is time-sensitive.
 
 ```{r}
 # Create two datasets
@@ -304,8 +381,11 @@ dt2 <- data.frame(id = c(11:20),
                   gender = c( "Male", "Male", "Male","Male", "Female", "Female", "Female", "Female", "Female", "Male"),
                   smoke=c(1,1,0,0,0,0,0,1,0,1),
                   alcohol=c(0,1,1,0,1,0,1,0,1,1))
-dt1
-dt2
+# View dt1
+head (dt1)
+
+# View dt2
+head(dt2)
 
 # bind rows using base R
 dt <- rbind(dt1, dt2)
@@ -319,9 +399,16 @@ dt_new
 
 ```
 
-**8. Transforming datasets (wide to long or long to wide):** The datasets can long or wide type based on the way it was collected or on the nature/layout of the questionnaire. In a wide-format dataset, each observation is represented by a single row, and different variables are stored in separate columns. This format is often easy to read but may become impractical when dealing with a large number of variables. In a long-format dataset, each observation is represented by multiple rows, and different variables are stored in a single column indicating the variable type. This format is more flexible and is often preferred for various analyses. Let's see how they look like and practice conversions from long to wide format and vice-versa.
+### Transforming datasets
 
-**Wide to long transformation**
+The datasets can long or wide type based on the way it was collected or on the nature/layout of the questionnaire.
+In a wide-format dataset, each observation is represented by a single row, and different variables are stored in separate columns.
+This format is often easy to read but may become impractical when dealing with a large number of variables.
+In a long-format dataset, each observation is represented by multiple rows, and different variables are stored in a single column indicating the variable type.
+This format is more flexible and is often preferred for various analyses.
+Let's see how they look like and practice conversions from long to wide format and vice-versa.
+
+#### Wide to long transformation
 
 ```{r}
 # Using base commmands
@@ -371,7 +458,7 @@ long_data_dt_wide_to_long <- melt(
 long_data_dt_wide_to_long
 ```
 
-**Long to wide transformation**
+#### Long to wide transformation
 
 ```{r}
 # Using base commands
@@ -412,7 +499,11 @@ wide_data_dt_long_to_wide <- dcast(
 wide_data_dt_long_to_wide
 ```
 
-**9. Creating functions:** Creating functions is a powerful method for encapsulating a series of actions, that promotes code organization, reusability, and readability. In data-centric tasks, functions become especially valuable for speeding up repetitive procedures like filtering, summarizing, or transforming datasets. Here's a simple guide to creating functions in R and using them for data manipulations:
+### Creating functions
+
+Creating functions is a powerful method for encapsulating a series of actions, that promotes code organization, reusability, and readability.
+In data-centric tasks, functions become especially valuable for speeding up repetitive procedures like filtering, summarizing, or transforming datasets.
+Here's a simple guide to creating functions in R and using them for data manipulations:
 
 ```{r}
 # Example 1: A function to calculate the mean of a vector
@@ -457,9 +548,16 @@ my_data <- c(3, 6, 8, 12, 5)
 calculate_stats(my_data)
 ```
 
-**10. Using Loops:** Loops are programming structures that allow you to repeat a block of code multiple times. They are essential for automating repetitive tasks and iterating over elements like vectors, lists, or data frames. Here are two primary types of loops in R and their common uses:
+### Using Loops
 
-**For Loop:** The **`for`** loop is used when you know the number of iterations in advance. It iterates over a sequence (which can be a vector or a sequence generated by functions like **`seq()`**).
+Loops are programming structures that allow you to repeat a block of code multiple times.
+They are essential for automating repetitive tasks and iterating over elements like vectors, lists, or data frames.
+Here are two primary types of loops in R and their common uses:
+
+#### For Loop:\*\*
+
+The **`for`** loop is used when you know the number of iterations in advance.
+It iterates over a sequence (which can be a vector or a sequence generated by functions like **`seq()`**).
 
 ```{r}
 # Example: Printing numbers from 1 to 5 using a for loop
@@ -468,7 +566,9 @@ for (i in 1:5) {
 }
 ```
 
-**While Loop:** The **`while`** loop is used when you do not know the number of iterations in advance but have a condition that, when met, stops the loop.
+#### While Loop
+
+The **`while`** loop is used when you do not know the number of iterations in advance but have a condition that, when met, stops the loop.
 
 ```{r}
 # Example: Printing numbers from 1 to 5 using a while loop
@@ -479,7 +579,9 @@ while (i <= 5) {
 }
 ```
 
-Loop control statements provide mechanisms to alter the flow of execution within loops. The `break` statement allows for the premature termination of a loop, while the `next` statement skips the remaining code for the current iteration and proceeds to the next iteration. These statements offer flexibility in managing loop execution based on specific conditions.
+Loop control statements provide mechanisms to alter the flow of execution within loops.
+The `break` statement allows for the premature termination of a loop, while the `next` statement skips the remaining code for the current iteration and proceeds to the next iteration.
+These statements offer flexibility in managing loop execution based on specific conditions.
 
 ```{r}
 # Example: Using break and next in a for loop
@@ -494,7 +596,10 @@ for (i in 1:10) {
 }
 ```
 
-Sometimes, a more functional programming approach is often preferred over explicit loops. Functions like **`apply`**, **`lapply`**, **`sapply`**, and **`mapply`**can be used for looping over elements more efficiently.
+#### Apply functions
+
+Sometimes, a more functional programming approach is often preferred over explicit loops.
+Functions like **`apply`**, **`lapply`**, **`sapply`**, and **`mapply`**can be used for looping over elements more efficiently.
 
 ```{r}
 # 'apply': Applies a function over the margins (rows or columns) of a matrix.
@@ -518,4 +623,645 @@ sapply(my_list, function(x) sum(x))
 mapply(function(x, y) x + y, c(1, 2, 3), c(4, 5, 6))
 ```
 
-Having completed our exploration of data manipulation in R, we now possess a flexible range of tools for transforming and refining datasets. We have explored effective techniques for preparing our data for analysis, ranging from basic filtering and reshaping operations to the advanced functionalities offered by the tidyverse and data.table packages. Now, with a well-established foundation, we shift our focus to the domain of descriptive statistics in the upcoming chapter where we will unravel the insights concealed within our data, uncovering patterns, trends, and key measures that will guide us in making informed decisions.
+Having completed our exploration of data manipulation in R, we now possess a flexible range of tools for transforming and refining datasets.
+We have explored effective techniques for preparing our data for analysis, ranging from basic filtering and reshaping operations to the advanced functionalities offered by the tidyverse and data.table packages.
+Now, with a well-established foundation, we shift our focus to the domain of descriptive statistics in the upcoming chapter where we will unravel the insights concealed within our data, uncovering patterns, trends, and key measures that will guide us in making informed decisions.
+
+## Splitting Text
+
+If you’ve worked in a spreadsheet application before, you’re likely familiar with the “text-to-columns” tool.
+This tool allows you to split one column of data into multiple columns based on a delimiter.
+This same functionality is also achievable in R through functions such as the “separate” function from the “tidyr” library.
+
+To test this function out, let’s first attach the “tidyr” package and then create a test data frame for us to use.
+
+```{r}
+library(tidyr)
+dt <- data.frame(name = c("Bikram_Adhikari", "Saphala_Acharya", "Bhumika_Adhikari"))
+
+dt
+```
+
+We have a data frame with one column that contains a first name and a last name separated by an underscore.
+In order to split two first and last names into two separate columns, first we declared that “dt” was going to be equal to the output of the function that followed by typing “dt \<-” and we use funtion called `separate()`.
+The first argument for this function was the column we splitting, “name”.
+The second argument was the names of future two new columns, “first_name” and “last_name”.
+Finally, the third argument was the delimiter separating two names, in this example, it is "underscore".
+
+```{r}
+dt <- dt %>% separate(name, c("first_name", "last_name"), "_")
+dt
+```
+
+## Missing Data Handling
+
+Missing data are common in real-world datasets and can arise for many reasons, including nonresponse, data-entry errors, skipped survey questions, equipment failure, or loss to follow-up.
+How missing data are handled can have an important effect on the results of an analysis.
+
+Therefore, missing observations should not automatically be deleted or replaced without first considering why the data are missing and how the missingness may affect the research question.
+
+In R, missing values are commonly represented by `NA`.
+Empty strings (`""`) may also occur in character variables and can represent missing information, although they are not automatically treated as `NA` by R.
+
+This chapter introduces several approaches to identifying and handling missing data.
+We will focus on:
+
+1.  Identifying and removing missing values
+2.  Constant value imputation
+3.  Mean and median imputation
+4.  Model-based imputation
+5.  Multiple imputation
+6.  Choosing an appropriate missing-data strategy
+
+### Identifying and Handling misisng or Blank Values
+
+Before deciding how to handle missing data, the first step is to identify where missing observations occur.
+
+Let us begin by creating two simple vectors.
+The first contains an empty string, while the second contains an `NA` value.
+
+```{r}
+blanks <- c("John", "Jane", "")
+nas <- c(NA, "Jane", "Joe")
+
+print(blanks)
+print(nas)
+```
+
+#### Identifying `NA` Values
+
+The `is.na()` function identifies missing values represented by `NA`.
+
+```{r}
+is.na(nas)
+```
+
+The result is a logical vector containing `TRUE` and `FALSE` values.
+A `TRUE` value indicates that the corresponding observation is missing.
+
+We can use `is.na()` to extract only the missing observations:
+
+```{r}
+only_nas <- nas[is.na(nas)]
+
+print(only_nas)
+```
+
+More commonly, we want to retain observations that are not missing.
+The `!` operator means "not."
+
+```{r}
+no_nas <- nas[!is.na(nas)]
+
+print(no_nas)
+```
+
+Thus:
+
+-   `is.na(x)` identifies missing observations, while
+-   `!is.na(x)` identifies observations that are not missing.
+
+#### Identifying Blank Strings
+
+An empty string (`""`) is different from `NA`.
+
+We can identify empty strings using the equality operator `==`.
+
+```{r}
+blanks == ""
+```
+
+We can extract only the blank observations:
+
+```{r}
+only_blanks <- blanks[blanks == ""]
+
+print(only_blanks)
+```
+
+Similarly, we can retain observations that are not blank:
+
+```{r}
+no_blanks <- blanks[blanks != ""]
+
+print(no_blanks)
+```
+
+It is often useful to convert blank strings to `NA` so that all missing observations can be handled consistently.
+
+```{r}
+blanks[blanks == ""] <- NA
+
+print(blanks)
+```
+
+We can now use `is.na()` to identify these observations:
+
+```{r}
+is.na(blanks)
+```
+
+#### Counting Missing Values
+
+Before deciding how to handle missing data, it is useful to determine how many missing observations exist.
+
+For a vector, we can use:
+
+```{r}
+sum(is.na(nas))
+```
+
+The proportion of missing observations can be calculated using:
+
+```{r}
+mean(is.na(nas))
+```
+
+For a data frame, `colSums()` can be used to count missing observations in each variable.
+
+```{r}
+students <- c("John", "Jane", "Joe", "Janet")
+scores <- c(100, 80, NA, 90)
+age <- c(20, NA, 22, 21)
+
+df <- data.frame(
+  student = students,
+  score = scores,
+  age = age
+)
+
+print(df)
+```
+
+Count the number of missing values in each variable:
+
+```{r}
+colSums(is.na(df))
+```
+
+Calculate the percentage of missing values:
+
+```{r}
+colMeans(is.na(df)) * 100
+```
+
+#### Removing Observations with Missing Values
+
+One simple approach to missing data is to remove observations containing missing values.
+
+The `na.omit()` function removes rows containing one or more `NA` values.
+
+```{r}
+students <- c("John", "Jane", "Joe")
+scores <- c(100, 80, NA)
+
+df <- data.frame(
+  student = students,
+  score = scores
+)
+
+print(df)
+```
+
+Remove observations containing missing values:
+
+```{r}
+df_complete <- na.omit(df)
+
+print(df_complete)
+```
+
+Although `na.omit()` is convenient, deleting observations should not automatically be the default approach.
+
+If missingness is related to characteristics of the participants or variables being studied, complete-case analysis can introduce bias.
+
+### Constant Value Imputation
+
+Constant value imputation replaces missing observations with a predetermined value.
+
+For example:
+
+```{r}
+students <- c("John", "Jane", "Joe")
+scores <- c(100, 80, NA)
+
+df <- data.frame(
+  student = students,
+  score = scores
+)
+
+print(df)
+```
+
+If we know that the missing value represents a score of zero, we can replace it with 0:
+
+```{r}
+df$score[is.na(df$score)] <- 0
+
+print(df)
+```
+
+However, researchers should be careful when using zero as an imputation value.
+
+A missing value and a zero value are not necessarily the same thing.
+
+For example:
+
+-   0 hospital visits means that the person had no hospital visits.
+-   `NA` hospital visits means that the number of visits is unknown.
+
+Therefore, zero should only be used when there is a substantive reason to believe that the missing value represents zero.
+
+#### Mean Imputation
+
+Another simple approach is to replace missing values with the mean of the observed values.
+
+Suppose we have data on the number of hours employees spend performing a particular task:
+
+```{r}
+employees <- c("John", "Jane", "Joe", "Janet")
+hours_spent <- c(12, 14, NA, 9)
+
+df <- data.frame(
+  employee = employees,
+  hours_spent = hours_spent
+)
+
+print(df)
+```
+
+Calculate the mean using:
+
+```{r}
+mean_value <- mean(
+  df$hours_spent,
+  na.rm = TRUE
+)
+
+print(mean_value)
+```
+
+Replace the missing observation with the mean:
+
+```{r}
+df$hours_spent[
+  is.na(df$hours_spent)
+] <- mean_value
+
+print(df)
+```
+
+Mean imputation is easy to implement but has important limitations.
+When multiple missing observations are replaced with the same mean:
+
+-   variability in the data is reduced;
+-   the distribution may be distorted;
+-   relationships between variables may be weakened; and
+-   standard errors may be underestimated.
+
+Therefore, mean imputation is generally not recommended as the primary approach for substantial missing data in inferential analyses.
+
+#### Median Imputation
+
+The median can also be used to replace missing values.
+
+Median imputation may be useful when a variable is highly skewed or contains extreme values.
+
+Reset the variable:
+
+```{r}
+df$hours_spent <- hours_spent
+
+print(df)
+```
+
+Calculate the median:
+
+```{r}
+median_value <- median(
+  df$hours_spent,
+  na.rm = TRUE
+)
+
+print(median_value)
+```
+
+Replace the missing observation:
+
+```{r}
+df$hours_spent[
+  is.na(df$hours_spent)
+] <- median_value
+
+print(df)
+```
+
+Median imputation is simple and less sensitive to extreme values than mean imputation.
+However, it still does not account for uncertainty surrounding the missing value and can distort relationships between variables.
+
+### Model-Based Imputation
+
+Instead of replacing all missing observations with the same value, we can use information from other variables to estimate missing values.
+
+For example, consider two variables, `x` and `y`:
+
+```{r}
+y <- c(10, 8, NA, 9, 4, NA)
+x <- c(8, 6, 9, 7, 2, 12)
+
+df <- data.frame(
+  y = y,
+  x = x
+)
+
+print(df)
+```
+
+The outcome variable `y` contains two missing observations, while `x` is observed for every individual.
+
+We can use linear regression to model the relationship between `x` and `y`:
+
+```{r}
+model <- lm(
+  y ~ x,
+  data = df
+)
+
+summary(model)
+```
+
+We can use the fitted model to predict values of `y` for observations where `y` is missing:
+
+```{r}
+missing_y <- is.na(df$y)
+
+imputed_values <- predict(
+  model,
+  newdata = data.frame(
+    x = df$x[missing_y]
+  )
+)
+
+print(imputed_values)
+```
+
+Insert the predicted values into the missing positions:
+
+```{r}
+df$y[missing_y] <- imputed_values
+
+print(df)
+```
+
+This approach is more informative than replacing every missing value with the overall mean because the imputed value depends on information from another variable.
+
+However, this is single model-based imputation, not true multiple imputation.
+
+### Multiple Imputation
+
+Multiple imputation is a more advanced approach to handling missing data.
+
+Instead of creating one completed dataset, multiple imputation creates several datasets in which missing values are replaced with plausible values.
+
+Each completed dataset is then analyzed separately, and the results are combined.
+
+The basic process is:
+
+1.  Identify missing observations.
+2.  Create multiple plausible versions of the missing values.
+3.  Analyze each completed dataset.
+4.  Combine the estimates.
+5.  Incorporate uncertainty caused by missing data.
+
+One commonly used R package for multiple imputation is `mice`.
+
+```{r}
+library(mice)
+```
+
+Create a dataset containing missing values:
+
+```{r}
+set.seed(123)
+
+dat <- data.frame(
+  age = c(25, 31, NA, 45, 52, 38, NA, 29),
+  bmi = c(22.1, 25.4, 27.8, NA, 31.2, 24.8, 29.1, NA),
+  systolic_bp = c(
+    118, 125, 130, 145,
+    NA, 128, 140, 119
+  )
+)
+
+print(dat)
+```
+
+We can examine the missing-data pattern:
+
+```{r}
+md.pattern(dat)
+```
+
+Perform multiple imputation:
+
+```{r}
+imp <- mice(
+  dat,
+  m = 5,
+  method = "pmm",
+  seed = 123
+)
+```
+
+Here:
+
+-   `m = 5` creates five imputed datasets.
+-   `method = "pmm"` uses predictive mean matching.
+-   `seed = 123` ensures reproducibility.
+
+We can inspect the first completed dataset:
+
+```{r}
+completed_data <- complete(
+  imp,
+  1
+)
+
+print(completed_data)
+```
+
+We can also obtain all completed datasets:
+
+```{r}
+complete(
+  imp,
+  "all"
+)
+```
+
+### Analyzing Multiply Imputed Data
+
+The completed datasets should not simply be combined into one large dataset.
+
+Instead, the analysis is performed separately within each imputed dataset, and the results are then pooled.
+
+For example, suppose we want to model systolic blood pressure as a function of age and BMI:
+
+```{r}
+fit <- with(
+  imp,
+  lm(
+    systolic_bp ~ age + bmi
+  )
+)
+```
+
+The results can then be pooled:
+
+```{r}
+pooled_results <- pool(fit)
+
+summary(pooled_results)
+```
+
+Pooling accounts for:
+
+-   uncertainty within each completed dataset; and
+-   uncertainty caused by the missing data.
+
+This is one of the major advantages of multiple imputation over simple mean or median imputation.
+
+### Missing Data Mechanisms
+
+The appropriate missing-data method depends partly on why the data are missing.
+
+Three commonly discussed missing-data mechanisms are described below.
+
+#### Missing Completely at Random (MCAR)
+
+Data are missing completely at random (MCAR) when the probability of an observation being missing is unrelated to both observed and unobserved data.
+
+For example, suppose several laboratory samples are accidentally lost because of a random equipment failure, with no relationship to participant characteristics.
+
+Under MCAR, complete-case analysis may produce unbiased estimates, although it reduces the available sample size.
+
+#### Missing at Random (MAR)
+
+Data are missing at random (MAR) when missingness is related to variables that have been observed.
+For example, suppose younger participants are less likely to report income.
+If age is available for everyone, the relationship between age and missing income can potentially be incorporated into an imputation model.
+
+Many multiple-imputation methods rely on the MAR assumption.
+
+#### Missing Not at Random (MNAR)
+
+Data are missing not at random (MNAR) when the probability of missingness depends on information that remains unobserved.
+For example, individuals with particularly high incomes may be less likely to report their income because their income is high.
+
+MNAR is more difficult to address because the information related to missingness is itself unavailable.
+Sensitivity analyses and specialized missing-data models may therefore be necessary.
+
+### Choosing an Appropriate Missing-Data Method
+
+There is no single missing-data method that is appropriate for every dataset.
+
+| Situation | Possible approach |
+|----|----|
+| Missing value genuinely represents zero | Constant-value imputation |
+| Very small amount of MCAR missingness | Complete-case analysis |
+| Simple exploratory analysis | Mean or median imputation |
+| Missingness related to observed variables | Multiple imputation |
+| Complex epidemiological analysis | Carefully specified multiple imputation |
+| Suspected MNAR mechanism | Sensitivity analysis or specialized models |
+
+The decision should consider:
+
+-   Amount of missing data
+-   Pattern of missingness
+-   Type of variable
+-   Study design
+-   Analysis model
+-   Plausible missing-data mechanism
+-   Potential for missingness to introduce systematic bias.
+
+### Practical Recommendations
+
+When working with missing data in R, the following workflow is recommended.
+
+**Step 1: Identify Missing Values**
+
+```{r}
+#| eval: false
+is.na(df)
+```
+
+**Step 2: Count Missing Values**
+
+```{r}
+#| eval: false
+colSums(is.na(df))
+```
+
+**Step 3: Calculate the Percentage of Missing Values**
+
+```{r}
+#| eval: false
+colMeans(is.na(df)) * 100
+```
+
+**Step 4: Check for Other Missing-Value Codes**
+
+Some datasets use values such as:
+
+-   `""`
+-   `"."`
+-   `"99"`
+-   `"999"`
+
+These should only be treated as missing when the study documentation or codebook confirms that they represent missing information.
+
+For example:
+
+```{r}
+#| eval: false
+df$variable[df$variable %in% c("", ".", "99", "999")] <- NA
+```
+
+**Step 5: Examine the Pattern of Missingness**
+
+For datasets with multiple variables, examine which variables tend to be missing together.
+
+```{r}
+#| eval: false
+md.pattern(df)
+```
+
+**Step 6: Consider Why the Data Are Missing**
+
+Ask whether the missingness is likely to be:
+
+-   MCAR
+-   MAR or
+-   MNAR.
+
+**Step 7: Select an Appropriate Method**
+
+Do not automatically remove observations or replace missing values with zero.
+
+Consider multiple imputation when appropriate.
+
+**Step 8: Perform Sensitivity Analyses**
+
+When conclusions may depend on assumptions about missingness, perform sensitivity analyses using alternative reasonable assumptions.
+
+**Step 9: Document the Method**
+
+Clearly report: - how much data were missing?
+- which variables contained missing data?
+- how missingness was assessed?
+- the method used to handle missing data.
+- variables included in the imputation model - the number of imputations - assumptions about missingness and - any sensitivity analyses performed.
+
+### Resources for Missing data handling
+
+-   <https://sites.stat.columbia.edu/gelman/arm/missing.pdf>

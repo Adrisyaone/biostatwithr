@@ -1,0 +1,717 @@
+---
+title: "Descriptive Statistics with R (Practical Part)"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+  
+---
+
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+# Load core libraries used throughout this chapter
+library(tidyverse)
+library(moments)      # skewness, kurtosis
+library(data.table)
+library(gtsummary)    # Table 1 summaries
+library(gt)           # export gtsummary tables
+library(skimr)        # quick missingness / distribution overview
+library(DescTools)    # BinomCI etc.
+library(gridExtra)
+library(patchwork)
+library(readxl)
+
+# NOTE ON FILE PATHS
+# Every path below uses here::here() so the chapter runs on any machine
+# once the project's .Rproj / root is set correctly. Replace the folder
+# names to match your own project structure if you are following along.
+
+library(here)
+data <- haven::read_dta(here("Environment/Datasets", "dt.dta"))
+data_new <- read_excel(here("Environment/Datasets", "wcgs.xls"))
+```
+
+
+# Learning Objectives
+
+By the end of this chapter, you should be able to:
+
+1.  Summarize categorical variables using frequencies and proportions.
+2.  Summarize numeric variables using measures of central tendency,
+    dispersion, and shape (skewness/kurtosis).
+3.  Assess whether a numeric variable is approximately normally
+    distributed.
+4.  Produce cross-tabulations and stratified numeric summaries.
+5.  Build a publication-ready "Table 1" using `gtsummary`.
+6.  Visualize categorical and numeric data using base R and `ggplot2`.
+7.  Produce a simple choropleth map using `sf` and `ggplot2`.
+
+
+
+You can get a descriptive overview of the whole dataset using the
+`summary()` function.
+
+```{r}
+data <- haven::read_dta(here("Environment/Datasets", "dt.dta"))
+# clean data
+data$Sex <- factor(data$Sex, levels = c(0,1), labels = c("Female", "Male"))
+
+# summarize
+summary(data)
+```
+
+::: callout-note
+Notice that the summary output differs depending on the underlying
+data type (numeric vs. factor vs. character).
+:::
+
+
+# Part 1: Descriptive Statistics of Categorical Variables
+
+The categorical variables can be described using frequency and
+percentage.
+
+
+## Frequency
+
+We can use the `table()` function to generate a frequency table for
+categorical variables. The `useNA` argument controls whether missing
+values are shown: `"no"` (default), `"ifany"`, or `"always"`.
+```{r}
+table(data$Sex)
+table(data$Sex, useNA = "no")
+table(data$Sex, useNA = "ifany")  # shows NA column only if missings exist
+table(data$Sex, useNA = "always") # always shows NA column
+```
+
+
+## Proportion
+
+To calculate proportions, use `prop.table()`, which is always applied
+on top of a `table()` object.
+
+```{r}
+sex <- table(data$Sex)
+prop.table(sex)
+
+# As percentage, rounded to 1 decimal
+round(prop.table(sex) * 100, 1)
+
+# Using the pipe (tidyverse loaded already)
+100 * table(data$Sex) |>
+  prop.table() |>
+  round(3)
+```
+
+## Bar Chart and Pie Chart (Base R)
+
+**Pie chart:** `pie(x, labels = names(x), col = NULL, main = NULL, ...)`
+
+```{r}
+pie(sex, main = "Sex-wise distribution of population")
+
+pie(sex,
+    main = "Sex-wise distribution of population",
+    labels = c("Female", "Male"),
+    col = c("pink", "lightblue"))
+```
+
+**Bar chart:** `barplot(height, names.arg, beside = TRUE, col = NULL, main = NULL, xlab = NULL, ylab = NULL)`
+
+```{r}
+barplot(sex,
+    main = "Sex-wise distribution of population",
+    names.arg = row.names(sex),
+    ylab = "Frequency", xlab = "Gender",
+    col = c("pink", "lightblue"),
+    las = 1)
+```
+
+::: callout-tip
+Base R plots (`pie()`, `barplot()`, `hist()`, `boxplot()`) are fast and
+great for exploratory checks while you're cleaning data. For
+publication-quality figures, you'll generally move to `ggplot2` — see
+Part 5.
+:::
+
+## Cross-Tabulation (Two Categorical Variables)
+
+```{r}
+table(data$Sex, data$Ethnicity)  # first variable = rows, second = columns
+
+# dplyr
+data |>
+  select(Sex, Ethnicity) |>
+  table()
+
+# data.table
+data.dt <- data.table(data)
+data.dt[, table(Sex, Ethnicity)]
+```
+
+### Proportions for a Cross-Tabulation
+
+-   default: proportion of the whole table
+-   `margin = 1`: row proportion
+-   `margin = 2`: column proportion
+
+```{r}
+ctable.sex.eth <- table(data$Sex, data$Ethnicity)
+
+prop.table(ctable.sex.eth)             # overall
+prop.table(ctable.sex.eth, margin = 1) # row %
+prop.table(ctable.sex.eth, margin = 2) # column %
+
+round(prop.table(ctable.sex.eth) * 100, 2)
+
+# data.table equivalent
+data.dt[, round(prop.table(table(Sex, Ethnicity), 1) * 100, 1)]
+data.dt[, round(prop.table(table(Sex, Ethnicity), 2) * 100, 1)]
+```
+
+::: callout-tip
+`prop.table()` takes a cross-table produced by `table()` as its first
+argument. Only when piping with `|>` can you supply the `margin`
+argument unnamed, as shown above.
+:::
+
+### Cross-Tabulation Bar Chart
+
+```{r}
+barplot(ctable.sex.eth,
+    main = "Sex and ethnicity-wise distribution of population",
+    ylab = "Frequency", xlab = "Ethnicity",
+    beside = TRUE,
+    col = c("skyblue", "orange"))
+legend("topright", legend = c("Female", "Male"),
+       fill = c("skyblue", "orange"))
+```
+
+------------------------------------------------------------------------
+
+# Part 2: Descriptive Statistics of Numeric Variables
+
+| Function | Use |
+|----|----|
+| `mean(x, na.rm=TRUE)` | Arithmetic mean |
+| `sd(x, na.rm=TRUE)` | Standard deviation |
+| `var(x, na.rm=TRUE)` | Variance |
+| `median(x, na.rm=T)` | Median |
+| `quantile(x, probs, type)` | Quantiles |
+| `min(x, na.rm=T)` / `max(x, na.rm=T)` | Minimum / maximum |
+| `range(x, na.rm=T)` | Min and max |
+| `moments::skewness(x)` | Skewness |
+| `moments::kurtosis(x)` | Kurtosis |
+
+## Missingness Overview First
+
+Before summarizing, it's good habit to check how much data is missing
+— this connects back to the missing-data chapter and should always
+precede your descriptive statistics.
+
+```{r}
+skimr::skim(data)
+```
+
+## Central Tendency and Dispersion
+
+```{r}
+mean(data$Age, na.rm = TRUE)
+sd(data$Age, na.rm = TRUE)
+var(data$Age, na.rm = TRUE)
+median(data$Age, na.rm = TRUE)
+quantile(data$Age, probs = c(0.25, 0.5, 0.75), na.rm = TRUE)
+min(data$Age, na.rm = TRUE)
+max(data$Age, na.rm = TRUE)
+range(data$Age, na.rm = TRUE)
+
+# Mode (R has no built-in mode() for this purpose)
+names(which.max(table(data$Age)))
+
+# Coefficient of variation — useful when comparing spread
+# across variables measured on different scales
+cv <- function(x) sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE) * 100
+cv(data$Age)
+```
+
+::: callout-tip
+`mode()` in base R does **not** compute the statistical mode — it
+returns the storage type of an object (numeric, integer, list,
+factor, etc.). Use the `which.max(table(x))` approach shown above
+instead.
+:::
+
+## Shape of the Distribution: Skewness and Kurtosis
+
+Mean and median alone can be misleading for skewed variables common in
+public health data (length of hospital stay, income, viral load).
+Skewness tells you about asymmetry; kurtosis tells you about
+"tailedness" relative to a normal distribution.
+
+```{r}
+moments::skewness(data_new$age, na.rm = TRUE)
+moments::kurtosis(data_new$age, na.rm = TRUE)
+```
+
+**Interpreting skewness:**
+
+-   \~0: roughly symmetric
+-   \> 0: right-skewed (long tail toward higher values) — mean \>
+    median
+-   \< 0: left-skewed (long tail toward lower values) — mean \<
+    median
+
+**Interpreting kurtosis:** values close to 3 resemble a normal
+distribution (some packages report "excess kurtosis" centered at 0 —
+always check which convention your function uses).
+
+## Is the Variable Normally Distributed?
+
+Whether a numeric variable is approximately normal informs later
+choices (e.g., parametric vs. non-parametric tests). Two common
+approaches:
+
+```{r}
+#| column: page
+#| layout-nrow: 1
+
+# Visual check: Q-Q plot
+qqnorm(data_new$age, main = "Q-Q Plot of Age")
+qqline(data_new$age, col = "red", lwd = 2)
+
+# Formal test (Shapiro-Wilk; sensitive with large n)
+shapiro.test(data_new$age)
+```
+
+::: callout-note
+With large sample sizes, `shapiro.test()` will often reject normality
+even for minor, practically irrelevant deviations. Always pair the
+formal test with a visual check (histogram or Q-Q plot) and use
+judgment rather than relying on the p-value alone.
+:::
+
+## Histogram
+
+`hist(x, main = NULL, xlab = NULL, ylab = NULL, col = NULL, breaks = "Sturges", …)`
+
+```{r}
+#| column: page
+#| layout-nrow: 1
+
+hist(data$Age,
+     main = "Distribution of Age", xlab = "Age", ylab = "Frequency",
+     col = "skyblue")
+
+# Overlay a normal curve for visual comparison
+sequence <- seq(min(data$Age, na.rm = TRUE), max(data$Age, na.rm = TRUE), 1)
+fun <- dnorm(sequence, mean = mean(data$Age, na.rm = TRUE), sd = sd(data$Age, na.rm = TRUE))
+
+hist(data$Age,
+     main = "Distribution of Age", xlab = "Age", ylab = "Frequency",
+     col = "skyblue", probability = TRUE)
+lines(sequence, fun, col = "blue", lwd = 2)
+```
+
+## Boxplot
+
+`boxplot(x, notch = FALSE, varwidth = FALSE, col = NULL, names = NULL, …)`
+
+```{r}
+boxplot(data$Age, main = "Box plot for Age", col = "skyblue")
+points(x = 1, y = mean(data$Age, na.rm = TRUE), col = "red", pch = 16)
+```
+
+------------------------------------------------------------------------
+
+# Part 3: Numeric Variables Stratified by a Categorical Variable
+
+## Base R: `tapply()` and `aggregate()`
+
+`tapply(X, INDEX, FUN)` applies a function to subsets of `X` defined by
+`INDEX`.
+
+```{r}
+tapply(data$Age, data$Sex, mean)
+tapply(data$Age, data$Sex, sd)
+
+quantile_fun <- function(x) {
+  q <- quantile(x, probs = c(0.25, 0.75))
+  names(q) <- c("q1", "q3")
+  q
+}
+tapply(data$Age, data$Sex, quantile_fun)
+
+aggregate(Age ~ Sex, data = data, FUN = mean)
+aggregate(Age ~ Sex, data = data, FUN = sd)
+```
+
+## dplyr
+
+```{r}
+data |>
+  group_by(Sex) |>
+  summarise(age_mean = mean(Age, na.rm = TRUE),
+            age_sd   = sd(Age, na.rm = TRUE),
+            age_min  = min(Age, na.rm = TRUE),
+            age_q1   = quantile(Age, probs = 0.25, na.rm = TRUE),
+            age_q2   = quantile(Age, probs = 0.50, na.rm = TRUE),
+            age_q3   = quantile(Age, probs = 0.75, na.rm = TRUE))
+
+data |>
+  group_by(Sex, Ethnicity) |>
+  summarise(age_mean = mean(Age, na.rm = TRUE),
+            age_sd   = sd(Age, na.rm = TRUE), .groups = "drop")
+```
+
+## data.table
+
+```{r}
+setDT(data)
+
+data[, .(age_mean = mean(Age, na.rm = TRUE),
+         age_sd   = sd(Age, na.rm = TRUE),
+         age_q1   = quantile(Age, probs = 0.25, na.rm = TRUE),
+         age_q3   = quantile(Age, probs = 0.75, na.rm = TRUE)),
+     by = Sex]
+
+data[, .(age_mean = mean(Age, na.rm = TRUE),
+         age_sd   = sd(Age, na.rm = TRUE)),
+     by = .(Sex, Ethnicity)]
+```
+
+## Boxplot by Group
+
+```{r}
+#| column: page
+#| layout-nrow: 1
+
+boxplot(data$Age ~ data$Sex,
+        main = "Distribution of Age by Sex",
+        col = c("lightpink", "lightblue"))
+
+boxplot(data$Age ~ data$Ethnicity,
+        main = "Distribution of Age by Ethnicity",
+        col = c("grey", "skyblue", "lightpink", "lightgreen", "lightyellow"))
+```
+
+------------------------------------------------------------------------
+
+# Part 4: Building a "Table 1" Summary Table
+
+Nearly every public health manuscript opens with a baseline
+characteristics table stratified by exposure or outcome group — often
+called "Table 1." The `gtsummary` package builds these in a few lines
+and produces output ready to export to Word.
+
+```{r}
+table1 <- data |>
+  select(Age, Sex, Ethnicity) |>
+  tbl_summary(
+    by = Sex,
+    statistic = list(all_continuous() ~ "{mean} ({sd})",
+                      all_categorical() ~ "{n} ({p}%)"),
+    missing = "ifany"
+  ) |>
+  add_p() |>
+  add_overall() |>
+  modify_header(label ~ "**Variable**") |>
+  bold_labels()
+
+table1
+```
+
+### Exporting Table 1
+
+```{r, eval=FALSE}
+# Export to Word
+table1 |>
+  as_gt() |>
+  gt::gtsave(here("Environment/Outputs", "table1.docx"))
+
+# Export to a plain data frame / Excel
+table1_df <- as_tibble(table1)
+writexl::write_xlsx(table1_df, here("Environment/Outputs", "table1.xlsx"))
+```
+
+------------------------------------------------------------------------
+
+# Part 5: Graphics with ggplot2
+
+Base R plotting (Parts 1–3) is fast for exploratory data analysis.
+`ggplot2` is generally the choice for **publication-quality** figures
+because of its consistent grammar and fine-grained control over every
+visual element — this section rebuilds several of the plots above
+using `ggplot2`.
+
+## Choosing a Chart Type
+
+The right chart depends on your variable type and what you want to
+communicate:
+
+-   **Nominal** (Sex, Ethnicity, Province): bar chart, pie chart, tree
+    map
+-   **Ordinal** (education level, Likert scale): ordered bar chart,
+    dot plot
+-   **Interval/Ratio** (Age, Height, Income): histogram, box plot,
+    line chart
+-   **Time series**: line chart, area chart
+-   **Hierarchical**: treemap, sunburst chart
+-   **Correlation/Relationships**: scatter plot, bubble chart, heatmap
+-   **Distribution**: histogram, box plot, kernel density plot
+-   **Geospatial**: choropleth map, cartogram
+-   **Comparison across groups**: grouped or stacked bar chart
+
+## The Grammar of Graphics
+
+Every `ggplot2` plot has three required components:
+
+1.  A **dataset** in tidy format.
+2.  **Aesthetic mappings** between variables and visual properties
+    (x, y, color, fill, shape, size).
+3.  At least one **layer** (`geom_*()`) describing how observations
+    are rendered — e.g. `geom_bar()`, `geom_boxplot()`,
+    `geom_histogram()`, `geom_point()`, `geom_line()`.
+
+## Basics
+
+```{r}
+ggplot(data = data, aes(x = Sex, y = Age)) +
+  geom_boxplot()
+
+ggplot(data = data, aes(x = Sex, y = Age, fill = Ethnicity)) +
+  geom_boxplot()
+
+ggplot(data = data, aes(x = Sex, y = Age, fill = Ethnicity)) +
+  geom_boxplot() +
+  xlab("Gender") +
+  ylab("Age (in years)") +
+  labs(title = "Sex- and ethnicity-wise distribution of Age",
+       subtitle = "Caption here", tag = "A")
+```
+
+## Manual Colors
+
+```{r}
+ggplot(data = data, aes(x = Sex, y = Age, fill = Ethnicity)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("lightpink", "lightblue", "lightyellow",
+                                "lightgreen", "navy")) +
+  xlab("Gender") + ylab("Age (in years)") +
+  labs(title = "Sex- and ethnicity-wise distribution of Age")
+```
+
+## Faceting
+
+Faceting splits data into subsets and repeats the same plot for each
+— `facet_wrap()` (flexible grid) vs `facet_grid()` (strict grid).
+
+```{r}
+ggplot(data = data, aes(x = Sex, y = Age, fill = Ethnicity)) +
+  geom_boxplot() +
+  facet_wrap(facets = ~Ethnicity, nrow = 3, scales = "free")
+```
+
+## Themes
+
+`ggplot2` themes are built from four components: theme **elements**
+(e.g. `panel.background`, `axis.title`, `legend.title`), **element
+functions** (`element_text()`, `element_line()`, `element_rect()`,
+`element_blank()`), the `theme()` function to override defaults, and
+**complete themes** (`theme_minimal()`, `theme_light()`,
+`theme_dark()`, `theme_classic()`).
+
+```{r}
+ggplot(data = data, aes(x = Sex, y = Age, fill = Ethnicity)) +
+  geom_boxplot() +
+  xlab("Gender") + ylab("Age (in years)") +
+  labs(title = "Sex- and ethnicity-wise distribution of Age") +
+  facet_wrap(facets = ~Ethnicity, nrow = 3, scales = "free_x") +
+  theme(panel.background = element_rect(fill = "lightgreen"),
+        panel.grid = element_blank(),
+        plot.title = element_text(face = "bold", color = "red", size = 13),
+        axis.title = element_text(face = "bold", color = "blue"),
+        legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+# Part 6: Mapping with sf and ggplot2
+
+```{r}
+llmap <- sf::st_read(here("Environment/Datasets", "Shape file of Nepal", "Nepal_llmapcoded.shp"))
+
+ggplot(data = llmap) +
+  geom_sf(aes(geometry = geometry), col = "black") +
+  coord_sf(crs = "WGS84") +
+  theme(panel.background = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+
+ggplot(data = llmap) +
+  geom_sf(aes(geometry = geometry, fill = TYPE), col = "black") +
+  scale_fill_viridis_d() +
+  coord_sf(crs = "WGS84") +
+  theme(panel.background = element_blank(),
+        legend.title = element_text(face = "bold"),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+```
+
+------------------------------------------------------------------------
+
+# Part 7: Applied Case Studies
+
+The examples in this section use different datasets from the rest of
+the chapter (introduced individually below) to show how the tools
+above come together in real analysis workflows.
+
+## Case Study 1: 4+ ANC Visits by Province, with Confidence Intervals
+
+**Dataset:** `For graphics1.RDS` — survey data with variables
+`Province`, `Location`, and `Four_ANC` (whether a woman had 4+
+antenatal care visits).
+
+```{r}
+dt <- readRDS(here("Environment/Datasets", "For graphics1.RDS"))
+
+a <- dt |>
+  group_by(Location, Province, Four_ANC) |>
+  tally() |>
+  ungroup() |>
+  group_by(Location, Province) |>
+  mutate(total = sum(n),
+         percent = n / total * 100,
+         ci = DescTools::BinomCI(n, total, method = "clopper-pearson") * 100) |>
+  filter(Four_ANC == "Yes")
+
+ggplot(data = a) +
+  geom_bar(aes(x = Location, y = percent, fill = Location),
+           col = "black", stat = "identity", alpha = 1) +
+  geom_errorbar(aes(x = Location, y = percent,
+                     ymin = a$ci[, 2], ymax = a$ci[, 3]),
+                width = 0.3, linewidth = 1) +
+  facet_wrap(~Province, nrow = 1) +
+  geom_text(aes(x = Location, y = percent, label = sprintf("%0.2f", percent)),
+            size = 4, vjust = 1.5, hjust = -0.1, angle = 90, col = "blue") +
+  scale_fill_manual(values = c("pink", "lightgreen")) +
+  xlab("Location") + ylab("Percent (%) with CI") +
+  labs(title = "Distribution of 4+ ANC by Location and Province") +
+  theme(panel.background = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = "bottom")
+```
+
+::: callout-note
+Notice how the percent was calculated *within* `Location` and
+`Province` groups before faceting — a common pivot-table mistake is
+computing percentages over the wrong grouping level and only noticing
+once the bars don't sum to 100% within each panel.
+:::
+
+## Case Study 2: Global Burden of Disease — Diabetes Mellitus
+
+**Dataset:** `For graphics2.xlsx` (sheet `"dataset"`) — GBD-style data
+with `Age`, `Sex`, `Class` (DM type), and `prop` (prevalence/death/DALY
+proportions).
+
+```{r}
+gbd <- read_excel(here("Environment/Datasets", "For graphics2.xlsx"), sheet = "dataset")
+
+gbd$Age2 <- factor(gbd$Age,
+  levels = c("<1","1-4","5-9","10-14","15-19","20-24","25-29","30-34",
+             "35-39","40-44","45-49","50-54","55-59","60-64","65-69","70+"),
+  ordered = TRUE)
+
+gbd$Class <- factor(gbd$Class, levels = c("DM", "DM1", "DM2"),
+  labels = c("Diabetes Mellitus (combined)",
+             "Diabetes Mellitus (Type 1)",
+             "Diabetes Mellitus (Type 2)"))
+
+prevalence <- gbd[gbd$Ovearll_class %in% c("DM_P", "DM1_P", "DM2_P"), ]
+death      <- gbd[gbd$Ovearll_class %in% c("DM_D", "DM1_D", "DM2_D"), ]
+daly       <- gbd[gbd$Ovearll_class %in% c("DM_Da", "DM1_Da", "DM2_Da"), ]
+
+c1 <- ggplot(prevalence) +
+  geom_bar(aes(x = Age2, y = prop, fill = Sex), stat = "identity", position = "dodge") +
+  xlab("Age (years)") + ylab("Prevalence") +
+  facet_wrap(~Class, nrow = 3, scales = "free_x") +
+  theme(legend.position = "none", strip.text = element_blank()) +
+  coord_flip()
+
+c2 <- ggplot(death) +
+  geom_bar(aes(x = Age2, y = prop, fill = Sex), stat = "identity", position = "dodge") +
+  xlab("") + ylab("Deaths") +
+  facet_wrap(~Class, nrow = 3, scales = "free_x") +
+  theme(legend.position = "none", strip.text = element_blank()) +
+  coord_flip()
+
+c3 <- ggplot(daly) +
+  geom_bar(aes(x = Age2, y = prop, fill = Sex), stat = "identity", position = "dodge") +
+  xlab("") + ylab("DALYs") +
+  facet_wrap(~Class, nrow = 3, scales = "free_x", strip.position = "right") +
+  theme(legend.position = "none") +
+  coord_flip()
+
+combined <- (c1 + c2 + c3) & theme(legend.position = "top", legend.title = element_blank())
+m <- combined + plot_layout(guides = "collect")
+m
+```
+
+```{r, eval=FALSE}
+ggsave(here("Environment/Outputs", "chart1.pdf"), plot = m, dpi = 300)
+```
+
+## Case Study 3: GBD Trends Over Time — Chronic Kidney Disease
+
+**Dataset:** `For graphics3.xlsx` — raw GBD export with `measure_name`,
+`age_name`, `sex_name`, `cause_name`, `year`, `val`.
+
+```{r}
+gbd3 <- read_excel(here("Environment/Datasets", "For graphics3.xlsx"))
+
+gbd3$Year <- factor(gbd3$year, ordered = TRUE)
+gbd3$cause_name <- as.factor(gbd3$cause_name)
+gbd3$sex_name <- as.factor(gbd3$sex_name)
+
+daly3 <- gbd3[gbd3$measure_name == "DALYs (Disability-Adjusted Life Years)", ]
+deaths3 <- gbd3[gbd3$measure_name == "Deaths", ]
+prev3 <- gbd3[gbd3$measure_name == "Prevalence", ]
+
+pe <- prev3 |>
+  filter(sex_name == "Both", metric_name == "Rate",
+         !age_name %in% c("Age-standardized", "All ages", "70+"),
+         cause_name != "Chronic kidney disease",
+         year %in% c(1990, 2019))
+
+a <- ggplot(pe) +
+  geom_bar(aes(x = age_name, y = val, fill = cause_name),
+           stat = "identity", position = "stack", color = "black", linewidth = 0.01) +
+  ylab("Prevalence rate (per 100,000)") + xlab("") +
+  scale_fill_manual(values = c("#9CD5E8", "#E69F00", "#00559C", "#CD534C", "#6BB43E")) +
+  facet_wrap(~Year) +
+  theme(legend.position = "bottom", legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+a
+```
+
+```{r, eval=FALSE}
+ggsave(here("Environment/Outputs", "chart2.png"), plot = a, dpi = 300)
+```
+
+------------------------------------------------------------------------
+
+# Exercises
+
+1.  Using `dt.dta`, produce a frequency table and bar chart for a
+    categorical variable other than `Sex`.
+2.  Compute skewness and kurtosis for `Age`. Is the distribution
+    symmetric? Support your answer with a histogram.
+3.  Run `shapiro.test()` on `Age` stratified by `Sex` (hint:
+    `tapply()`). Do both groups appear normally distributed?
+4.  Build a `gtsummary` Table 1 stratified by `Ethnicity` instead of
+    `Sex`, and export it to Word.
+5.  Recreate the Case Study 1 bar chart using a different confidence
+    interval method available in `DescTools::BinomCI()` (e.g.
+    `"wilson"`) and compare the resulting intervals.

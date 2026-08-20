@@ -45,7 +45,7 @@ R requires installation of console R and R-studio in your computer. Follow the i
 
 R Studio is an integrated development environment (IDE) for R. It has four main panes, top-left, top-right, bottom-left and bottom-right. Each panes has specific purpose.
 
-![*Figure 1: RStudio interface showing four panes*](Pictures/picture_2.png)
+![*Figure 1: RStudio interface showing four panes*](/Section1/Chapter2/Pictures/picture_2.png)
 
 **Top-Left (Text editor, R-script, R-markdown, Quarto)**
 
@@ -77,7 +77,9 @@ The R console is the pane where R is waiting for us to tell it what to do, and w
 
 You can get list of important shortcuts by navigating *Tools \> Keyboard Shortcuts Help* or `ALT+SHIFT+K` Shortcut keys can help to efficient coding.
 
-![](Pictures/picture_6.png) \# RStudio Keyboard Shortcuts (Windows/Linux)
+![](/Section1/Chapter2/Pictures/picture_6.png)
+
+\# RStudio Keyboard Shortcuts (Windows/Linux)
 
 ### File Management
 
@@ -289,10 +291,10 @@ You can get list of important shortcuts by navigating *Tools \> Keyboard Shortcu
 
 ### Useful R Operators
 
-| Shortcut       | Inserts      |
-|----------------|--------------|
-| `Alt+-`        | `<-`         |
-| `Ctrl+Shift+M` | `%>% or``|>` |
+| Shortcut       | Inserts            |
+|----------------|--------------------|
+| `Alt+-`        | `<-`               |
+| `Ctrl+Shift+M` | ``` %>% or``|> ``` |
 
 ------------------------------------------------------------------------
 

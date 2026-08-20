@@ -1,0 +1,554 @@
+---
+title: "Comparing Three or more Independent Group Means"
+output:
+  pdf_document:
+    number_sections: yes
+  html_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include=FALSE}
+knitr::opts_knit$set(root.dir = "D:/Epi Biostat with R/Biostat_with_R/")
+```
+
+```{r}
+#| label: setup
+#| include: false
+library(readxl)
+library(ggplot2)
+library(knitr)
+library(car)
+ 
+options(digits = 4)
+wcgs <- readxl::read_excel("Section2/Categorical data analysis/Datasets/wcgs.xls")
+wcgs$behpat <- factor(wcgs$behpat, levels = c("A1", "A2", "B3", "B4"))
+wcgs$dibpat <- factor(wcgs$dibpat, levels = c("Type A", "Type B"))
+wcgs$chd69  <- factor(wcgs$chd69,  levels = c("No", "Yes"))
+```
+
+# Learning Objectives {.unnumbered}
+
+By the end of this chapter, you should be able to:
+
+1.  State the situation in which the means of **three or more independent groups** are compared, and translate a research question into $H_0$/$H_1$.
+2.  State the assumptions, formula, and correct interpretation of **one-way ANOVA**, and explain how it partitions total variability into between-group and within-group components.
+3.  State when **Welch's ANOVA** should be used instead of the standard (Fisher) one-way ANOVA, and explain how it relaxes the equal-variance assumption.
+4.  Calculate a one-way ANOVA **by hand** from raw data, building the full ANOVA table (sums of squares, degrees of freedom, mean squares, $F$).
+5.  State the assumptions, formula, and correct interpretation of the **Kruskal-Wallis test**, the nonparametric alternative for 3+ groups.
+6.  Calculate the Kruskal-Wallis $H$ statistic **by hand**, including handling of tied ranks.
+7.  Explain why a significant omnibus test motivates **post-hoc pairwise comparisons**, and correctly apply and interpret **Tukey's HSD** and **Bonferroni-adjusted pairwise Wilcoxon tests**.
+8.  Reproduce all procedures in **R**, using the WCGS data, and correctly choose among them based on formal checks of normality and variance homogeneity.
+
+------------------------------------------------------------------------
+
+# Comparing Three or More Independent Groups
+
+In this chapter, we will use a variable named `behpat` measuring behavioral pattern (A1, A2, A3, A4) as explained in the codebook of WCGS [@aragon2020] with **total cholesterol (`chol`, mg/dL)** as the primary outcome.
+
+```{r}
+#| label: fig-box-intro
+#| fig-cap: "Total cholesterol by four-level behaviour pattern (behpat)."
+ggplot(wcgs[!is.na(wcgs$chol), ], aes(x = behpat, y = chol, fill = behpat)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  labs(x = "Behaviour pattern", y = "Cholesterol (mg/dL)") +
+  theme_minimal(base_size = 12)
+```
+
+Three procedures are commonly used to compare $k \ge 3$ independent groups:
+
+| Test | Assumes equal variances? | Assumes (approx.) normality? | Uses |
+|------------------|------------------|------------------|------------------|
+| **One-way ANOVA** (Fisher's) | Yes | Yes, in each group | Raw values |
+| **Welch's ANOVA** | No | Yes, in each group | Raw values |
+| **Kruskal-Wallis test** | No | No | Ranks of the pooled values |
+
+Just as Welch's $t$-test generalised Student's $t$-test to unequal variances in the two-group case, **Welch's ANOVA** generalises one-way ANOVA to unequal variances across $k\ge3$ groups; and just as the Mann-Whitney U test generalises to a rank-based two-group comparison, the **Kruskal-Wallis test** generalises the Mann-Whitney idea to $k\ge3$ groups by ranking all observations together.
+
+------------------------------------------------------------------------
+
+# One-Way ANOVA {#sec-oneway_anova}
+
+## Hypotheses
+
+$$
+H_0: \mu_1=\mu_2=\cdots=\mu_k \qquad 
+$$ $$
+H_1: \text{at least one } \mu_i \text{ differs from the others}
+$$
+
+Note carefully what $H_1$ does **not** say: it does not specify *which* group(s) differ, or how many. A significant omnibus $F$-test tells us only that **some** difference exists somewhere among the $k$ groups; identifying *which* groups differ requires a separate **post-hoc** procedure (see below).
+
+## Assumptions
+
+1.  The outcome is **continuous numeric**.
+2.  The $k$ groups are **independent** of each other, and observations **within** each group are independent (a random sample from each population). This is the direct extension of the two-group comparison of mean.
+3.  Each population is (approximately) **normally distributed**, or each group's $n$ is large enough for the Central Limit Theorem to apply.
+4.  The $k$ populations have **equal variances** ($\sigma_1^2=\sigma_2^2=\cdots=\sigma_k^2$), commonly called **homogeneity of variance**. It is checked with **Levene's test** (preferred, being robust to non-normality) or Bartlett's test.
+
+## Partitioning the variance
+
+One-way ANOVA works by decomposing the **total** variability in the outcome into a part attributable to differences **between** group means, and a part attributable to variability **within** each group (individuals varying around their own group's mean):
+
+$$
+SS_{Total} = SS_{Between} + SS_{Within}
+$$ {#eq-sspartition}
+
+with
+
+$$
+SS_{Total}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(x_{ij}-\bar x)^2, \qquad
+SS_{Between}=\sum_{i=1}^{k} n_i(\bar x_i-\bar x)^2, \qquad
+SS_{Within}=\sum_{i=1}^{k}\sum_{j=1}^{n_i}(x_{ij}-\bar x_i)^2
+$$ {#eq-ssformulas}
+
+where $\bar x_i$ is the mean of group $i$ (size $n_i$), $\bar x$ is the **grand mean** across all $N=\sum n_i$ observations, and $x_{ij}$ is the $j$th observation in group $i$. Intuitively: if the group means are very spread out relative to the spread of individuals *within* each group, $SS_{Between}$ will be large relative to $SS_{Within}$, and we will conclude the groups differ.
+
+## The $F$ statistic
+
+Each sum of squares is converted to a **mean square** by dividing by its degrees of freedom, and the ratio of the two mean squares forms the test statistic:
+
+$$
+df_{Between}=k-1, \qquad df_{Within}=N-k
+$$
+
+$$
+MS_{Between}=\frac{SS_{Between}}{k-1}, \qquad MS_{Within}=\frac{SS_{Within}}{N-k}
+$$
+
+$$
+F=\frac{MS_{Between}}{MS_{Within}} \qquad \sim\; F_{(k-1,\,N-k)} \text{ under } H_0
+$$ {#eq-fstat}
+
+These quantities are conventionally displayed in an **ANOVA table**:
+
+| Source | SS | df | MS | F |
+|---------------|---------------|---------------|---------------|---------------|
+| Between groups | $SS_{Between}$ | $k-1$ | $MS_{Between}$ | $MS_{Between}/MS_{Within}$ |
+| Within groups | $SS_{Within}$ | $N-k$ | $MS_{Within}$ |  |
+| Total | $SS_{Total}$ | $N-1$ |  |  |
+
+When $k=2$, one-way ANOVA is mathematically identical to Student's pooled-variance $t$-test from Chapter 3 (in fact $F=t^2$) — one-way ANOVA is simply the natural generalisation to $k\ge3$ groups.
+
+## Post-hoc comparisons: Tukey's HSD
+
+### Why a post-hoc test is needed
+
+A significant omnibus $F$ only establishes that **at least one** group mean differs from at least one other — it does not say *which* pair(s). It is tempting to just run a $t$-test on every pair of groups instead, but this is the single most common post-hoc error: with $k$ groups there are $\binom{k}{2}$ possible pairwise comparisons, and if each is tested at an uncorrected $\alpha=0.05$, the probability that **at least one** comparison falsely rejects $H_0$ — the **family-wise error rate (FWER)** — climbs well above $5\%$. For $k=4$ groups (as in this chapter's full behaviour-pattern example) there are $\binom{4}{2}=6$ comparisons, and even assuming independence, the FWER is approximately
+
+$$
+1-(1-\alpha)^{m} = 1-(0.95)^{6} \approx 0.265
+$$
+
+There is roughly a **1-in-4 chance of at least one false positive**, more than five times the nominal $5\%$ (and the comparisons are typically correlated in practice, which changes the exact figure but not the basic problem). A **post-hoc test** is simply a pairwise-comparison procedure explicitly built to control this family-wise error rate at the nominal $\alpha$, rather than controlling the error rate of each individual comparison in isolation.
+
+### Tukey's Honestly Significant Difference (HSD)
+
+**Tukey's HSD** is the classical, and usually preferred, post-hoc procedure specifically for **all pairwise comparisons** among $k$ group means following a one-way ANOVA. Instead of the ordinary $t$-distribution, it uses the **studentised range distribution** ($q$), which describes how far apart the largest and smallest of $k$ sample means drawn from the *same* population would be expected to fall purely by chance — using this reference distribution (rather than $k$ separate $t$-tests) is exactly what accounts for the number of comparisons being made simultaneously, giving Tukey's HSD its family-wise error control.
+
+For each pair of groups $i,j$, the test statistic is
+
+$$
+q=\frac{|\bar x_i-\bar x_j|}{\sqrt{MS_{Within}/n}}\qquad \text{(equal group sizes } n\text{)}
+$$ {#eq-tukeyq}
+
+compared against the critical value $q_{(1-\alpha,\;k,\;N-k)}$ from the studentised range distribution (available in R via `qtukey()`). Equivalently, and more usefully for hand calculation, Tukey's HSD gives a single **critical difference** — any pair of group means differing by more than this amount is declared significant:
+
+$$
+HSD = q_{(1-\alpha,\;k,\;N-k)}\sqrt{\frac{MS_{Within}}{n}}
+$$ {#eq-tukeyhsd}
+
+When the groups have **unequal sample sizes** $n_i \ne n_j$ (as in the full WCGS behaviour-pattern data), R (and most software) automatically applies the **Tukey-Kramer adjustment**, replacing $MS_{Within}/n$ with $\dfrac{MS_{Within}}{2}\left(\dfrac1{n_i}+\dfrac1{n_j}\right)$ for each specific pair — so the critical difference is slightly wider for comparisons involving a smaller group. Tukey's HSD carries the **same assumptions as the one-way ANOVA it follows**: independent observations, approximate normality within each group, and importantly **homogeneous variances across groups**, since it relies on the single pooled $MS_{Within}$ from the ANOVA table.
+
+### Other post-hoc and multiple-comparison methods
+
+Tukey's HSD is not the only option, and the right choice depends on exactly what is being compared and what can be assumed about the data:
+
+| Method | Best suited to | Assumes equal variances? | Notes on power/conservativeness |
+|------------------|------------------|------------------|------------------|
+| **Tukey's HSD** | All $\binom{k}{2}$ pairwise comparisons | Yes | The standard choice for all-pairwise comparisons; more powerful than Bonferroni for this specific purpose because it uses a reference distribution built exactly for the "largest minus smallest of $k$ means" problem, rather than a generic correction. |
+| **Fisher's Least Significant Difference (LSD)** | All pairwise comparisons, but *only* as a follow-up to a significant omnibus $F$ | Yes | Uses an ordinary $t$-test critical value with no correction for multiple comparisons beyond the "protection" of requiring a significant $F$ first — this protection is imperfect once $k>3$, so Fisher's LSD is now generally considered too liberal (inflated FWER) and is not recommended over Tukey's HSD. |
+| **Bonferroni correction** | Any small, *pre-specified* set of comparisons (not necessarily all pairs) | No (works with Welch/unequal variances too) | Simple and general — divide $\alpha$ by the number of comparisons $m$ (or multiply each $p$-value by $m$) — but conservative (low power) once $m$ is more than a handful, since it does not exploit the specific structure of all-pairwise comparisons the way Tukey's HSD does. |
+| **Scheffé's method** | *Any* number of comparisons, including complex contrasts (e.g., averages of several groups vs. another group), not just simple pairs | Yes | The most conservative common method — appropriate when you want the flexibility to test contrasts you didn't specify in advance, but needlessly conservative for simple all-pairwise comparisons, where Tukey's HSD dominates it in power. |
+| **Dunnett's test** | Comparing several **treatment** groups back to a single **reference/control** group only (not all pairs) | Yes | More powerful than Tukey's HSD *for this specific narrower question*, because it only spends its error-rate "budget" on $k-1$ comparisons against the control rather than all $\binom{k}{2}$ pairs. |
+| **Games-Howell** | All pairwise comparisons when variances are **unequal** (the natural follow-up to Welch's ANOVA) | No | Uses per-pair variance estimates and Welch-Satterthwaite-adjusted degrees of freedom, analogous to how Welch's $t$-test relaxes Student's $t$-test — the appropriate substitute for Tukey's HSD whenever Levene's test flags heterogeneous variances. |
+| **Dunn's test / Bonferroni-adjusted pairwise Wilcoxon** | All pairwise comparisons following a significant **Kruskal-Wallis** test (non-normal data) | No | The nonparametric analogue of Tukey's HSD — compares rank sums (Dunn's test) or applies pairwise Mann-Whitney/Wilcoxon tests with a Bonferroni (or Holm, or Benjamini-Hochberg) correction, as used later in this chapter's full R demonstration. |
+
+**Practical rule of thumb:** for the very common case of comparing **all pairs** of $k$ group means with roughly equal variances — the situation in most of this chapter — **Tukey's HSD** is the right default because it is specifically calibrated for that exact comparison structure, giving it more statistical power than the more generic Bonferroni or Scheffé corrections while still rigorously controlling the family-wise error rate. Switch to **Games-Howell** if variances are unequal, to **Dunnett's test** if the real question is "does each group differ from a single control," and to **Dunn's test / Bonferroni-adjusted pairwise Wilcoxon tests** if normality itself is in doubt and you are following up a Kruskal-Wallis test rather than an ANOVA (as demonstrated later in this chapter).
+
+# Manual (Hand) Calculation of One-Way ANOVA
+
+We draw a reproducible random subsample of $n=5$ men from **three** of the four behaviour-pattern groups — **A1**, **A2**, and **B4** (using three groups, rather than all four, keeps the by-hand arithmetic tractable while preserving the full logic of the method) — and compare **total cholesterol** (mg/dL).
+
+```{r}
+#| label: anova-manual-sample
+#| echo: false
+
+set.seed(555)
+A1 <- wcgs[wcgs$behpat == "A1" & !is.na(wcgs$chol), c("id", "chol")]
+A2 <- wcgs[wcgs$behpat == "A2" & !is.na(wcgs$chol), c("id", "chol")]
+B4 <- wcgs[wcgs$behpat == "B4" & !is.na(wcgs$chol), c("id", "chol")]
+sA1 <- as.data.frame(A1[sample(nrow(A1), 5), ])
+sA2 <- as.data.frame(A2[sample(nrow(A2), 5), ])
+sB4 <- as.data.frame(B4[sample(nrow(B4), 5), ])
+ 
+sub <- rbind(
+  data.frame(id = sA1$id, chol = sA1$chol, group = "A1"),
+  data.frame(id = sA2$id, chol = sA2$chol, group = "A2"),
+  data.frame(id = sB4$id, chol = sB4$chol, group = "B4")
+)
+sub$group <- factor(sub$group, levels = c("A1", "A2", "B4"))
+kable(sub, row.names = FALSE, caption = "Subsample: 5 men each from A1, A2, and B4 (n = 15 total)")
+```
+
+## Step 1: Compute the grand mean and each group's mean
+
+```{r}
+#| label: anova-manual-means
+#| echo: false
+grand_mean <- mean(sub$chol)
+group_means <- tapply(sub$chol, sub$group, mean)
+ns <- tapply(sub$chol, sub$group, length)
+ 
+data.frame(Group = names(group_means), n = as.numeric(ns), Mean = as.numeric(group_means))
+```
+
+```{r}
+#| label: anova-manual-grandmean-print
+#| echo: false
+grand_mean
+```
+
+$$
+\bar x = \frac{264+271+198+312+265+225+268+210+250+235+162+190+211+216+177}{15}=230.27
+$$
+
+## Step 2 : Between-groups sum of squares
+
+$$
+SS_{Between}=5(262.0-230.27)^2+5(237.6-230.27)^2+5(191.2-230.27)^2
+$$
+
+```{r}
+#| label: anova-manual-ssb
+#| echo: false
+SSb <- sum(ns * (group_means - grand_mean)^2)
+SSb
+```
+
+## Step 3: Within-groups sum of squares
+
+For each group, sum the squared deviations of its own five observations from **that group's own mean**, then add the three groups' totals together:
+
+```{r}
+#| label: anova-manual-ssw
+SSw <- sum(tapply(sub$chol, sub$group, function(x) sum((x - mean(x))^2)))
+SSw
+```
+
+## Step 4: Total sum of squares (a check)
+
+```{r}
+#| label: anova-manual-sst
+#| echo: false
+SSt <- sum((sub$chol - grand_mean)^2)
+data.frame(SS_Between = SSb, SS_Within = SSw, `SS_Between + SS_Within` = SSb + SSw,
+           SS_Total = SSt, check.names = FALSE)
+```
+
+$SS_{Between}+SS_{Within}=SS_{Total}$ exactly (up to rounding), as required by @eq-sspartition.
+
+## Step 5: Build the ANOVA table
+
+```{r}
+#| label: anova-manual-table
+#| echo: false
+k <- 3; N <- 15
+df_b <- k - 1
+df_w <- N - k
+MSb <- SSb / df_b
+MSw <- SSw / df_w
+Fstat <- MSb / MSw
+p_anova <- pf(Fstat, df_b, df_w, lower.tail = FALSE)
+ 
+anova_tab <- data.frame(
+  Source = c("Between groups", "Within groups", "Total"),
+  SS = c(SSb, SSw, SSt),
+  df = c(df_b, df_w, N - 1),
+  MS = c(MSb, MSw, NA),
+  F = c(Fstat, NA, NA),
+  p_value = c(p_anova, NA, NA)
+)
+kable(anova_tab, digits = 3, caption = "Hand-built one-way ANOVA table")
+```
+
+## Step 6: Verify against R
+
+```{r}
+#| label: anova-manual-verify
+#| echo: false
+summary(aov(chol ~ group, data = sub))
+```
+
+The hand-calculated $F=7.214$ on $(2,12)$ df, $p=0.0088$, match `summary(aov())` on the same subsample **exactly**. At the $5\%$ level we **reject** $H_0$ in this small subsample at least one of A1, A2, B4 has a different mean cholesterol. (Note this omnibus result alone does not tell us *which* group(s) differ. To see which gorups differs separately use the post-hoc test.
+
+------------------------------------------------------------------------
+
+# Welch's ANOVA (Unequal Variances) {#sec-welch_oneway_anova}
+
+## When to use it
+
+Just as with the two-group case, if the assumption of equal variances across the $k$ groups is doubtful, either because Levene's test rejects equal variances, **Welch's ANOVA** should be used instead of the standard (Fisher) one-way ANOVA. It relaxes the equal-variance assumption by not pooling the within-group variances into a single $MS_{Within}$; instead, each group's variance is weighted separately (analogous to how Welch's $t$-test does not pool $s_1^2$ and $s_2^2$), and the degrees of freedom are adjusted downward via a Welch-Satterthwaite-type approximation, exactly as in the two-group case. In R this is available directly via:
+
+``` r
+oneway.test(outcome ~ group, data = your_data, var.equal = FALSE)
+```
+
+As with Welch's $t$-test, when the group variances genuinely **are** homogeneous, Welch's ANOVA and the standard one-way ANOVA give nearly identical results, Welch's ANOVA costs little in that case and protects against inflated Type I error when variances differ, so many statisticians recommend defaulting to it.
+
+------------------------------------------------------------------------
+
+# The Kruskal-Wallis Test {#sec-h_test_KW}
+
+## When to use it
+
+The **Kruskal-Wallis test** is the nonparametric, rank-based generalisation of the Mann-Whitney U test to $k\ge3$ independent groups. It is use when normality is doubtful, samples are small, or the data contain influential outliers, exactly as with the two-group Mann-Whitney test in Chapter 3.
+
+$$
+H_0: \text{all } k \text{ populations have the same distribution (no location shift among any of them)}
+$$
+
+## Procedure and formula
+
+1.  Combine all $N=\sum n_i$ observations from all $k$ groups and **rank them together** from smallest (rank 1) to largest, giving tied values the average of the ranks they span.
+2.  Sum the ranks within each group: $R_i$ for $i=1,\dots,k$.
+3.  Compute the test statistic:
+
+$$
+H=\frac{12}{N(N+1)}\sum_{i=1}^{k}\frac{R_i^2}{n_i}-3(N+1)
+$$ {#eq-kwH}
+
+4.  Under $H_0$, $H$ is approximately **chi-squared distributed with** $k-1$ degrees of freedom, for reasonably sized $n_i$:
+
+$$
+H \;\sim\; \chi^2_{(k-1)} \text{ under } H_0
+$$
+
+5.  **Ties** reduce the variance of the rank sums slightly; software (and, for exactness, hand calculation) applies a small **tie correction** factor to $H$, dividing it by $1-\dfrac{\sum(t_j^3-t_j)}{N^3-N}$, where $t_j$ is the number of observations tied at the $j$th distinct value. When there are no ties, this correction factor is exactly $1$ and can be ignored.
+
+------------------------------------------------------------------------
+
+# Manual calculation of the Kruskal-Wallis Test
+
+We use the **same** 15-subject, 3-group (A1/A2/B4) subsample as above — conveniently, this subsample happens to contain **no tied cholesterol values**, simplifying the rank calculation.
+
+## Step 1: Rank all 15 values together
+
+```{r}
+#| label: kw-manual-ranks
+#| echo: false
+sub$rank <- rank(sub$chol)
+kable(sub[order(sub$chol), ], row.names = FALSE, caption = "Combined, ranked cholesterol values (all 15 subjects)")
+```
+
+## Step 2: Sum the ranks in each group
+
+```{r}
+#| label: kw-manual-ranksums
+#| echo: false
+Rsum <- tapply(sub$rank, sub$group, sum)
+data.frame(Group = names(Rsum), n = as.numeric(ns), Rank_sum = as.numeric(Rsum))
+```
+
+$$
+R_{A1}=56, \qquad R_{A2}=45, \qquad R_{B4}=19, \qquad R_{A1}+R_{A2}+R_{B4}=120=\frac{15\times16}{2}\;\checkmark
+$$
+
+## Step 3: Compute $H$
+
+$$
+H=\frac{12}{15\times16}\left(\frac{56^2}{5}+\frac{45^2}{5}+\frac{19^2}{5}\right)-3(16)
+$$
+
+```{r}
+#| label: kw-manual-H
+#| echo: false
+N <- 15
+H_manual <- (12 / (N * (N + 1))) * sum(Rsum^2 / ns) - 3 * (N + 1)
+H_manual
+```
+
+## Step 4: $p$-value from the chi-squared distribution
+
+```{r}
+#| label: kw-manual-p
+#| echo: false
+p_kw_manual <- pchisq(H_manual, df = k - 1, lower.tail = FALSE)
+data.frame(H = H_manual, df = k - 1, p_value = p_kw_manual)
+```
+
+## Step 5: Verify against R
+
+```{r}
+#| label: kw-manual-verify
+#| echo: false
+kruskal.test(chol ~ group, data = sub)
+```
+
+The hand-calculated $H=7.22$ on $2$ df, $p=0.0271$, match `kruskal.test()` **exactly** (no tie-correction adjustment was needed, since this subsample has no ties). As with the parametric ANOVA above, we reject $H_0$ at the $5\%$ level in this subsample but note the Kruskal-Wallis $p$-value ($0.0271$) is somewhat larger (less extreme) than the ANOVA's ($0.0088$), a reminder that rank-based tests typically sacrifice some power relative to a correctly-specified parametric test, in exchange for robustness to non-normality.
+
+------------------------------------------------------------------------
+
+# Demonstration in R Using the Full WCGS Data Set
+
+## Visualising and checking assumptions
+
+```{r}
+#| label: fig-chol-normcheck
+#| fig-cap: "Cholesterol distribution by behaviour pattern — full WCGS cohort."
+#| fig-subcap:
+#|   - "Boxplots by group"
+#|   - "Histograms by group"
+#| layout-ncol: 2
+ggplot(wcgs[!is.na(wcgs$chol), ], aes(x = behpat, y = chol, fill = behpat)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  labs(x = "Behaviour pattern", y = "Cholesterol (mg/dL)") +
+  theme_minimal(base_size = 12)
+ 
+ggplot(wcgs[!is.na(wcgs$chol), ], aes(x = chol, fill = behpat)) +
+  geom_histogram(binwidth = 20, alpha = 0.6, position = "identity", colour = "white") +
+  labs(x = "Cholesterol (mg/dL)", y = "Count", fill = "Behaviour pattern") +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+#| label: full-shapiro
+tapply(wcgs$chol, wcgs$behpat, function(x) shapiro.test(x[!is.na(x)])$p.value)
+```
+
+Cholesterol is right-skewed in every group, and with group sizes ranging from $264$ to $1{,}325$, Shapiro-Wilk rejects normality (all $p<0.001$) in every group — the usual large-$n$ caveat applies (Shapiro-Wilk becomes hyper-sensitive to trivial deviations from normality once $n$ is in the hundreds or thousands, so a formally "significant" result here does not necessarily rule out ANOVA, given the CLT and the moderate skew involved). Because of this, we will report **all three** procedures below and compare them.
+
+## Checking variance homogeneity
+
+```{r}
+#| label: full-levene
+leveneTest(chol ~ behpat, data = wcgs)
+```
+
+Levene's test is **not** significant ($F=0.197$, $p=0.899$), the four groups' cholesterol variances are statistically indistinguishable. This is a useful **contrast with Chapter 3's cholesterol-by-`chd69` example**, where variances differed enough that Welch's test and the Mann-Whitney test were clearly preferred. Here, with variances confirmed homogeneous, we expect the standard one-way ANOVA and Welch's ANOVA to agree closely — and, as shown next, they do.
+
+## One-way ANOVA, Welch's ANOVA, and Kruskal-Wallis
+
+```{r}
+#| label: full-anova
+fit <- aov(chol ~ behpat, data = wcgs)
+summary(fit)
+```
+
+```{r}
+#| label: full-welch
+oneway.test(chol ~ behpat, data = wcgs, var.equal = FALSE)
+```
+
+```{r}
+#| label: full-kw
+kruskal.test(chol ~ behpat, data = wcgs)
+```
+
+**Interpretation:** All three procedures agree closely and reach the same conclusion. The standard one-way ANOVA gives $F(3,3138)=4.351$, $p=0.00458$; Welch's ANOVA gives a nearly identical $F=4.521$ (num df $=3$, denom df $=834.6$), $p=0.00374$ — exactly what we expect given the homogeneous variances confirmed by Levene's test above, since Welch's correction has little work to do when the equal-variance assumption already holds. The Kruskal-Wallis test corroborates this with $\chi^2=12.01$, $df=3$, $p=0.00735$. We reject $H_0$: mean (and typical) cholesterol is **not** the same across all four behaviour-pattern subtypes. As always, this omnibus result alone does not identify *which* subtype(s) differ — for that we turn to post-hoc comparisons.
+
+## Post-hoc comparisons: which groups differ?
+
+```{r}
+#| label: full-tukey
+TukeyHSD(fit)
+```
+
+```{r}
+#| label: full-pairwise-wilcox
+pairwise.wilcox.test(wcgs$chol, wcgs$behpat, p.adjust.method = "bonferroni")
+```
+
+**Interpretation:** Tukey's HSD identifies exactly two significant pairwise differences: **A1 vs. B3** (mean difference $-8.25$ mg/dL, $p=0.027$) and **A1 vs. B4** (mean difference $-10.11$ mg/dL, $p=0.023$). All other pairs (A2 vs. A1, B3 vs. A2, B4 vs. A2, B4 vs. B3) are **not** statistically significant. The Bonferroni-adjusted pairwise Wilcoxon tests show the **same pattern**: A1 vs. B3 ($p=0.038$) and A1 vs. B4 ($p=0.025$) are significant, while every other pair is not — a reassuring concordance between the parametric and nonparametric post-hoc approaches, giving confidence that the finding is not an artefact of the (mild) non-normality noted above.
+
+Substantively, this tells a coherent story: **A1** — the *extreme* or "purest" Type A subtype — has the highest mean cholesterol of the four groups, significantly higher than both B3 and B4 (the two Type B subtypes), but not significantly different from A2 (the *moderate* Type A subtype), and B3/B4 are not significantly different from each other or from A2. This is consistent with the broader WCGS finding (explored in Chapter 3 via the collapsed `dibpat` variable) that Type A behaviour pattern is associated with unfavourable cardiovascular risk-factor profiles, and further suggests the association is strongest at the most extreme end of the Type A spectrum.
+
+## Summary table across several outcome variables
+
+```{r}
+#| label: tbl-summary-anova
+vars_list <- c("chol", "sbp", "bmi")
+ 
+results <- do.call(rbind, lapply(vars_list, function(v) {
+  f  <- as.formula(paste(v, "~ behpat"))
+  d  <- wcgs[!is.na(wcgs[[v]]), ]
+  a  <- summary(aov(f, data = d))[[1]]
+  w  <- oneway.test(f, data = d, var.equal = FALSE)
+  kw <- kruskal.test(f, data = d)
+  data.frame(Outcome = v,
+             ANOVA_F = round(a$`F value`[1], 3), ANOVA_df = paste0(a$Df[1], ",", a$Df[2]),
+             ANOVA_p = signif(a$`Pr(>F)`[1], 3),
+             Welch_F = round(unname(w$statistic), 3),
+             Welch_df = paste0(round(unname(w$parameter[1]), 1), ",", round(unname(w$parameter[2]), 1)),
+             Welch_p = signif(w$p.value, 3),
+             KW_chisq = round(unname(kw$statistic), 3), KW_p = signif(kw$p.value, 3))
+}))
+kable(results, caption = "One-way ANOVA, Welch's ANOVA, and Kruskal-Wallis results across three outcomes, by behpat")
+```
+
+Cholesterol and systolic blood pressure (`sbp`) both show significant differences across behaviour-pattern subtypes by all three methods, while BMI (`bmi`) does not — a useful illustration that the behaviour-pattern association is not simply a proxy for body size, and that all three testing approaches tell a consistent story once variances are homogeneous.
+
+------------------------------------------------------------------------
+
+# A Practical Decision Process
+
+1.  **Plot the data** (boxplots, histograms) for each of the $k$ groups.
+2.  **Check normality** within each group (Q-Q plots or histograms; Shapiro-Wilk for smaller $n$, interpreted cautiously for large $n$).
+3.  **Check variance homogeneity** across all $k$ groups (Levene's test is generally preferred over Bartlett's test, since it is far less sensitive to non-normality).
+4.  Choose accordingly:
+
+| Normality? | Equal variances? | Recommended test |
+|----|----|----|
+| Yes | Yes | One-way (Fisher's) ANOVA |
+| Yes | No | Welch's ANOVA |
+| No (or small, skewed, or outlier-prone) | — | Kruskal-Wallis test |
+
+5.  **If the omnibus test is significant**, follow up with an appropriate post-hoc test: **Tukey's HSD** after one-way ANOVA (equal variances), **Bonferroni-adjusted pairwise Wilcoxon tests** after Kruskal-Wallis, or (not computed in this chapter, but worth knowing) the **Games-Howell** test after Welch's ANOVA, which — unlike Tukey's HSD — does not assume equal variances.
+
+As with the two-group case, many statisticians recommend **defaulting to Welch's ANOVA** for 3+ group comparisons, since it costs little when variances are equal and protects against inflated Type I error when they are not.
+
+------------------------------------------------------------------------
+
+# Common Pitfalls
+
+-   **Running many uncorrected pairwise** $t$-tests instead of an omnibus test with proper post-hoc correction. With $k=4$ groups there are $\binom{4}{2}=6$ possible pairwise comparisons; testing each at an uncorrected $\alpha=0.05$ inflates the true family-wise Type I error rate well above $5\%$. Tukey's HSD (or Bonferroni-adjusted pairwise tests, as used for the Kruskal-Wallis follow-up here) controls this properly.
+-   **Misinterpreting a significant omnibus** $F$ (or $H$) as identifying which groups differ. It does not — it only establishes that *some* difference exists. Always follow a significant omnibus test with an appropriate post-hoc procedure before making claims about specific groups.
+-   **Using Tukey's HSD when variances are unequal.** Tukey's HSD assumes homogeneous variances, just like the standard one-way ANOVA it follows; when Levene's test indicates heterogeneous variances, use **Games-Howell** post-hoc comparisons (the Welch-appropriate analogue) instead, rather than applying Tukey's HSD uncritically.
+-   **Ignoring unequal group sizes.** Very unbalanced designs (here, A1's $n=264$ vs. A2's $n=1{,}325$) reduce power to detect differences involving the smaller group(s), and can make some tests more sensitive to violated assumptions — always report the group $n$'s alongside the test results.
+-   **Over-relying on Shapiro-Wilk in large samples.** As in Chapter 3, with group $n$'s in the hundreds or thousands, Shapiro-Wilk will often flag "significant" non-normality even for mild, practically harmless skew — inspect the plots as well, and lean on the Central Limit Theorem for large $n$.
+-   **Confusing statistical and clinical significance.** A statistically significant $8$–$10$ mg/dL difference in mean cholesterol between behaviour-pattern subtypes, as found here, should be interpreted alongside its clinical relevance and effect size, not just its $p$-value.
+
+------------------------------------------------------------------------
+
+# Summary
+
+-   To compare the means of **three or more independent groups**, first assess normality within each group and variance homogeneity across all groups (Levene's test).
+-   **One-way (Fisher's) ANOVA** partitions total variability into between-group and within-group sums of squares, forming $F=MS_{Between}/MS_{Within}$; it is appropriate when groups are approximately normal with similar variances (as with cholesterol by `behpat` in the WCGS data, where Levene's test confirmed homogeneity: $F=0.197$, $p=0.899$).
+-   **Welch's ANOVA** relaxes the equal-variance assumption and, as with Welch's $t$-test, is a safe general default; it agreed almost exactly with the standard ANOVA here ($F=4.521$ vs. $4.351$, both $p<0.005$) precisely because variances were homogeneous — a useful contrast with Chapter 3's cholesterol-by-`chd69` example, where unequal variances made the two approaches diverge more.
+-   The **Kruskal-Wallis test** extends the Mann-Whitney U logic to $k\ge3$ groups using ranks, requiring no distributional assumption beyond independence; it corroborated the parametric results here ($\chi^2=12.01$, $df=3$, $p=0.00735$).
+-   A significant omnibus test only shows that **some** group differs — always follow up with an appropriate **post-hoc** procedure. Here, Tukey's HSD and Bonferroni-adjusted pairwise Wilcoxon tests **agreed exactly** on which pairs differed: the extreme Type A subtype (A1) had significantly higher cholesterol than both Type B subtypes (B3, B4), while no other pairwise differences reached significance.
+
+------------------------------------------------------------------------
+
+# References {.unnumbered}
+
+-   Rosner B. *Fundamentals of Biostatistics*. 8th ed. Cengage Learning.
+-   Daniel WW, Cross CL. *Biostatistics: A Foundation for Analysis in the Health Sciences*. 11th ed. Wiley.
+-   Bland M. *An Introduction to Medical Statistics*. 4th ed. Oxford University Press.
+-   Fisher RA. *Statistical Methods for Research Workers*. Oliver and Boyd, 1925. (Origin of analysis of variance.)
+-   Welch BL. "On the comparison of several mean values: an alternative approach." *Biometrika*. 1951;38(3-4):330-336.
+-   Kruskal WH, Wallis WA. "Use of Ranks in One-Criterion Variance Analysis." *Journal of the American Statistical Association*. 1952;47(260):583-621.
+-   Tukey JW. "Comparing Individual Means in the Analysis of Variance." *Biometrics*. 1949;5(2):99-114.
+-   Rosenman RH, et al. "A predictive study of coronary heart disease: the Western Collaborative Group Study." *JAMA*. 1964;189:15-22. (Original WCGS study.)
+
+Downloa
