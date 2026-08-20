@@ -58,7 +58,7 @@ ggplot(wcgs[!is.na(wcgs$chol), ], aes(x = behpat, y = chol, fill = behpat)) +
 Three procedures are commonly used to compare $k \ge 3$ independent groups:
 
 | Test | Assumes equal variances? | Assumes (approx.) normality? | Uses |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 | **One-way ANOVA** (Fisher's) | Yes | Yes, in each group | Raw values |
 | **Welch's ANOVA** | No | Yes, in each group | Raw values |
 | **Kruskal-Wallis test** | No | No | Ranks of the pooled values |
@@ -123,7 +123,7 @@ $$ {#eq-fstat}
 These quantities are conventionally displayed in an **ANOVA table**:
 
 | Source | SS | df | MS | F |
-|---------------|---------------|---------------|---------------|---------------|
+|----|----|----|----|----|
 | Between groups | $SS_{Between}$ | $k-1$ | $MS_{Between}$ | $MS_{Between}/MS_{Within}$ |
 | Within groups | $SS_{Within}$ | $N-k$ | $MS_{Within}$ |  |
 | Total | $SS_{Total}$ | $N-1$ |  |  |
@@ -165,7 +165,7 @@ When the groups have **unequal sample sizes** $n_i \ne n_j$ (as in the full WCGS
 Tukey's HSD is not the only option, and the right choice depends on exactly what is being compared and what can be assumed about the data:
 
 | Method | Best suited to | Assumes equal variances? | Notes on power/conservativeness |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 | **Tukey's HSD** | All $\binom{k}{2}$ pairwise comparisons | Yes | The standard choice for all-pairwise comparisons; more powerful than Bonferroni for this specific purpose because it uses a reference distribution built exactly for the "largest minus smallest of $k$ means" problem, rather than a generic correction. |
 | **Fisher's Least Significant Difference (LSD)** | All pairwise comparisons, but *only* as a follow-up to a significant omnibus $F$ | Yes | Uses an ordinary $t$-test critical value with no correction for multiple comparisons beyond the "protection" of requiring a significant $F$ first — this protection is imperfect once $k>3$, so Fisher's LSD is now generally considered too liberal (inflated FWER) and is not recommended over Tukey's HSD. |
 | **Bonferroni correction** | Any small, *pre-specified* set of comparisons (not necessarily all pairs) | No (works with Welch/unequal variances too) | Simple and general — divide $\alpha$ by the number of comparisons $m$ (or multiply each $p$-value by $m$) — but conservative (low power) once $m$ is more than a handful, since it does not exploit the specific structure of all-pairwise comparisons the way Tukey's HSD does. |

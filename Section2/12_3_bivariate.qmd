@@ -119,6 +119,7 @@ We draw reproducible random subsamples of $n=8$ men from each behaviour-pattern 
 
 ```{r}
 #| label: student-manual-sample
+#| echo: false
 set.seed(111)
 A <- wcgs[wcgs$dibpat == "Type A", c("id", "weight")]
 B <- wcgs[wcgs$dibpat == "Type B", c("id", "weight")]
@@ -132,6 +133,7 @@ kable(sB, caption = "Type B subsample (n = 8)")
 
 ```{r}
 #| label: student-manual-stats
+#| echo: false
 x1 <- sA$weight; x2 <- sB$weight
 n1 <- length(x1); n2 <- length(x2)
 m1 <- mean(x1); m2 <- mean(x2)
@@ -161,6 +163,7 @@ $$
 
 ```{r}
 #| label: student-manual-t
+#| echo: false
 se_pooled <- sqrt(sp2 * (1/n1 + 1/n2))
 t_pooled  <- (m1 - m2) / se_pooled
 df_pooled <- n1 + n2 - 2
@@ -218,6 +221,7 @@ $$
 
 ```{r}
 #| label: welch-manual-se
+#| echo: false
 se_welch <- sqrt(v1/n1 + v2/n2)
 se_welch
 ```
@@ -232,6 +236,7 @@ $$
 
 ```{r}
 #| label: welch-manual-df
+#| echo: false
 df_welch <- (v1/n1 + v2/n2)^2 / ( (v1/n1)^2/(n1-1) + (v2/n2)^2/(n2-1) )
 df_welch
 ```
@@ -242,6 +247,7 @@ Because Group B's variance so dominates Group A's in this subsample, $df_{Welch}
 
 ```{r}
 #| label: welch-manual-t
+#| echo: false
 t_welch <- (m1 - m2) / se_welch
 p_welch <- 2 * pt(-abs(t_welch), df = df_welch)
 data.frame(t = t_welch, df = df_welch, p_value = p_welch)
@@ -304,6 +310,7 @@ We draw reproducible random subsamples of $n=8$ men from each CHD-event group (r
 
 ```{r}
 #| label: mwu-manual-sample
+#| echo: false
 set.seed(222)
 Y <- wcgs[wcgs$chd69 == "Yes" & !is.na(wcgs$chol), c("id", "chol")]
 N <- wcgs[wcgs$chd69 == "No"  & !is.na(wcgs$chol), c("id", "chol")]
@@ -319,6 +326,7 @@ Note the value $220$ occurs twice (both in the "Yes" group), so both receive the
 
 ```{r}
 #| label: mwu-manual-ranks
+#| echo: false
 g1 <- sY$chol; g2 <- sN$chol
 n1 <- length(g1); n2 <- length(g2)
 allvals <- c(g1, g2)
@@ -334,6 +342,7 @@ kable(tab, row.names = FALSE, caption = "Combined, ranked cholesterol values")
 
 ```{r}
 #| label: mwu-manual-sums
+#| echo: false
 R1 <- sum(rk[grp == "Yes"])
 R2 <- sum(rk[grp == "No"])
 data.frame(Group = c("Yes","No"), Rank_sum = c(R1,R2),

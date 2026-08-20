@@ -68,7 +68,7 @@ ggplot(wcgs, aes(x = height, y = weight)) +
 Two correlation coefficients dominate practice, and this chapter covers both:
 
 |   | **Pearson** $r$ | **Spearman** $r_s$ |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Measures | Strength of **linear** association | Strength of **monotonic** association |
 | Uses | Raw values | **Ranks** of the values |
 | Best suited to | Approximately normal, linearly related continuous data | Ordinal data, non-normal data, data with outliers, or monotonic-but-curved relationships |
@@ -159,6 +159,7 @@ We illustrate the arithmetic with a small, reproducible random sample of $n=10$ 
 
 ```{r}
 #| label: pearson-manual-sample
+#| echo: false
 set.seed(123)
 idx <- sample(seq_len(nrow(wcgs)), 10)
 sub <- as.data.frame(wcgs[idx, c("id", "height", "weight")])
@@ -172,6 +173,7 @@ For each subject we need $x-\bar x$, $y-\bar y$, their product, and their square
 
 ```{r}
 #| label: pearson-manual-table
+#| echo: false
 x <- sub$x_height; y <- sub$y_weight
 n <- length(x)
 xbar <- mean(x); ybar <- mean(y)
@@ -291,6 +293,7 @@ We again draw a reproducible random subsample of $n=10$ men (this time keeping o
 
 ```{r}
 #| label: spearman-manual-sample
+#| echo: false
 set.seed(321)
 idx2 <- sample(which(!is.na(wcgs$chol)), 10)
 sub2 <- as.data.frame(wcgs[idx2, c("id", "chol", "sbp")])
@@ -303,6 +306,7 @@ Ranks are assigned from lowest (rank 1) to highest; **tied values receive the av
 
 ```{r}
 #| label: spearman-manual-ranks
+#| echo: false
 cx <- sub2$chol; cy <- sub2$sbp
 rx <- rank(cx); ry <- rank(cy)
 d  <- rx - ry
@@ -322,6 +326,7 @@ $$
 
 ```{r}
 #| label: spearman-manual-shortcut
+#| echo: false
 n2 <- length(cx)
 rho_shortcut <- 1 - (6 * sum(d2)) / (n2 * (n2^2 - 1))
 rho_shortcut
@@ -333,6 +338,7 @@ This gives $r_s \approx 0.306$. **However**, because `sbp` contains tied values,
 
 ```{r}
 #| label: spearman-manual-exact
+#| echo: false
 rho_exact <- cor(rx, ry, method = "pearson")
 rho_exact
 ```
@@ -521,7 +527,7 @@ kable(results)
 # Pearson vs. Spearman: A Side-by-Side Comparison
 
 | Feature | Pearson $r$ | Spearman $r_s$ |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Data type required | Numeric (interval/ratio) | Ordinal or numeric |
 | Detects | Linear association | Any monotonic association |
 | Uses | Actual values | Ranks of the values |

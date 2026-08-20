@@ -60,7 +60,7 @@ or a one-sided alternative ($H_1: \mu > \mu_0$ or $\mu < \mu_0$) when justified 
 Three procedures are commonly used, in decreasing order of how much they assume about the data:
 
 | Test | Assumes population SD $\sigma$ known? | Assumes (approx.) normal data? | Uses |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | One-sample $z$-test | Yes | Yes | Raw values |
 | One-sample $t$-test | No (estimates $\sigma$ with $s$) | Yes | Raw values |
 | **Wilcoxon signed-rank test** | No | No — only symmetry around the centre | Ranks of the differences $x_i - \mu_0$ |
@@ -121,6 +121,7 @@ We reuse the same reproducible random subsample of $n=10$ men from the WCGS data
 
 ```{r}
 #| label: t-manual-sample
+#| echo: false
 set.seed(123)
 idx <- sample(seq_len(nrow(wcgs)), 10)
 sub <- as.data.frame(wcgs[idx, c("id", "height")])
@@ -131,6 +132,7 @@ kable(sub, caption = "Random subsample (n = 10) used for the manual one-sample t
 
 ```{r}
 #| label: t-manual-stats
+#| echo: false
 x    <- sub$height
 n    <- length(x)
 mu0  <- 69.0
@@ -158,6 +160,7 @@ $$
 
 ```{r}
 #| label: t-manual-tstat
+#| echo: false
 t_stat <- (xbar - mu0) / se
 df     <- n - 1
 p_val  <- 2 * pt(-abs(t_stat), df = df)
@@ -174,6 +177,7 @@ $$
 
 ```{r}
 #| label: t-manual-ci
+#| echo: false
 tcrit <- qt(0.975, df = df)
 ci    <- xbar + c(-1, 1) * tcrit * se
 data.frame(t_critical = tcrit, lower = ci[1], upper = ci[2])
@@ -260,6 +264,7 @@ We use the same reproducible random subsample of $n=10$ men (with complete chole
 
 ```{r}
 #| label: wilcoxon-manual-sample
+#| echo: false
 set.seed(321)
 idx2 <- sample(which(!is.na(wcgs$chol)), 10)
 sub2 <- as.data.frame(wcgs[idx2, c("id", "chol")])
@@ -272,6 +277,7 @@ Note subjects 3 and 10 are **tied** at $|d| = 5$ (chol $=205$, $d=5$): both rece
 
 ```{r}
 #| label: wilcoxon-manual-table
+#| echo: false
 cx  <- sub2$chol
 mu0c <- 200
 d    <- cx - mu0c
@@ -288,6 +294,7 @@ kable(tab, col.names = c("ID","Cholesterol","$d=x-200$","$\\lvert d\\rvert$","Ra
 
 ```{r}
 #| label: wilcoxon-manual-sums
+#| echo: false
 Wpos <- sum(rk[d > 0])
 Wneg <- sum(rk[d < 0])
 n2   <- length(cx)
@@ -311,6 +318,7 @@ $$
 
 ```{r}
 #| label: wilcoxon-manual-z
+#| echo: false
 mu_W    <- n2 * (n2 + 1) / 4
 sigma_W <- sqrt(n2 * (n2 + 1) * (2 * n2 + 1) / 24)
 W       <- min(Wpos, Wneg)
@@ -325,6 +333,7 @@ By hand (uncorrected normal approximation): $z=-1.68$, two-sided $p \approx 0.09
 
 ```{r}
 #| label: wilcoxon-manual-verify
+#| echo: false
 wilcox.test(cx, mu = mu0c)                       # default: continuity-corrected normal approx (ties present)
 wilcox.test(cx, mu = mu0c, correct = FALSE)       # without continuity correction
 ```
@@ -437,7 +446,7 @@ Systolic blood pressure (`sbp`) vs. $120$ mmHg and BMI (`bmi`) vs. $25.0$ kg/m$^
 # Choosing Among the Three Tests
 
 | Situation | Recommended test |
-|----|----|
+|------------------------------------|------------------------------------|
 | $\sigma$ genuinely known from an external, trusted source | $z$-test |
 | $\sigma$ unknown (the usual case), data approximately normal or $n$ large | One-sample $t$-test |
 | Data ordinal, or numeric but clearly skewed / outlier-prone, especially with small $n$ | Wilcoxon signed-rank test |

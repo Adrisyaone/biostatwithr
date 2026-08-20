@@ -73,7 +73,7 @@ ggplot(wcgs, aes(x = dbp, y = sbp)) +
 Two procedures are commonly used for paired data:
 
 | Test | Assumes normality? | Uses |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | **Paired** $t$-test | Yes, of the *differences* $d_i$ (or large $n$) | Raw differences |
 | **Wilcoxon signed-rank test** | No — only (approximate) symmetry of the differences | Ranks of $\lvert d_i\rvert$ |
 
@@ -410,7 +410,7 @@ kable(results, digits = 3,
 3.  Choose accordingly:
 
 | Differences approximately normal (or large $n$)? | Recommended test |
-|------------------------------------|------------------------------------|
+|----|----|
 | Yes | Paired $t$-test |
 | No (skewed, outlier-prone, ordinal, or small $n$ with clear non-normality) | Wilcoxon signed-rank test |
 

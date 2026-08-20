@@ -783,12 +783,6 @@ t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2\left(\dfrac1{n_1}+\dfrac1{n_2}\right)}}
 <h1>Manual (Hand) Calculation of Student’s <span class="math inline">\(t\)</span>-Test</h1>
 <p>We draw reproducible random subsamples of <span class="math inline">\(n=8\)</span> men from each behaviour-pattern group and compare <strong>weight</strong> (lb).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">111</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> wcgs[wcgs<span class="sc">$</span>dibpat <span class="sc">==</span> <span class="st">"Type A"</span>, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"weight"</span>)]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> wcgs[wcgs<span class="sc">$</span>dibpat <span class="sc">==</span> <span class="st">"Type B"</span>, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"weight"</span>)]</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sA <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(A[<span class="fu">sample</span>(<span class="fu">nrow</span>(A), <span class="dv">8</span>), ])</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sB <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(B[<span class="fu">sample</span>(<span class="fu">nrow</span>(B), <span class="dv">8</span>), ])</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sA, <span class="at">caption =</span> <span class="st">"Type A subsample (n = 8)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Type A subsample (n = 8)</caption>
@@ -834,7 +828,6 @@ t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2\left(\dfrac1{n_1}+\dfrac1{n_2}\right)}}
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sB, <span class="at">caption =</span> <span class="st">"Type B subsample (n = 8)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Type B subsample (n = 8)</caption>
@@ -884,17 +877,10 @@ t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2\left(\dfrac1{n_1}+\dfrac1{n_2}\right)}}
 <section id="step-1-compute-each-groups-mean-and-variance" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-compute-each-groups-mean-and-variance">Step 1: Compute each group’s mean and variance</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> sA<span class="sc">$</span>weight; x2 <span class="ot">&lt;-</span> sB<span class="sc">$</span>weight</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> <span class="fu">length</span>(x1); n2 <span class="ot">&lt;-</span> <span class="fu">length</span>(x2)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(x1); m2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(x2)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">var</span>(x1);  v2 <span class="ot">&lt;-</span> <span class="fu">var</span>(x2)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">Group =</span> <span class="fu">c</span>(<span class="st">"Type A"</span>,<span class="st">"Type B"</span>), <span class="at">n =</span> <span class="fu">c</span>(n1,n2),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">Mean =</span> <span class="fu">c</span>(m1,m2), <span class="at">Variance =</span> <span class="fu">c</span>(v1,v2), <span class="at">SD =</span> <span class="fu">c</span>(<span class="fu">sd</span>(x1), <span class="fu">sd</span>(x2)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    Group n  Mean Variance     SD
-#&gt; 1 Type A 8 166.8    31.93  5.651
-#&gt; 2 Type B 8 183.4   616.27 24.825</code></pre>
+<pre><code>#&gt;    Group n    Mean  Variance        SD
+#&gt; 1 Type A 8 166.750  31.92857  5.650537
+#&gt; 2 Type B 8 183.375 616.26786 24.824743</code></pre>
 </div>
 </div>
 </section>
@@ -904,8 +890,8 @@ t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2\left(\dfrac1{n_1}+\dfrac1{n_2}\right)}}
 s_p^2=\frac{(8-1)(31.93)+(8-1)(616.27)}{8+8-2}=\frac{7(31.93)+7(616.27)}{14}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sp2 <span class="ot">&lt;-</span> ((n1 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> v1 <span class="sc">+</span> (n2 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> v2) <span class="sc">/</span> (n1 <span class="sc">+</span> n2 <span class="sc">-</span> <span class="dv">2</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sp2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sp2 <span class="ot">&lt;-</span> ((n1 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> v1 <span class="sc">+</span> (n2 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> v2) <span class="sc">/</span> (n1 <span class="sc">+</span> n2 <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sp2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 324.1</code></pre>
 </div>
@@ -917,21 +903,16 @@ s_p^2=\frac{(8-1)(31.93)+(8-1)(616.27)}{8+8-2}=\frac{7(31.93)+7(616.27)}{14}
 t=\frac{\bar x_1-\bar x_2}{\sqrt{s_p^2(1/n_1+1/n_2)}}=\frac{166.75-183.375}{\sqrt{324.10\times(1/8+1/8)}}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>se_pooled <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(sp2 <span class="sc">*</span> (<span class="dv">1</span><span class="sc">/</span>n1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>n2))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>t_pooled  <span class="ot">&lt;-</span> (m1 <span class="sc">-</span> m2) <span class="sc">/</span> se_pooled</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df_pooled <span class="ot">&lt;-</span> n1 <span class="sc">+</span> n2 <span class="sc">-</span> <span class="dv">2</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>p_pooled  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_pooled), <span class="at">df =</span> df_pooled)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">SE =</span> se_pooled, <span class="at">t =</span> t_pooled, <span class="at">df =</span> df_pooled, <span class="at">p_value =</span> p_pooled)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;      SE      t df p_value
-#&gt; 1 9.001 -1.847 14   0.086</code></pre>
+<pre><code>#&gt;         SE         t df    p_value
+#&gt; 1 9.001364 -1.846942 14 0.08599752</code></pre>
 </div>
 </div>
 </section>
 <section id="step-4-verify-against-r" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-verify-against-r">Step 4: Verify against R</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x1, x2, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x1, x2, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Two Sample t-test
@@ -989,10 +970,8 @@ df_{Welch}=\frac{\left(\dfrac{s_1^2}{n_1}+\dfrac{s_2^2}{n_2}\right)^2}
 SE=\sqrt{\frac{31.93}{8}+\frac{616.27}{8}}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>se_welch <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v1<span class="sc">/</span>n1 <span class="sc">+</span> v2<span class="sc">/</span>n2)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>se_welch</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 9.001</code></pre>
+<pre><code>#&gt; [1] 9.001364</code></pre>
 </div>
 </div>
 <p><strong>Notice</strong> that because <span class="math inline">\(n_1=n_2=8\)</span> here, <span class="math inline">\(SE_{Welch}=\sqrt{(s_1^2+s_2^2)/n}\)</span> is numerically <strong>identical</strong> to <span class="math inline">\(SE_{pooled}=\sqrt{s_p^2 \times 2/n}\)</span> from the Student’s test above — this is a general fact whenever the two sample sizes are equal. What differs between the two tests, in this equal-<span class="math inline">\(n\)</span> case, is entirely the <strong>degrees of freedom</strong>.</p>
@@ -1003,10 +982,8 @@ SE=\sqrt{\frac{31.93}{8}+\frac{616.27}{8}}
 df_{Welch}=\frac{(31.93/8+616.27/8)^2}{\dfrac{(31.93/8)^2}{7}+\dfrac{(616.27/8)^2}{7}}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df_welch <span class="ot">&lt;-</span> (v1<span class="sc">/</span>n1 <span class="sc">+</span> v2<span class="sc">/</span>n2)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> ( (v1<span class="sc">/</span>n1)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(n1<span class="dv">-1</span>) <span class="sc">+</span> (v2<span class="sc">/</span>n2)<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(n2<span class="dv">-1</span>) )</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df_welch</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 7.723</code></pre>
+<pre><code>#&gt; [1] 7.723392</code></pre>
 </div>
 </div>
 <p>Because Group B’s variance so dominates Group A’s in this subsample, <span class="math inline">\(df_{Welch}=7.72\)</span> — pulled down close to <span class="math inline">\(n_2-1=7\)</span> (Welch’s df is always between <span class="math inline">\(\min(n_1,n_2)-1\)</span> and <span class="math inline">\(n_1+n_2-2\)</span>; the more unequal the variances, the closer it moves to the smaller group’s own df).</p>
@@ -1014,19 +991,16 @@ df_{Welch}=\frac{(31.93/8+616.27/8)^2}{\dfrac{(31.93/8)^2}{7}+\dfrac{(616.27/8)^
 <section id="step-3-test-statistic-and-p-value" class="level2">
 <h2 class="anchored" data-anchor-id="step-3-test-statistic-and-p-value">Step 3: Test statistic and <span class="math inline">\(p\)</span>-value</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>t_welch <span class="ot">&lt;-</span> (m1 <span class="sc">-</span> m2) <span class="sc">/</span> se_welch</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>p_welch <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_welch), <span class="at">df =</span> df_welch)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">t =</span> t_welch, <span class="at">df =</span> df_welch, <span class="at">p_value =</span> p_welch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;        t    df p_value
-#&gt; 1 -1.847 7.723  0.1033</code></pre>
+<pre><code>#&gt;           t       df   p_value
+#&gt; 1 -1.846942 7.723392 0.1032826</code></pre>
 </div>
 </div>
 </section>
 <section id="step-4-verify-against-r-1" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-verify-against-r-1">Step 4: Verify against R</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x1, x2, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(x1, x2, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Welch Two Sample t-test
@@ -1046,7 +1020,7 @@ df_{Welch}=\frac{(31.93/8+616.27/8)^2}{\dfrac{(31.93/8)^2}{7}+\dfrac{(616.27/8)^
 <section id="choosing-between-them-check-variance-homogeneity-formally" class="level2">
 <h2 class="anchored" data-anchor-id="choosing-between-them-check-variance-homogeneity-formally">Choosing between them: check variance homogeneity formally</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs)          <span class="co"># F-test (sensitive to non-normality)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs)          <span class="co"># F-test (sensitive to non-normality)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  F test to compare two variances
@@ -1060,7 +1034,7 @@ df_{Welch}=\frac{(31.93/8+616.27/8)^2}{\dfrac{(31.93/8)^2}{7}+\dfrac{(616.27/8)^
 #&gt; ratio of variances 
 #&gt;              1.052</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs)         <span class="co"># Levene's test (robust to non-normality)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs)         <span class="co"># Levene's test (robust to non-normality)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Levene's Test for Homogeneity of Variance (center = median)
 #&gt;         Df F value Pr(&gt;F)
@@ -1107,12 +1081,6 @@ z=\frac{U-\mu_U}{\sigma_U}, \qquad \mu_U=\frac{n_1n_2}{2}, \qquad \sigma_U=\sqrt
 <h1>Manual (Hand) Calculation of the Mann-Whitney U Test</h1>
 <p>We draw reproducible random subsamples of <span class="math inline">\(n=8\)</span> men from each CHD-event group (restricted to those with complete cholesterol) and compare <strong>total cholesterol</strong> — a variable we already know is right-skewed, with the CHD-event group additionally containing a genuine extreme outlier (<span class="math inline">\(645\)</span> mg/dL, the maximum value in the entire cohort), making this a strong case for a rank-based test.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">222</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> wcgs[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"Yes"</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol), <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"chol"</span>)]</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> wcgs[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"No"</span>  <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol), <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"chol"</span>)]</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sY <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Y[<span class="fu">sample</span>(<span class="fu">nrow</span>(Y), <span class="dv">8</span>), ])</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>sN <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(N[<span class="fu">sample</span>(<span class="fu">nrow</span>(N), <span class="dv">8</span>), ])</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sY, <span class="at">caption =</span> <span class="st">"CHD = Yes subsample (n = 8)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>CHD = Yes subsample (n = 8)</caption>
@@ -1158,7 +1126,6 @@ z=\frac{U-\mu_U}{\sigma_U}, \qquad \mu_U=\frac{n_1n_2}{2}, \qquad \sigma_U=\sqrt
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sN, <span class="at">caption =</span> <span class="st">"CHD = No subsample (n = 8)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>CHD = No subsample (n = 8)</caption>
@@ -1209,15 +1176,6 @@ z=\frac{U-\mu_U}{\sigma_U}, \qquad \mu_U=\frac{n_1n_2}{2}, \qquad \sigma_U=\sqrt
 <h2 class="anchored" data-anchor-id="step-1-pool-rank-and-tabulate">Step 1: Pool, rank, and tabulate</h2>
 <p>Note the value <span class="math inline">\(220\)</span> occurs twice (both in the “Yes” group), so both receive the average rank <span class="math inline">\((5+6)/2=5.5\)</span>.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> sY<span class="sc">$</span>chol; g2 <span class="ot">&lt;-</span> sN<span class="sc">$</span>chol</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> <span class="fu">length</span>(g1); n2 <span class="ot">&lt;-</span> <span class="fu">length</span>(g2)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>allvals <span class="ot">&lt;-</span> <span class="fu">c</span>(g1, g2)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>grp <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Yes"</span>, n1), <span class="fu">rep</span>(<span class="st">"No"</span>, n2))</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>rk  <span class="ot">&lt;-</span> <span class="fu">rank</span>(allvals)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">chol =</span> allvals, <span class="at">group =</span> grp, <span class="at">rank =</span> rk)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> tab[<span class="fu">order</span>(tab<span class="sc">$</span>chol), ]</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tab, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">caption =</span> <span class="st">"Combined, ranked cholesterol values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Combined, ranked cholesterol values</caption>
@@ -1317,10 +1275,6 @@ z=\frac{U-\mu_U}{\sigma_U}, \qquad \mu_U=\frac{n_1n_2}{2}, \qquad \sigma_U=\sqrt
 <section id="step-2-sum-the-ranks-in-each-group" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-sum-the-ranks-in-each-group">Step 2: Sum the ranks in each group</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>R1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(rk[grp <span class="sc">==</span> <span class="st">"Yes"</span>])</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>R2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(rk[grp <span class="sc">==</span> <span class="st">"No"</span>])</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">Group =</span> <span class="fu">c</span>(<span class="st">"Yes"</span>,<span class="st">"No"</span>), <span class="at">Rank_sum =</span> <span class="fu">c</span>(R1,R2),</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">Total =</span> R1 <span class="sc">+</span> R2, <span class="at">Expected =</span> (n1<span class="sc">+</span>n2)<span class="sc">*</span>(n1<span class="sc">+</span>n2<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;   Group Rank_sum Total Expected
 #&gt; 1   Yes       79   136      136
@@ -1355,7 +1309,7 @@ U_1=R_1-\frac{n_1(n_1+1)}{2}=79-36=43, \qquad U_2=R_2-\frac{n_2(n_2+1)}{2}=57-36
 <section id="step-5-verify-against-r" class="level2">
 <h2 class="anchored" data-anchor-id="step-5-verify-against-r">Step 5: Verify against R</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(g1, g2)                       <span class="co"># default: continuity-corrected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(g1, g2)                       <span class="co"># default: continuity-corrected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Wilcoxon rank sum test with continuity correction
@@ -1364,7 +1318,7 @@ U_1=R_1-\frac{n_1(n_1+1)}{2}=79-36=43, \qquad U_2=R_2-\frac{n_2(n_2+1)}{2}=57-36
 #&gt; W = 43, p-value = 0.3
 #&gt; alternative hypothesis: true location shift is not equal to 0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(g1, g2, <span class="at">correct =</span> <span class="cn">FALSE</span>)      <span class="co"># matches the hand normal-approximation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(g1, g2, <span class="at">correct =</span> <span class="cn">FALSE</span>)      <span class="co"># matches the hand normal-approximation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Wilcoxon rank sum test
@@ -1383,10 +1337,10 @@ U_1=R_1-\frac{n_1(n_1+1)}{2}=79-36=43, \qquad U_2=R_2-\frac{n_2(n_2+1)}{2}=57-36
 <section id="comparison-1-weight-by-behaviour-pattern-dibpat-the-equal-variance-case" class="level2">
 <h2 class="anchored" data-anchor-id="comparison-1-weight-by-behaviour-pattern-dibpat-the-equal-variance-case">Comparison 1: Weight by behaviour pattern (<code>dibpat</code>) — the “equal-variance” case</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> weight, <span class="at">fill =</span> dibpat)) <span class="sc">+</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Weight (lb)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill =</span> <span class="st">"Behaviour pattern"</span>) <span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> weight, <span class="at">fill =</span> dibpat)) <span class="sc">+</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Weight (lb)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill =</span> <span class="st">"Behaviour pattern"</span>) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-weight-normcheck" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1401,7 +1355,7 @@ Figure&nbsp;27.1: Weight distributions by behaviour pattern — both reasonably 
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)   <span class="co"># Student's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)   <span class="co"># Student's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Two Sample t-test
@@ -1415,7 +1369,7 @@ Figure&nbsp;27.1: Weight distributions by behaviour pattern — both reasonably 
 #&gt; mean in group Type A mean in group Type B 
 #&gt;                170.8                169.0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)  <span class="co"># Welch's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(weight <span class="sc">~</span> dibpat, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)  <span class="co"># Welch's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Welch Two Sample t-test
@@ -1435,10 +1389,10 @@ Figure&nbsp;27.1: Weight distributions by behaviour pattern — both reasonably 
 <section id="comparison-2-cholesterol-by-chd-event-status-chd69-the-unequal-variance-skewed-case" class="level2">
 <h2 class="anchored" data-anchor-id="comparison-2-cholesterol-by-chd-event-status-chd69-the-unequal-variance-skewed-case">Comparison 2: Cholesterol by CHD event status (<code>chd69</code>) — the “unequal-variance, skewed” case</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> chd69, <span class="at">y =</span> chol, <span class="at">fill =</span> chd69)) <span class="sc">+</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"CHD event by 1969"</span>, <span class="at">y =</span> <span class="st">"Cholesterol (mg/dL)"</span>) <span class="sc">+</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(<span class="at">x =</span> chd69, <span class="at">y =</span> chol, <span class="at">fill =</span> chd69)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"CHD event by 1969"</span>, <span class="at">y =</span> <span class="st">"Cholesterol (mg/dL)"</span>) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-chol-box" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1453,7 +1407,7 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  F test to compare two variances
@@ -1467,14 +1421,14 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 #&gt; ratio of variances 
 #&gt;             0.7305</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Levene's Test for Homogeneity of Variance (center = median)
 #&gt;         Df F value Pr(&gt;F)
 #&gt; group    1    1.41   0.24
 #&gt;       3140</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"Yes"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"Yes"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Shapiro-Wilk normality test
@@ -1482,7 +1436,7 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 #&gt; data:  wcgs$chol[wcgs$chd69 == "Yes"]
 #&gt; W = 0.88, p-value = 1e-13</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"No"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol[wcgs<span class="sc">$</span>chd69 <span class="sc">==</span> <span class="st">"No"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Shapiro-Wilk normality test
@@ -1493,7 +1447,7 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 </div>
 <p>Here the <span class="math inline">\(F\)</span>-test suggests unequal variances (<span class="math inline">\(p&lt;0.001\)</span>), while Levene’s test (more robust to the non-normality also confirmed by both Shapiro-Wilk tests) does not reach significance (<span class="math inline">\(p=0.24\)</span>) — a useful reminder that the classical <span class="math inline">\(F\)</span>-test for variances is itself sensitive to non-normality, and Levene’s test is generally the more trustworthy diagnostic when normality is in doubt. Given the clear skew and an extreme outlier in the CHD = Yes group, this is a case for reporting <strong>both</strong> Welch’s test and a nonparametric test.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)   <span class="co"># Student's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)   <span class="co"># Student's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Two Sample t-test
@@ -1507,7 +1461,7 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 #&gt;  mean in group No mean in group Yes 
 #&gt;             224.3             250.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)  <span class="co"># Welch's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)  <span class="co"># Welch's</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Welch Two Sample t-test
@@ -1521,7 +1475,7 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 #&gt;  mean in group No mean in group Yes 
 #&gt;             224.3             250.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(chol <span class="sc">~</span> chd69, <span class="at">data =</span> wcgs, <span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Wilcoxon rank sum test with continuity correction
@@ -1541,28 +1495,28 @@ Figure&nbsp;27.2: Cholesterol by CHD event status, showing greater spread, right
 <section id="summary-table-across-several-variable-pairs" class="level2">
 <h2 class="anchored" data-anchor-id="summary-table-across-several-variable-pairs">Summary table across several variable pairs</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>pairs_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"weight"</span>, <span class="at">group =</span> <span class="st">"dibpat"</span>),</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"sbp"</span>,    <span class="at">group =</span> <span class="st">"dibpat"</span>),</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"chol"</span>,   <span class="at">group =</span> <span class="st">"chd69"</span>),</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"sbp"</span>,    <span class="at">group =</span> <span class="st">"chd69"</span>),</span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"weight"</span>, <span class="at">group =</span> <span class="st">"smoke"</span>)</span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(pairs_list, <span class="cf">function</span>(p) {</span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  f  <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(p<span class="sc">$</span>outcome, <span class="st">"~"</span>, p<span class="sc">$</span>group))</span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  d  <span class="ot">&lt;-</span> wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs[[p<span class="sc">$</span>outcome]]), ]</span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  st <span class="ot">&lt;-</span> <span class="fu">t.test</span>(f, <span class="at">data =</span> d, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>  we <span class="ot">&lt;-</span> <span class="fu">t.test</span>(f, <span class="at">data =</span> d, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>  mw <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(f, <span class="at">data =</span> d)</span>
-<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Outcome =</span> p<span class="sc">$</span>outcome, <span class="at">Group =</span> p<span class="sc">$</span>group,</span>
-<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">Student_t =</span> <span class="fu">round</span>(<span class="fu">unname</span>(st<span class="sc">$</span>statistic), <span class="dv">2</span>), <span class="at">Student_df =</span> <span class="fu">round</span>(<span class="fu">unname</span>(st<span class="sc">$</span>parameter),<span class="dv">1</span>),</span>
-<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">Student_p =</span> <span class="fu">signif</span>(st<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
-<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_t =</span> <span class="fu">round</span>(<span class="fu">unname</span>(we<span class="sc">$</span>statistic), <span class="dv">2</span>), <span class="at">Welch_df =</span> <span class="fu">round</span>(<span class="fu">unname</span>(we<span class="sc">$</span>parameter), <span class="dv">1</span>),</span>
-<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_p =</span> <span class="fu">signif</span>(we<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
-<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>             <span class="at">MannWhitney_W =</span> <span class="fu">unname</span>(mw<span class="sc">$</span>statistic), <span class="at">MW_p =</span> <span class="fu">signif</span>(mw<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
-<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>pairs_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"weight"</span>, <span class="at">group =</span> <span class="st">"dibpat"</span>),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"sbp"</span>,    <span class="at">group =</span> <span class="st">"dibpat"</span>),</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"chol"</span>,   <span class="at">group =</span> <span class="st">"chd69"</span>),</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"sbp"</span>,    <span class="at">group =</span> <span class="st">"chd69"</span>),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">outcome =</span> <span class="st">"weight"</span>, <span class="at">group =</span> <span class="st">"smoke"</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(pairs_list, <span class="cf">function</span>(p) {</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  f  <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(p<span class="sc">$</span>outcome, <span class="st">"~"</span>, p<span class="sc">$</span>group))</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  d  <span class="ot">&lt;-</span> wcgs[<span class="sc">!</span><span class="fu">is.na</span>(wcgs[[p<span class="sc">$</span>outcome]]), ]</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  st <span class="ot">&lt;-</span> <span class="fu">t.test</span>(f, <span class="at">data =</span> d, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  we <span class="ot">&lt;-</span> <span class="fu">t.test</span>(f, <span class="at">data =</span> d, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  mw <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(f, <span class="at">data =</span> d)</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Outcome =</span> p<span class="sc">$</span>outcome, <span class="at">Group =</span> p<span class="sc">$</span>group,</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">Student_t =</span> <span class="fu">round</span>(<span class="fu">unname</span>(st<span class="sc">$</span>statistic), <span class="dv">2</span>), <span class="at">Student_df =</span> <span class="fu">round</span>(<span class="fu">unname</span>(st<span class="sc">$</span>parameter),<span class="dv">1</span>),</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">Student_p =</span> <span class="fu">signif</span>(st<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_t =</span> <span class="fu">round</span>(<span class="fu">unname</span>(we<span class="sc">$</span>statistic), <span class="dv">2</span>), <span class="at">Welch_df =</span> <span class="fu">round</span>(<span class="fu">unname</span>(we<span class="sc">$</span>parameter), <span class="dv">1</span>),</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">Welch_p =</span> <span class="fu">signif</span>(we<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>             <span class="at">MannWhitney_W =</span> <span class="fu">unname</span>(mw<span class="sc">$</span>statistic), <span class="at">MW_p =</span> <span class="fu">signif</span>(mw<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div id="tbl-summary-twogroup" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-summary-twogroup-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">

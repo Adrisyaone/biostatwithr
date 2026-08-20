@@ -564,7 +564,7 @@
     "href": "Section2/12_2_bivariate.html#step-1-compute-the-sample-mean-and-standard-deviation",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 1: Compute the sample mean and standard deviation",
-    "text": "Step 1: Compute the sample mean and standard deviation\n\nx    &lt;- sub$height\nn    &lt;- length(x)\nmu0  &lt;- 69.0\nxbar &lt;- mean(x)\ns    &lt;- sd(x)\nse   &lt;- s / sqrt(n)\n\ndata.frame(n = n, mean = xbar, sd = s, se = se)\n\n#&gt;    n mean    sd     se\n#&gt; 1 10 69.4 2.836 0.8969\n\n\n\\[\n\\bar x = \\frac{\\sum x_i}{n} = \\frac{694}{10} = 69.4, \\qquad\ns = \\sqrt{\\frac{\\sum(x_i-\\bar x)^2}{n-1}} = \\sqrt{\\frac{72.4}{9}} = 2.836\n\\]\n\\[\nSE(\\bar x) = \\frac{s}{\\sqrt n} = \\frac{2.836}{\\sqrt{10}} = 0.897\n\\]",
+    "text": "Step 1: Compute the sample mean and standard deviation\n\n\n#&gt;    n mean       sd        se\n#&gt; 1 10 69.4 2.836273 0.8969083\n\n\n\\[\n\\bar x = \\frac{\\sum x_i}{n} = \\frac{694}{10} = 69.4, \\qquad\ns = \\sqrt{\\frac{\\sum(x_i-\\bar x)^2}{n-1}} = \\sqrt{\\frac{72.4}{9}} = 2.836\n\\]\n\\[\nSE(\\bar x) = \\frac{s}{\\sqrt n} = \\frac{2.836}{\\sqrt{10}} = 0.897\n\\]",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -575,7 +575,7 @@
     "href": "Section2/12_2_bivariate.html#step-2-compute-the-test-statistic",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 2: Compute the test statistic",
-    "text": "Step 2: Compute the test statistic\n\\[\nt = \\frac{\\bar x-\\mu_0}{SE(\\bar x)} = \\frac{69.4-69.0}{0.897} = \\frac{0.4}{0.897}\n\\]\n\nt_stat &lt;- (xbar - mu0) / se\ndf     &lt;- n - 1\np_val  &lt;- 2 * pt(-abs(t_stat), df = df)\ndata.frame(t = t_stat, df = df, p_value = p_val)\n\n#&gt;       t df p_value\n#&gt; 1 0.446  9  0.6662\n\n\nWith \\(t = 0.446\\) on \\(9\\) df, \\(p = 0.666\\): we fail to reject \\(H_0\\) — this small sample provides no evidence that mean height differs from \\(69.0\\) inches.",
+    "text": "Step 2: Compute the test statistic\n\\[\nt = \\frac{\\bar x-\\mu_0}{SE(\\bar x)} = \\frac{69.4-69.0}{0.897} = \\frac{0.4}{0.897}\n\\]\n\n\n#&gt;           t df   p_value\n#&gt; 1 0.4459765  9 0.6661501\n\n\nWith \\(t = 0.446\\) on \\(9\\) df, \\(p = 0.666\\): we fail to reject \\(H_0\\) — this small sample provides no evidence that mean height differs from \\(69.0\\) inches.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -586,7 +586,7 @@
     "href": "Section2/12_2_bivariate.html#step-3-95-confidence-interval",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 3: 95% confidence interval",
-    "text": "Step 3: 95% confidence interval\n\\[\n\\bar x \\pm t_{(0.975,\\,9)}\\times SE(\\bar x) = 69.4 \\pm 2.262 \\times 0.897\n\\]\n\ntcrit &lt;- qt(0.975, df = df)\nci    &lt;- xbar + c(-1, 1) * tcrit * se\ndata.frame(t_critical = tcrit, lower = ci[1], upper = ci[2])\n\n#&gt;   t_critical lower upper\n#&gt; 1      2.262 67.37 71.43",
+    "text": "Step 3: 95% confidence interval\n\\[\n\\bar x \\pm t_{(0.975,\\,9)}\\times SE(\\bar x) = 69.4 \\pm 2.262 \\times 0.897\n\\]\n\n\n#&gt;   t_critical    lower    upper\n#&gt; 1   2.262157 67.37105 71.42895",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -641,7 +641,7 @@
     "href": "Section2/12_2_bivariate.html#step-1-compute-differences-rank-absolute-differences-reattach-sign",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 1: Compute differences, rank absolute differences, reattach sign",
-    "text": "Step 1: Compute differences, rank absolute differences, reattach sign\nNote subjects 3 and 10 are tied at \\(|d| = 5\\) (chol \\(=205\\), \\(d=5\\)): both receive the average rank \\((1+2)/2 = 1.5\\).\n\ncx  &lt;- sub2$chol\nmu0c &lt;- 200\nd    &lt;- cx - mu0c\nabsd &lt;- abs(d)\nrk   &lt;- rank(absd)\nsigned_rk &lt;- ifelse(d &gt; 0, rk, -rk)\n\ntab &lt;- data.frame(id = sub2$id, chol = cx, d = d, abs_d = absd,\n                   rank = rk, signed_rank = signed_rk)\nkable(tab, col.names = c(\"ID\",\"Cholesterol\",\"$d=x-200$\",\"$\\\\lvert d\\\\rvert$\",\"Rank of $\\\\lvert d\\\\rvert$\",\"Signed rank\"))\n\n\n\n\n\n\n\n\n\n\n\n\nID\nCholesterol\n\\(d=x-200\\)\n\\(\\lvert d\\rvert\\)\nRank of \\(\\lvert d\\rvert\\)\nSigned rank\n\n\n\n\n3574\n279\n79\n79\n9.0\n9.0\n\n\n12432\n288\n88\n88\n10.0\n10.0\n\n\n3562\n205\n5\n5\n1.5\n1.5\n\n\n2242\n212\n12\n12\n3.0\n3.0\n\n\n12334\n164\n-36\n36\n7.0\n-7.0\n\n\n16026\n230\n30\n30\n6.0\n6.0\n\n\n3711\n175\n-25\n25\n4.0\n-4.0\n\n\n3069\n241\n41\n41\n8.0\n8.0\n\n\n3739\n228\n28\n28\n5.0\n5.0\n\n\n3281\n205\n5\n5\n1.5\n1.5",
+    "text": "Step 1: Compute differences, rank absolute differences, reattach sign\nNote subjects 3 and 10 are tied at \\(|d| = 5\\) (chol \\(=205\\), \\(d=5\\)): both receive the average rank \\((1+2)/2 = 1.5\\).\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nCholesterol\n\\(d=x-200\\)\n\\(\\lvert d\\rvert\\)\nRank of \\(\\lvert d\\rvert\\)\nSigned rank\n\n\n\n\n3574\n279\n79\n79\n9.0\n9.0\n\n\n12432\n288\n88\n88\n10.0\n10.0\n\n\n3562\n205\n5\n5\n1.5\n1.5\n\n\n2242\n212\n12\n12\n3.0\n3.0\n\n\n12334\n164\n-36\n36\n7.0\n-7.0\n\n\n16026\n230\n30\n30\n6.0\n6.0\n\n\n3711\n175\n-25\n25\n4.0\n-4.0\n\n\n3069\n241\n41\n41\n8.0\n8.0\n\n\n3739\n228\n28\n28\n5.0\n5.0\n\n\n3281\n205\n5\n5\n1.5\n1.5",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -652,7 +652,7 @@
     "href": "Section2/12_2_bivariate.html#step-2-sum-the-positive-and-negative-signed-ranks",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 2: Sum the positive and negative signed ranks",
-    "text": "Step 2: Sum the positive and negative signed ranks\n\nWpos &lt;- sum(rk[d &gt; 0])\nWneg &lt;- sum(rk[d &lt; 0])\nn2   &lt;- length(cx)\ndata.frame(`W+` = Wpos, `W-` = Wneg, `sum (check)` = Wpos + Wneg,\n           `expected n(n+1)/2` = n2 * (n2 + 1) / 2, check.names = FALSE)\n\n#&gt;   W+ W- sum (check) expected n(n+1)/2\n#&gt; 1 44 11          55                55\n\n\n\\(W^+ = 44\\), \\(W^- = 11\\); the two sums correctly add to \\(n(n+1)/2 = 55\\). Using the min-statistic convention, \\(W = \\min(44,11) = 11\\).",
+    "text": "Step 2: Sum the positive and negative signed ranks\n\n\n#&gt;   W+ W- sum (check) expected n(n+1)/2\n#&gt; 1 44 11          55                55\n\n\n\\(W^+ = 44\\), \\(W^- = 11\\); the two sums correctly add to \\(n(n+1)/2 = 55\\). Using the min-statistic convention, \\(W = \\min(44,11) = 11\\).",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -663,7 +663,7 @@
     "href": "Section2/12_2_bivariate.html#step-3-normal-approximation-since-n-is-small-this-is-illustrative-r-uses-an-exacttie-adjusted-method-by-default",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 3: Normal approximation (since \\(n\\) is small, this is illustrative; R uses an exact/tie-adjusted method by default)",
-    "text": "Step 3: Normal approximation (since \\(n\\) is small, this is illustrative; R uses an exact/tie-adjusted method by default)\n\\[\n\\mu_W = \\frac{n(n+1)}{4} = \\frac{10\\times11}{4}=27.5,\n\\qquad\n\\sigma_W = \\sqrt{\\frac{n(n+1)(2n+1)}{24}} = \\sqrt{\\frac{10\\times11\\times21}{24}} = \\sqrt{96.25}=9.811\n\\]\n\\[\nz = \\frac{W-\\mu_W}{\\sigma_W} = \\frac{11-27.5}{9.811}\n\\]\n\nmu_W    &lt;- n2 * (n2 + 1) / 4\nsigma_W &lt;- sqrt(n2 * (n2 + 1) * (2 * n2 + 1) / 24)\nW       &lt;- min(Wpos, Wneg)\nz_manual &lt;- (W - mu_W) / sigma_W\np_manual &lt;- 2 * pnorm(-abs(z_manual))\ndata.frame(mu_W, sigma_W, W, z = z_manual, p_value = p_manual)\n\n#&gt;   mu_W sigma_W  W      z p_value\n#&gt; 1 27.5   9.811 11 -1.682  0.0926\n\n\nBy hand (uncorrected normal approximation): \\(z=-1.68\\), two-sided \\(p \\approx 0.093\\) — a borderline result, not significant at the conventional \\(5\\%\\) level for this small subsample.",
+    "text": "Step 3: Normal approximation (since \\(n\\) is small, this is illustrative; R uses an exact/tie-adjusted method by default)\n\\[\n\\mu_W = \\frac{n(n+1)}{4} = \\frac{10\\times11}{4}=27.5,\n\\qquad\n\\sigma_W = \\sqrt{\\frac{n(n+1)(2n+1)}{24}} = \\sqrt{\\frac{10\\times11\\times21}{24}} = \\sqrt{96.25}=9.811\n\\]\n\\[\nz = \\frac{W-\\mu_W}{\\sigma_W} = \\frac{11-27.5}{9.811}\n\\]\n\n\n#&gt;   mu_W  sigma_W  W         z   p_value\n#&gt; 1 27.5 9.810708 11 -1.681836 0.0926007\n\n\nBy hand (uncorrected normal approximation): \\(z=-1.68\\), two-sided \\(p \\approx 0.093\\) — a borderline result, not significant at the conventional \\(5\\%\\) level for this small subsample.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -674,7 +674,7 @@
     "href": "Section2/12_2_bivariate.html#step-4-verify-against-rs-built-in-function-1",
     "title": "Comparing a Sample Mean to a Fixed Value",
     "section": "Step 4: Verify against R’s built-in function",
-    "text": "Step 4: Verify against R’s built-in function\n\nwilcox.test(cx, mu = mu0c)                       # default: continuity-corrected normal approx (ties present)\n\n#&gt; \n#&gt;  Wilcoxon signed rank test with continuity correction\n#&gt; \n#&gt; data:  cx\n#&gt; V = 44, p-value = 0.1\n#&gt; alternative hypothesis: true location is not equal to 200\n\nwilcox.test(cx, mu = mu0c, correct = FALSE)       # without continuity correction\n\n#&gt; \n#&gt;  Wilcoxon signed rank test\n#&gt; \n#&gt; data:  cx\n#&gt; V = 44, p-value = 0.09\n#&gt; alternative hypothesis: true location is not equal to 200\n\n\nR reports \\(V = 44\\) — this is simply \\(W^+\\), the sum of the positive signed ranks, which is R’s chosen statistic (equivalent information to our \\(W=\\min(W^+,W^-)=11\\)). With the continuity correction, \\(p=0.103\\); without it, \\(p=0.092\\), matching our hand calculation closely (the tiny remaining difference is R’s additional correction to \\(\\sigma_W\\) for the tied rank at \\(1.5\\)). Both the manual and software results reach the same conclusion: no significant evidence against \\(H_0\\) in this small subsample.",
+    "text": "Step 4: Verify against R’s built-in function\n\n\n#&gt; \n#&gt;  Wilcoxon signed rank test with continuity correction\n#&gt; \n#&gt; data:  cx\n#&gt; V = 44, p-value = 0.1027\n#&gt; alternative hypothesis: true location is not equal to 200\n\n\n#&gt; \n#&gt;  Wilcoxon signed rank test\n#&gt; \n#&gt; data:  cx\n#&gt; V = 44, p-value = 0.09239\n#&gt; alternative hypothesis: true location is not equal to 200\n\n\nR reports \\(V = 44\\) — this is simply \\(W^+\\), the sum of the positive signed ranks, which is R’s chosen statistic (equivalent information to our \\(W=\\min(W^+,W^-)=11\\)). With the continuity correction, \\(p=0.103\\); without it, \\(p=0.092\\), matching our hand calculation closely (the tiny remaining difference is R’s additional correction to \\(\\sigma_W\\) for the tied rank at \\(1.5\\)). Both the manual and software results reach the same conclusion: no significant evidence against \\(H_0\\) in this small subsample.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Comparing a Sample Mean to a Fixed Value</span>"
@@ -773,7 +773,7 @@
     "href": "Section2/12_3_bivariate.html#step-1-compute-each-groups-mean-and-variance",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 1: Compute each group’s mean and variance",
-    "text": "Step 1: Compute each group’s mean and variance\n\nx1 &lt;- sA$weight; x2 &lt;- sB$weight\nn1 &lt;- length(x1); n2 &lt;- length(x2)\nm1 &lt;- mean(x1); m2 &lt;- mean(x2)\nv1 &lt;- var(x1);  v2 &lt;- var(x2)\n\ndata.frame(Group = c(\"Type A\",\"Type B\"), n = c(n1,n2),\n           Mean = c(m1,m2), Variance = c(v1,v2), SD = c(sd(x1), sd(x2)))\n\n#&gt;    Group n  Mean Variance     SD\n#&gt; 1 Type A 8 166.8    31.93  5.651\n#&gt; 2 Type B 8 183.4   616.27 24.825",
+    "text": "Step 1: Compute each group’s mean and variance\n\n\n#&gt;    Group n    Mean  Variance        SD\n#&gt; 1 Type A 8 166.750  31.92857  5.650537\n#&gt; 2 Type B 8 183.375 616.26786 24.824743",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -795,7 +795,7 @@
     "href": "Section2/12_3_bivariate.html#step-3-compute-the-test-statistic",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 3: Compute the test statistic",
-    "text": "Step 3: Compute the test statistic\n\\[\nt=\\frac{\\bar x_1-\\bar x_2}{\\sqrt{s_p^2(1/n_1+1/n_2)}}=\\frac{166.75-183.375}{\\sqrt{324.10\\times(1/8+1/8)}}\n\\]\n\nse_pooled &lt;- sqrt(sp2 * (1/n1 + 1/n2))\nt_pooled  &lt;- (m1 - m2) / se_pooled\ndf_pooled &lt;- n1 + n2 - 2\np_pooled  &lt;- 2 * pt(-abs(t_pooled), df = df_pooled)\ndata.frame(SE = se_pooled, t = t_pooled, df = df_pooled, p_value = p_pooled)\n\n#&gt;      SE      t df p_value\n#&gt; 1 9.001 -1.847 14   0.086",
+    "text": "Step 3: Compute the test statistic\n\\[\nt=\\frac{\\bar x_1-\\bar x_2}{\\sqrt{s_p^2(1/n_1+1/n_2)}}=\\frac{166.75-183.375}{\\sqrt{324.10\\times(1/8+1/8)}}\n\\]\n\n\n#&gt;         SE         t df    p_value\n#&gt; 1 9.001364 -1.846942 14 0.08599752",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -839,7 +839,7 @@
     "href": "Section2/12_3_bivariate.html#step-1-compute-the-unpooled-standard-error",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 1: Compute the (unpooled) standard error",
-    "text": "Step 1: Compute the (unpooled) standard error\n\\[\nSE=\\sqrt{\\frac{31.93}{8}+\\frac{616.27}{8}}\n\\]\n\nse_welch &lt;- sqrt(v1/n1 + v2/n2)\nse_welch\n\n#&gt; [1] 9.001\n\n\nNotice that because \\(n_1=n_2=8\\) here, \\(SE_{Welch}=\\sqrt{(s_1^2+s_2^2)/n}\\) is numerically identical to \\(SE_{pooled}=\\sqrt{s_p^2 \\times 2/n}\\) from the Student’s test above — this is a general fact whenever the two sample sizes are equal. What differs between the two tests, in this equal-\\(n\\) case, is entirely the degrees of freedom.",
+    "text": "Step 1: Compute the (unpooled) standard error\n\\[\nSE=\\sqrt{\\frac{31.93}{8}+\\frac{616.27}{8}}\n\\]\n\n\n#&gt; [1] 9.001364\n\n\nNotice that because \\(n_1=n_2=8\\) here, \\(SE_{Welch}=\\sqrt{(s_1^2+s_2^2)/n}\\) is numerically identical to \\(SE_{pooled}=\\sqrt{s_p^2 \\times 2/n}\\) from the Student’s test above — this is a general fact whenever the two sample sizes are equal. What differs between the two tests, in this equal-\\(n\\) case, is entirely the degrees of freedom.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -850,7 +850,7 @@
     "href": "Section2/12_3_bivariate.html#step-2-welch-satterthwaite-degrees-of-freedom",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 2: Welch-Satterthwaite degrees of freedom",
-    "text": "Step 2: Welch-Satterthwaite degrees of freedom\n\\[\ndf_{Welch}=\\frac{(31.93/8+616.27/8)^2}{\\dfrac{(31.93/8)^2}{7}+\\dfrac{(616.27/8)^2}{7}}\n\\]\n\ndf_welch &lt;- (v1/n1 + v2/n2)^2 / ( (v1/n1)^2/(n1-1) + (v2/n2)^2/(n2-1) )\ndf_welch\n\n#&gt; [1] 7.723\n\n\nBecause Group B’s variance so dominates Group A’s in this subsample, \\(df_{Welch}=7.72\\) — pulled down close to \\(n_2-1=7\\) (Welch’s df is always between \\(\\min(n_1,n_2)-1\\) and \\(n_1+n_2-2\\); the more unequal the variances, the closer it moves to the smaller group’s own df).",
+    "text": "Step 2: Welch-Satterthwaite degrees of freedom\n\\[\ndf_{Welch}=\\frac{(31.93/8+616.27/8)^2}{\\dfrac{(31.93/8)^2}{7}+\\dfrac{(616.27/8)^2}{7}}\n\\]\n\n\n#&gt; [1] 7.723392\n\n\nBecause Group B’s variance so dominates Group A’s in this subsample, \\(df_{Welch}=7.72\\) — pulled down close to \\(n_2-1=7\\) (Welch’s df is always between \\(\\min(n_1,n_2)-1\\) and \\(n_1+n_2-2\\); the more unequal the variances, the closer it moves to the smaller group’s own df).",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -861,7 +861,7 @@
     "href": "Section2/12_3_bivariate.html#step-3-test-statistic-and-p-value",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 3: Test statistic and \\(p\\)-value",
-    "text": "Step 3: Test statistic and \\(p\\)-value\n\nt_welch &lt;- (m1 - m2) / se_welch\np_welch &lt;- 2 * pt(-abs(t_welch), df = df_welch)\ndata.frame(t = t_welch, df = df_welch, p_value = p_welch)\n\n#&gt;        t    df p_value\n#&gt; 1 -1.847 7.723  0.1033",
+    "text": "Step 3: Test statistic and \\(p\\)-value\n\n\n#&gt;           t       df   p_value\n#&gt; 1 -1.846942 7.723392 0.1032826",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -916,7 +916,7 @@
     "href": "Section2/12_3_bivariate.html#step-1-pool-rank-and-tabulate",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 1: Pool, rank, and tabulate",
-    "text": "Step 1: Pool, rank, and tabulate\nNote the value \\(220\\) occurs twice (both in the “Yes” group), so both receive the average rank \\((5+6)/2=5.5\\).\n\ng1 &lt;- sY$chol; g2 &lt;- sN$chol\nn1 &lt;- length(g1); n2 &lt;- length(g2)\nallvals &lt;- c(g1, g2)\ngrp &lt;- c(rep(\"Yes\", n1), rep(\"No\", n2))\nrk  &lt;- rank(allvals)\n\ntab &lt;- data.frame(chol = allvals, group = grp, rank = rk)\ntab &lt;- tab[order(tab$chol), ]\nkable(tab, row.names = FALSE, caption = \"Combined, ranked cholesterol values\")\n\n\nCombined, ranked cholesterol values\n\n\nchol\ngroup\nrank\n\n\n\n\n188\nNo\n1.0\n\n\n189\nNo\n2.0\n\n\n198\nNo\n3.0\n\n\n208\nYes\n4.0\n\n\n220\nYes\n5.5\n\n\n220\nYes\n5.5\n\n\n223\nNo\n7.0\n\n\n224\nNo\n8.0\n\n\n225\nNo\n9.0\n\n\n226\nYes\n10.0\n\n\n228\nYes\n11.0\n\n\n240\nYes\n12.0\n\n\n258\nNo\n13.0\n\n\n265\nNo\n14.0\n\n\n300\nYes\n15.0\n\n\n645\nYes\n16.0",
+    "text": "Step 1: Pool, rank, and tabulate\nNote the value \\(220\\) occurs twice (both in the “Yes” group), so both receive the average rank \\((5+6)/2=5.5\\).\n\n\n\nCombined, ranked cholesterol values\n\n\nchol\ngroup\nrank\n\n\n\n\n188\nNo\n1.0\n\n\n189\nNo\n2.0\n\n\n198\nNo\n3.0\n\n\n208\nYes\n4.0\n\n\n220\nYes\n5.5\n\n\n220\nYes\n5.5\n\n\n223\nNo\n7.0\n\n\n224\nNo\n8.0\n\n\n225\nNo\n9.0\n\n\n226\nYes\n10.0\n\n\n228\nYes\n11.0\n\n\n240\nYes\n12.0\n\n\n258\nNo\n13.0\n\n\n265\nNo\n14.0\n\n\n300\nYes\n15.0\n\n\n645\nYes\n16.0",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -927,7 +927,7 @@
     "href": "Section2/12_3_bivariate.html#step-2-sum-the-ranks-in-each-group",
     "title": "Comparing Two Independent Group Means",
     "section": "Step 2: Sum the ranks in each group",
-    "text": "Step 2: Sum the ranks in each group\n\nR1 &lt;- sum(rk[grp == \"Yes\"])\nR2 &lt;- sum(rk[grp == \"No\"])\ndata.frame(Group = c(\"Yes\",\"No\"), Rank_sum = c(R1,R2),\n           Total = R1 + R2, Expected = (n1+n2)*(n1+n2+1)/2)\n\n#&gt;   Group Rank_sum Total Expected\n#&gt; 1   Yes       79   136      136\n#&gt; 2    No       57   136      136",
+    "text": "Step 2: Sum the ranks in each group\n\n\n#&gt;   Group Rank_sum Total Expected\n#&gt; 1   Yes       79   136      136\n#&gt; 2    No       57   136      136",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>19</span>  <span class='chapter-title'>Comparing Two Independent Group Means</span>"
@@ -2346,7 +2346,7 @@
     "href": "Section2/12_1_Correlation.html#step-1-compute-the-deviation-table",
     "title": "Association Between Two Numeric Variables",
     "section": "Step 1: Compute the deviation table",
-    "text": "Step 1: Compute the deviation table\nFor each subject we need \\(x-\\bar x\\), \\(y-\\bar y\\), their product, and their squares.\n\nx &lt;- sub$x_height; y &lt;- sub$y_weight\nn &lt;- length(x)\nxbar &lt;- mean(x); ybar &lt;- mean(y)\n\ntab &lt;- data.frame(\n  id     = sub$id,\n  x      = x,\n  y      = y,\n  dx     = round(x - xbar, 2),\n  dy     = round(y - ybar, 2),\n  dx_dy  = round((x - xbar) * (y - ybar), 2),\n  dx2    = round((x - xbar)^2, 2),\n  dy2    = round((y - ybar)^2, 2)\n)\nkable(tab, col.names = c(\"ID\",\"x (height)\",\"y (weight)\",\"$x-\\\\bar x$\",\"$y-\\\\bar y$\",\n                          \"$(x-\\\\bar x)(y-\\\\bar y)$\",\"$(x-\\\\bar x)^2$\",\"$(y-\\\\bar y)^2$\"))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nx (height)\ny (weight)\n\\(x-\\bar x\\)\n\\(y-\\bar y\\)\n\\((x-\\bar x)(y-\\bar y)\\)\n\\((x-\\bar x)^2\\)\n\\((y-\\bar y)^2\\)\n\n\n\n\n11348\n74\n290\n4.6\n115\n529.0\n21.16\n13225\n\n\n22029\n69\n160\n-0.4\n-15\n6.0\n0.16\n225\n\n\n13114\n67\n165\n-2.4\n-10\n24.0\n5.76\n100\n\n\n11238\n72\n187\n2.6\n12\n31.2\n6.76\n144\n\n\n3777\n72\n160\n2.6\n-15\n-39.0\n6.76\n225\n\n\n10157\n67\n145\n-2.4\n-30\n72.0\n5.76\n900\n\n\n21192\n67\n155\n-2.4\n-20\n48.0\n5.76\n400\n\n\n21159\n68\n156\n-1.4\n-19\n26.6\n1.96\n361\n\n\n3944\n66\n145\n-3.4\n-30\n102.0\n11.56\n900\n\n\n3118\n72\n187\n2.6\n12\n31.2\n6.76\n144\n\n\n\n\ncat(\"Column sums:\\n\",\n    \" sum(x) =\", sum(x), \"  sum(y) =\", sum(y), \"\\n\",\n    \" sum[(x-xbar)(y-ybar)] =\", sum(tab$dx_dy), \"\\n\",\n    \" sum[(x-xbar)^2]       =\", sum(tab$dx2), \"\\n\",\n    \" sum[(y-ybar)^2]       =\", sum(tab$dy2), \"\\n\")\n\n#&gt; Column sums:\n#&gt;   sum(x) = 694   sum(y) = 1750 \n#&gt;   sum[(x-xbar)(y-ybar)] = 831 \n#&gt;   sum[(x-xbar)^2]       = 72.4 \n#&gt;   sum[(y-ybar)^2]       = 16624",
+    "text": "Step 1: Compute the deviation table\nFor each subject we need \\(x-\\bar x\\), \\(y-\\bar y\\), their product, and their squares.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nID\nx (height)\ny (weight)\n\\(x-\\bar x\\)\n\\(y-\\bar y\\)\n\\((x-\\bar x)(y-\\bar y)\\)\n\\((x-\\bar x)^2\\)\n\\((y-\\bar y)^2\\)\n\n\n\n\n11348\n74\n290\n4.6\n115\n529.0\n21.16\n13225\n\n\n22029\n69\n160\n-0.4\n-15\n6.0\n0.16\n225\n\n\n13114\n67\n165\n-2.4\n-10\n24.0\n5.76\n100\n\n\n11238\n72\n187\n2.6\n12\n31.2\n6.76\n144\n\n\n3777\n72\n160\n2.6\n-15\n-39.0\n6.76\n225\n\n\n10157\n67\n145\n-2.4\n-30\n72.0\n5.76\n900\n\n\n21192\n67\n155\n-2.4\n-20\n48.0\n5.76\n400\n\n\n21159\n68\n156\n-1.4\n-19\n26.6\n1.96\n361\n\n\n3944\n66\n145\n-3.4\n-30\n102.0\n11.56\n900\n\n\n3118\n72\n187\n2.6\n12\n31.2\n6.76\n144\n\n\n\n\n\n#&gt; Column sums:\n#&gt;   sum(x) = 694   sum(y) = 1750 \n#&gt;   sum[(x-xbar)(y-ybar)] = 831 \n#&gt;   sum[(x-xbar)^2]       = 72.4 \n#&gt;   sum[(y-ybar)^2]       = 16624",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Association Between Two Numeric Variables</span>"
@@ -2423,7 +2423,7 @@
     "href": "Section2/12_1_Correlation.html#step-1-rank-each-variable-separately",
     "title": "Association Between Two Numeric Variables",
     "section": "Step 1: Rank each variable separately",
-    "text": "Step 1: Rank each variable separately\nRanks are assigned from lowest (rank 1) to highest; tied values receive the average of the ranks they span. Notice that sbp = 120 occurs three times (ranks 3, 4, 5 → averaged to 4).\n\ncx &lt;- sub2$chol; cy &lt;- sub2$sbp\nrx &lt;- rank(cx); ry &lt;- rank(cy)\nd  &lt;- rx - ry\nd2 &lt;- d^2\n\ntab2 &lt;- data.frame(id = sub2$id, chol = cx, sbp = cy,\n                    rank_chol = rx, rank_sbp = ry, d = d, d2 = d2)\nkable(tab2, col.names = c(\"ID\",\"Cholesterol\",\"SBP\",\"Rank (chol)\",\"Rank (sbp)\",\"$d$\",\"$d^2$\"))\n\n\n\n\nID\nCholesterol\nSBP\nRank (chol)\nRank (sbp)\n\\(d\\)\n\\(d^2\\)\n\n\n\n\n3574\n279\n130\n9.0\n8\n1.0\n1.00\n\n\n12432\n288\n122\n10.0\n6\n4.0\n16.00\n\n\n3562\n205\n128\n3.5\n7\n-3.5\n12.25\n\n\n2242\n212\n152\n5.0\n10\n-5.0\n25.00\n\n\n12334\n164\n120\n1.0\n4\n-3.0\n9.00\n\n\n16026\n230\n138\n7.0\n9\n-2.0\n4.00\n\n\n3711\n175\n120\n2.0\n4\n-2.0\n4.00\n\n\n3069\n241\n120\n8.0\n4\n4.0\n16.00\n\n\n3739\n228\n110\n6.0\n1\n5.0\n25.00\n\n\n3281\n205\n116\n3.5\n2\n1.5\n2.25\n\n\n\n\ncat(\"Sum of d^2 =\", sum(d2), \"\\n\")\n\n#&gt; Sum of d^2 = 114.5",
+    "text": "Step 1: Rank each variable separately\nRanks are assigned from lowest (rank 1) to highest; tied values receive the average of the ranks they span. Notice that sbp = 120 occurs three times (ranks 3, 4, 5 → averaged to 4).\n\n\n\n\n\nID\nCholesterol\nSBP\nRank (chol)\nRank (sbp)\n\\(d\\)\n\\(d^2\\)\n\n\n\n\n3574\n279\n130\n9.0\n8\n1.0\n1.00\n\n\n12432\n288\n122\n10.0\n6\n4.0\n16.00\n\n\n3562\n205\n128\n3.5\n7\n-3.5\n12.25\n\n\n2242\n212\n152\n5.0\n10\n-5.0\n25.00\n\n\n12334\n164\n120\n1.0\n4\n-3.0\n9.00\n\n\n16026\n230\n138\n7.0\n9\n-2.0\n4.00\n\n\n3711\n175\n120\n2.0\n4\n-2.0\n4.00\n\n\n3069\n241\n120\n8.0\n4\n4.0\n16.00\n\n\n3739\n228\n110\n6.0\n1\n5.0\n25.00\n\n\n3281\n205\n116\n3.5\n2\n1.5\n2.25\n\n\n\n\n\n#&gt; Sum of d^2 = 114.5",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Association Between Two Numeric Variables</span>"
@@ -2434,7 +2434,7 @@
     "href": "Section2/12_1_Correlation.html#step-2-apply-the-shortcut-formula-ignoring-ties",
     "title": "Association Between Two Numeric Variables",
     "section": "Step 2: Apply the shortcut formula (ignoring ties)",
-    "text": "Step 2: Apply the shortcut formula (ignoring ties)\n\\[\nr_s \\approx 1-\\frac{6\\sum d_i^2}{n(n^2-1)} = 1-\\frac{6(114.5)}{10(100-1)} = 1-\\frac{687}{990}\n\\]\n\nn2 &lt;- length(cx)\nrho_shortcut &lt;- 1 - (6 * sum(d2)) / (n2 * (n2^2 - 1))\nrho_shortcut\n\n#&gt; [1] 0.3060606\n\n\nThis gives \\(r_s \\approx 0.306\\). However, because sbp contains tied values, this shortcut formula is only approximate.",
+    "text": "Step 2: Apply the shortcut formula (ignoring ties)\n\\[\nr_s \\approx 1-\\frac{6\\sum d_i^2}{n(n^2-1)} = 1-\\frac{6(114.5)}{10(100-1)} = 1-\\frac{687}{990}\n\\]\n\n\n#&gt; [1] 0.3060606\n\n\nThis gives \\(r_s \\approx 0.306\\). However, because sbp contains tied values, this shortcut formula is only approximate.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Association Between Two Numeric Variables</span>"
@@ -2445,7 +2445,7 @@
     "href": "Section2/12_1_Correlation.html#step-3-exact-value-pearsons-formula-applied-to-the-ranks",
     "title": "Association Between Two Numeric Variables",
     "section": "Step 3: Exact value: Pearson’s formula applied to the ranks",
-    "text": "Step 3: Exact value: Pearson’s formula applied to the ranks\n\nrho_exact &lt;- cor(rx, ry, method = \"pearson\")\nrho_exact\n\n#&gt; [1] 0.2953972\n\n\nThe tie-corrected (exact) value is \\(r_s = 0.295\\) — close to, but not identical to, the uncorrected shortcut (0.306). Rule of thumb: with any tied values, always use the Pearson-on-ranks method (or software) rather than the raw \\(d^2\\) shortcut.",
+    "text": "Step 3: Exact value: Pearson’s formula applied to the ranks\n\n\n#&gt; [1] 0.2953972\n\n\nThe tie-corrected (exact) value is \\(r_s = 0.295\\) — close to, but not identical to, the uncorrected shortcut (0.306). Rule of thumb: with any tied values, always use the Pearson-on-ranks method (or software) rather than the raw \\(d^2\\) shortcut.",
     "crumbs": [
       "Biostatistics",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Association Between Two Numeric Variables</span>"

@@ -818,11 +818,6 @@ r = \frac{e^{2z'}-1}{e^{2z'}+1}
 <h1>Manual (Hand) Calculation of Pearson <span class="math inline">\(r\)</span></h1>
 <p>We illustrate the arithmetic with a small, reproducible random sample of <span class="math inline">\(n=10\)</span> men drawn from the WCGS data, using <strong>height</strong> (inches) and <strong>weight</strong> (lb).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(wcgs)), <span class="dv">10</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sub <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(wcgs[idx, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"height"</span>, <span class="st">"weight"</span>)])</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(sub) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"x_height"</span>, <span class="st">"y_weight"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sub, <span class="at">caption =</span> <span class="st">"Random subsample (n = 10) used for the manual Pearson calculation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Random subsample (n = 10) used for the manual Pearson calculation</caption>
@@ -892,22 +887,6 @@ r = \frac{e^{2z'}-1}{e^{2z'}+1}
 <h2 class="anchored" data-anchor-id="step-1-compute-the-deviation-table">Step 1: Compute the deviation table</h2>
 <p>For each subject we need <span class="math inline">\(x-\bar x\)</span>, <span class="math inline">\(y-\bar y\)</span>, their product, and their squares.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> sub<span class="sc">$</span>x_height; y <span class="ot">&lt;-</span> sub<span class="sc">$</span>y_weight</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x); ybar <span class="ot">&lt;-</span> <span class="fu">mean</span>(y)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">id     =</span> sub<span class="sc">$</span>id,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x      =</span> x,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y      =</span> y,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">dx     =</span> <span class="fu">round</span>(x <span class="sc">-</span> xbar, <span class="dv">2</span>),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">dy     =</span> <span class="fu">round</span>(y <span class="sc">-</span> ybar, <span class="dv">2</span>),</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dx_dy  =</span> <span class="fu">round</span>((x <span class="sc">-</span> xbar) <span class="sc">*</span> (y <span class="sc">-</span> ybar), <span class="dv">2</span>),</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">dx2    =</span> <span class="fu">round</span>((x <span class="sc">-</span> xbar)<span class="sc">^</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">dy2    =</span> <span class="fu">round</span>((y <span class="sc">-</span> ybar)<span class="sc">^</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tab, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"ID"</span>,<span class="st">"x (height)"</span>,<span class="st">"y (weight)"</span>,<span class="st">"$x-</span><span class="sc">\\</span><span class="st">bar x$"</span>,<span class="st">"$y-</span><span class="sc">\\</span><span class="st">bar y$"</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"$(x-</span><span class="sc">\\</span><span class="st">bar x)(y-</span><span class="sc">\\</span><span class="st">bar y)$"</span>,<span class="st">"$(x-</span><span class="sc">\\</span><span class="st">bar x)^2$"</span>,<span class="st">"$(y-</span><span class="sc">\\</span><span class="st">bar y)^2$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -1036,11 +1015,6 @@ r = \frac{e^{2z'}-1}{e^{2z'}+1}
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Column sums:</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">" sum(x) ="</span>, <span class="fu">sum</span>(x), <span class="st">"  sum(y) ="</span>, <span class="fu">sum</span>(y), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">" sum[(x-xbar)(y-ybar)] ="</span>, <span class="fu">sum</span>(tab<span class="sc">$</span>dx_dy), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">" sum[(x-xbar)^2]       ="</span>, <span class="fu">sum</span>(tab<span class="sc">$</span>dx2), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">" sum[(y-ybar)^2]       ="</span>, <span class="fu">sum</span>(tab<span class="sc">$</span>dy2), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Column sums:
 #&gt;   sum(x) = 694   sum(y) = 1750 
@@ -1062,8 +1036,8 @@ r=\frac{\sum(x-\bar x)(y-\bar y)}{\sqrt{\sum(x-\bar x)^2 \sum(y-\bar y)^2}}
 =\frac{831.0}{1097.26}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r_manual <span class="ot">&lt;-</span> <span class="fu">sum</span>(tab<span class="sc">$</span>dx_dy) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(tab<span class="sc">$</span>dx2) <span class="sc">*</span> <span class="fu">sum</span>(tab<span class="sc">$</span>dy2))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>r_manual</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>r_manual <span class="ot">&lt;-</span> <span class="fu">sum</span>(tab<span class="sc">$</span>dx_dy) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(tab<span class="sc">$</span>dx2) <span class="sc">*</span> <span class="fu">sum</span>(tab<span class="sc">$</span>dy2))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>r_manual</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 0.7574675</code></pre>
 </div>
@@ -1072,9 +1046,9 @@ r=\frac{\sum(x-\bar x)(y-\bar y)}{\sqrt{\sum(x-\bar x)^2 \sum(y-\bar y)^2}}
 <section id="cross-check-with-the-computational-raw-score-formula" class="level3">
 <h3 class="anchored" data-anchor-id="cross-check-with-the-computational-raw-score-formula">Cross-check with the computational (raw-score) formula</h3>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Sx <span class="ot">&lt;-</span> <span class="fu">sum</span>(x); Sy <span class="ot">&lt;-</span> <span class="fu">sum</span>(y); Sxy <span class="ot">&lt;-</span> <span class="fu">sum</span>(x<span class="sc">*</span>y); Sx2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>); Sy2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(y<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>r_raw <span class="ot">&lt;-</span> (n<span class="sc">*</span>Sxy <span class="sc">-</span> Sx<span class="sc">*</span>Sy) <span class="sc">/</span> <span class="fu">sqrt</span>((n<span class="sc">*</span>Sx2 <span class="sc">-</span> Sx<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> (n<span class="sc">*</span>Sy2 <span class="sc">-</span> Sy<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(Sx, Sy, Sxy, Sx2, Sy2, r_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Sx <span class="ot">&lt;-</span> <span class="fu">sum</span>(x); Sy <span class="ot">&lt;-</span> <span class="fu">sum</span>(y); Sxy <span class="ot">&lt;-</span> <span class="fu">sum</span>(x<span class="sc">*</span>y); Sx2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>); Sy2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(y<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>r_raw <span class="ot">&lt;-</span> (n<span class="sc">*</span>Sxy <span class="sc">-</span> Sx<span class="sc">*</span>Sy) <span class="sc">/</span> <span class="fu">sqrt</span>((n<span class="sc">*</span>Sx2 <span class="sc">-</span> Sx<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> (n<span class="sc">*</span>Sy2 <span class="sc">-</span> Sy<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(Sx, Sy, Sxy, Sx2, Sy2, r_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    Sx   Sy    Sxy   Sx2    Sy2     r_raw
 #&gt; 1 694 1750 122281 48236 322874 0.7574675</code></pre>
@@ -1089,10 +1063,10 @@ r=\frac{\sum(x-\bar x)(y-\bar y)}{\sqrt{\sum(x-\bar x)^2 \sum(y-\bar y)^2}}
 t = r\sqrt{\frac{n-2}{1-r^2}} = 0.757\sqrt{\frac{8}{1-0.757^2}}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>t_manual  <span class="ot">&lt;-</span> r_manual <span class="sc">*</span> <span class="fu">sqrt</span>((n <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r_manual<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df_manual <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">2</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>p_manual  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_manual), <span class="at">df =</span> df_manual)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">t =</span> t_manual, <span class="at">df =</span> df_manual, <span class="at">p_value =</span> p_manual)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>t_manual  <span class="ot">&lt;-</span> r_manual <span class="sc">*</span> <span class="fu">sqrt</span>((n <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r_manual<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_manual <span class="ot">&lt;-</span> n <span class="sc">-</span> <span class="dv">2</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p_manual  <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_manual), <span class="at">df =</span> df_manual)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">t =</span> t_manual, <span class="at">df =</span> df_manual, <span class="at">p_value =</span> p_manual)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;         t df    p_value
 #&gt; 1 3.28156  8 0.01116178</code></pre>
@@ -1103,7 +1077,7 @@ t = r\sqrt{\frac{n-2}{1-r^2}} = 0.757\sqrt{\frac{8}{1-0.757^2}}
 <section id="step-4-verify-against-rs-built-in-function" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-verify-against-rs-built-in-function">Step 4: Verify against R’s built-in function</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(x, y, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(x, y, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Pearson's product-moment correlation
@@ -1157,10 +1131,6 @@ r_s = 1-\frac{6\sum_{i=1}^n d_i^2}{n(n^2-1)}, \qquad d_i = \operatorname{rank}(x
 <h1>Manual (Hand) Calculation of Spearman <span class="math inline">\(r_s\)</span></h1>
 <p>We again draw a reproducible random subsample of <span class="math inline">\(n=10\)</span> men (this time keeping only those with a recorded cholesterol value) and examine <strong>total cholesterol</strong> (<code>chol</code>, mg/dL) against <strong>systolic blood pressure</strong> (<code>sbp</code>, mmHg) — two variables that are typically right-skewed, making Spearman a more defensible choice than Pearson.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">321</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>idx2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(wcgs<span class="sc">$</span>chol)), <span class="dv">10</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>sub2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(wcgs[idx2, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"chol"</span>, <span class="st">"sbp"</span>)])</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sub2, <span class="at">caption =</span> <span class="st">"Random subsample (n = 10, complete cholesterol) used for the manual Spearman calculation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Random subsample (n = 10, complete cholesterol) used for the manual Spearman calculation</caption>
@@ -1230,14 +1200,6 @@ r_s = 1-\frac{6\sum_{i=1}^n d_i^2}{n(n^2-1)}, \qquad d_i = \operatorname{rank}(x
 <h2 class="anchored" data-anchor-id="step-1-rank-each-variable-separately">Step 1: Rank each variable separately</h2>
 <p>Ranks are assigned from lowest (rank 1) to highest; <strong>tied values receive the average of the ranks they span</strong>. Notice that <code>sbp</code> = 120 occurs three times (ranks 3, 4, 5 → averaged to 4).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cx <span class="ot">&lt;-</span> sub2<span class="sc">$</span>chol; cy <span class="ot">&lt;-</span> sub2<span class="sc">$</span>sbp</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>rx <span class="ot">&lt;-</span> <span class="fu">rank</span>(cx); ry <span class="ot">&lt;-</span> <span class="fu">rank</span>(cy)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>d  <span class="ot">&lt;-</span> rx <span class="sc">-</span> ry</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> d<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>tab2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">id =</span> sub2<span class="sc">$</span>id, <span class="at">chol =</span> cx, <span class="at">sbp =</span> cy,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rank_chol =</span> rx, <span class="at">rank_sbp =</span> ry, <span class="at">d =</span> d, <span class="at">d2 =</span> d2)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tab2, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"ID"</span>,<span class="st">"Cholesterol"</span>,<span class="st">"SBP"</span>,<span class="st">"Rank (chol)"</span>,<span class="st">"Rank (sbp)"</span>,<span class="st">"$d$"</span>,<span class="st">"$d^2$"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <thead>
@@ -1345,7 +1307,6 @@ r_s = 1-\frac{6\sum_{i=1}^n d_i^2}{n(n^2-1)}, \qquad d_i = \operatorname{rank}(x
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sum of d^2 ="</span>, <span class="fu">sum</span>(d2), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Sum of d^2 = 114.5</code></pre>
 </div>
@@ -1357,9 +1318,6 @@ r_s = 1-\frac{6\sum_{i=1}^n d_i^2}{n(n^2-1)}, \qquad d_i = \operatorname{rank}(x
 r_s \approx 1-\frac{6\sum d_i^2}{n(n^2-1)} = 1-\frac{6(114.5)}{10(100-1)} = 1-\frac{687}{990}
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">&lt;-</span> <span class="fu">length</span>(cx)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>rho_shortcut <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="dv">6</span> <span class="sc">*</span> <span class="fu">sum</span>(d2)) <span class="sc">/</span> (n2 <span class="sc">*</span> (n2<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> <span class="dv">1</span>))</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>rho_shortcut</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 0.3060606</code></pre>
 </div>
@@ -1369,8 +1327,6 @@ r_s \approx 1-\frac{6\sum d_i^2}{n(n^2-1)} = 1-\frac{6(114.5)}{10(100-1)} = 1-\f
 <section id="step-3-exact-value-pearsons-formula-applied-to-the-ranks" class="level2">
 <h2 class="anchored" data-anchor-id="step-3-exact-value-pearsons-formula-applied-to-the-ranks">Step 3: Exact value: Pearson’s formula applied to the ranks</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rho_exact <span class="ot">&lt;-</span> <span class="fu">cor</span>(rx, ry, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rho_exact</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 0.2953972</code></pre>
 </div>
@@ -1380,7 +1336,7 @@ r_s \approx 1-\frac{6\sum d_i^2}{n(n^2-1)} = 1-\frac{6(114.5)}{10(100-1)} = 1-\f
 <section id="step-4-verify-against-rs-built-in-function-1" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-verify-against-rs-built-in-function-1">Step 4: Verify against R’s built-in function</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(cx, cy, <span class="at">method =</span> <span class="st">"spearman"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(cx, cy, <span class="at">method =</span> <span class="st">"spearman"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Spearman's rank correlation rho
@@ -1403,22 +1359,22 @@ r_s \approx 1-\frac{6\sum d_i^2}{n(n^2-1)} = 1-\frac{6(114.5)}{10(100-1)} = 1-\f
 <h2 class="anchored" data-anchor-id="about-the-data">About the data</h2>
 <p>The <strong>Western Collaborative Group Study (WCGS)</strong> was a prospective cohort study of coronary heart disease (CHD) among middle-aged American men. The extract used here (<code>wcgs.xls</code>) contains <strong>3154</strong> subjects and the following key numeric variables:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>,<span class="st">"chd69"</span>,<span class="st">"behpat"</span>),</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Description =</span> <span class="fu">c</span>(</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Age (years)"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Height (inches)"</span>,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Weight (pounds)"</span>,</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Body mass index (kg/m$^2$)"</span>,</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Systolic blood pressure (mmHg)"</span>,</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Diastolic blood pressure (mmHg)"</span>,</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Total serum cholesterol (mg/dL)"</span>,</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Cigarettes smoked per day"</span>,</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Coronary heart disease event by end of follow-up (Yes/No)"</span>,</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Behaviour pattern (A1, A2, B3, B4)"</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>,<span class="st">"chd69"</span>,<span class="st">"behpat"</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Description =</span> <span class="fu">c</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Age (years)"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Height (inches)"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Weight (pounds)"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Body mass index (kg/m$^2$)"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Systolic blood pressure (mmHg)"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Diastolic blood pressure (mmHg)"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Total serum cholesterol (mg/dL)"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Cigarettes smoked per day"</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Coronary heart disease event by end of follow-up (Yes/No)"</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Behaviour pattern (A1, A2, B3, B4)"</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div id="tbl-dictionary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-dictionary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1485,12 +1441,12 @@ Table&nbsp;22.1: Selected WCGS variables used in this chapter
 <section id="step-1-import-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-import-the-data">Step 1: Import the data</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"wcgs.xls"</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>wcgs <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"wcgs.xls"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(wcgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wcgs[, <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wcgs[, <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;       age            height          weight         bmi             sbp       
 #&gt;  Min.   :39.00   Min.   :60.00   Min.   : 78   Min.   :11.19   Min.   : 98.0  
@@ -1513,17 +1469,17 @@ Table&nbsp;22.1: Selected WCGS variables used in this chapter
 </section>
 <section id="step-2-visualise-the-relationships-first" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-visualise-the-relationships-first">Step 2: Visualise the relationships first</h2>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(height, weight)) <span class="sc">+</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Height (in)"</span>, <span class="at">y =</span> <span class="st">"Weight (lb)"</span>) <span class="sc">+</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(chol, sbp)) <span class="sc">+</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">colour =</span> <span class="st">"darkorange3"</span>) <span class="sc">+</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Cholesterol (mg/dL)"</span>, <span class="at">y =</span> <span class="st">"SBP (mmHg)"</span>) <span class="sc">+</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(height, weight)) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Height (in)"</span>, <span class="at">y =</span> <span class="st">"Weight (lb)"</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(wcgs, <span class="fu">aes</span>(chol, sbp)) <span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">colour =</span> <span class="st">"darkorange3"</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Cholesterol (mg/dL)"</span>, <span class="at">y =</span> <span class="st">"SBP (mmHg)"</span>) <span class="sc">+</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div id="fig-scatter-two" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-scatter-two-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1562,10 +1518,10 @@ Figure&nbsp;22.1: Two candidate relationships: (left) height vs.&nbsp;weight —
 </section>
 <section id="step-3-check-the-normality-assumption-needed-for-pearson-inference" class="level2">
 <h2 class="anchored" data-anchor-id="step-3-check-the-normality-assumption-needed-for-pearson-inference">Step 3: Check the normality assumption (needed for Pearson inference)</h2>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>height, <span class="at">main =</span> <span class="st">"Height"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>height, <span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>weight, <span class="at">main =</span> <span class="st">"Weight"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>weight, <span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>chol,   <span class="at">main =</span> <span class="st">"Cholesterol"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>chol, <span class="at">col =</span> <span class="st">"red"</span>)</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>sbp,    <span class="at">main =</span> <span class="st">"SBP"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>sbp, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>height, <span class="at">main =</span> <span class="st">"Height"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>height, <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>weight, <span class="at">main =</span> <span class="st">"Weight"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>weight, <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>chol,   <span class="at">main =</span> <span class="st">"Cholesterol"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>chol, <span class="at">col =</span> <span class="st">"red"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(wcgs<span class="sc">$</span>sbp,    <span class="at">main =</span> <span class="st">"SBP"</span>); <span class="fu">qqline</span>(wcgs<span class="sc">$</span>sbp, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div id="fig-qq" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qq-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1628,7 +1584,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 </figure>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>height)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>height)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Shapiro-Wilk normality test
@@ -1636,7 +1592,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 #&gt; data:  wcgs$height
 #&gt; W = 0.98357, p-value &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(wcgs<span class="sc">$</span>chol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Shapiro-Wilk normality test
@@ -1650,7 +1606,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 <section id="step-4-pearson-correlation" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-pearson-correlation">Step 4: Pearson correlation</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>height, wcgs<span class="sc">$</span>weight, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>height, wcgs<span class="sc">$</span>weight, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Pearson's product-moment correlation
@@ -1667,7 +1623,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 </div>
 <p><strong>Interpretation:</strong> <span class="math inline">\(r = 0.533\)</span> (<span class="math inline">\(95\%\)</span> CI: <span class="math inline">\(0.507\)</span> to <span class="math inline">\(0.557\)</span>), <span class="math inline">\(t(3152) = 35.4\)</span>, <span class="math inline">\(p &lt; 0.001\)</span>. There is a <strong>moderate, highly statistically significant, positive linear association</strong> between height and weight: taller men tend to weigh more. <span class="math inline">\(r^2 = 0.284\)</span>, i.e., height linearly “explains” about <span class="math inline">\(28\%\)</span> of the variability in weight.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>sbp, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>sbp, <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Pearson's product-moment correlation
@@ -1687,7 +1643,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 <section id="step-5-spearman-correlation" class="level2">
 <h2 class="anchored" data-anchor-id="step-5-spearman-correlation">Step 5: Spearman correlation</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>sbp, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>chol, wcgs<span class="sc">$</span>sbp, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Spearman's rank correlation rho
@@ -1702,7 +1658,7 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 </div>
 <p><strong>Interpretation:</strong> <span class="math inline">\(r_s = 0.138\)</span>, <span class="math inline">\(p &lt; 0.001\)</span>. Because <span class="math inline">\(n\)</span> is large, even this weak monotonic association is statistically significant — a reminder that with large samples, statistical significance and practical/clinical importance are not the same thing. Note <code>exact = FALSE</code> is required here because <code>chol</code> contains tied values and is large, so R falls back on the asymptotic <span class="math inline">\(t\)</span>-approximation for the <span class="math inline">\(p\)</span>-value.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>height, wcgs<span class="sc">$</span>weight, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(wcgs<span class="sc">$</span>height, wcgs<span class="sc">$</span>weight, <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt;  Spearman's rank correlation rho
@@ -1721,9 +1677,9 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 <h2 class="anchored" data-anchor-id="step-6-a-correlation-matrix-and-correlation-plot">Step 6: A correlation matrix and correlation plot</h2>
 <p>It is often useful to examine several numeric variables at once.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">cor</span>(wcgs[, vars], <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(M, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"bmi"</span>,<span class="st">"sbp"</span>,<span class="st">"dbp"</span>,<span class="st">"chol"</span>,<span class="st">"ncigs"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">cor</span>(wcgs[, vars], <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(M, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;          age height weight   bmi  sbp   dbp  chol ncigs
 #&gt; age     1.00  -0.10  -0.03  0.03 0.17  0.14  0.09 -0.01
@@ -1735,10 +1691,10 @@ Figure&nbsp;22.2: Normal Q-Q plots: height and weight are close to normal; chole
 #&gt; chol    0.09  -0.09   0.01  0.07 0.12  0.13  1.00  0.10
 #&gt; ncigs  -0.01   0.01  -0.08 -0.11 0.03 -0.06  0.10  1.00</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(M, <span class="at">method =</span> <span class="st">"circle"</span>, <span class="at">type =</span> <span class="st">"upper"</span>, <span class="at">addCoef.col =</span> <span class="st">"black"</span>,</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.7</span>, <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="at">tl.srt =</span> <span class="dv">45</span>,</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"Pearson correlations, WCGS numeric variables"</span>,</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(M, <span class="at">method =</span> <span class="st">"circle"</span>, <span class="at">type =</span> <span class="st">"upper"</span>, <span class="at">addCoef.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">number.cex =</span> <span class="fl">0.7</span>, <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="at">tl.srt =</span> <span class="dv">45</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"Pearson correlations, WCGS numeric variables"</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-corrmat" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1753,9 +1709,9 @@ Figure&nbsp;22.3: Pearson correlation matrix of key WCGS numeric variables.
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">pairs.panels</span>(wcgs[, <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"sbp"</span>,<span class="st">"chol"</span>)],</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">hist.col =</span> <span class="st">"lightblue"</span>,</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">density =</span> <span class="cn">TRUE</span>, <span class="at">ellipses =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">pairs.panels</span>(wcgs[, <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"height"</span>,<span class="st">"weight"</span>,<span class="st">"sbp"</span>,<span class="st">"chol"</span>)],</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">hist.col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">density =</span> <span class="cn">TRUE</span>, <span class="at">ellipses =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-pairspanel" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1773,20 +1729,20 @@ Figure&nbsp;22.4: Pairwise scatterplots, distributions, and Pearson correlations
 <section id="step-7-summary-table-pearson-and-spearman-side-by-side" class="level2">
 <h2 class="anchored" data-anchor-id="step-7-summary-table-pearson-and-spearman-side-by-side">Step 7: Summary table, Pearson and Spearman side by side</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pairs_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"height"</span>,<span class="st">"weight"</span>), <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"sbp"</span>), <span class="fu">c</span>(<span class="st">"chol"</span>,<span class="st">"sbp"</span>), <span class="fu">c</span>(<span class="st">"bmi"</span>,<span class="st">"sbp"</span>))</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(pairs_list, <span class="cf">function</span>(p) {</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> wcgs[[p[<span class="dv">1</span>]]]; y <span class="ot">&lt;-</span> wcgs[[p[<span class="dv">2</span>]]]</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  ok <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(x, y)</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  pear <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x[ok], y[ok], <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  spea <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x[ok], y[ok], <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Variable_1 =</span> p[<span class="dv">1</span>], <span class="at">Variable_2 =</span> p[<span class="dv">2</span>], <span class="at">n =</span> <span class="fu">sum</span>(ok),</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">Pearson_r =</span> <span class="fu">round</span>(<span class="fu">unname</span>(pear<span class="sc">$</span>estimate), <span class="dv">3</span>),</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">Pearson_p =</span> <span class="fu">signif</span>(pear<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">Spearman_rs =</span> <span class="fu">round</span>(<span class="fu">unname</span>(spea<span class="sc">$</span>estimate), <span class="dv">3</span>),</span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">Spearman_p =</span> <span class="fu">signif</span>(spea<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>pairs_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"height"</span>,<span class="st">"weight"</span>), <span class="fu">c</span>(<span class="st">"age"</span>,<span class="st">"sbp"</span>), <span class="fu">c</span>(<span class="st">"chol"</span>,<span class="st">"sbp"</span>), <span class="fu">c</span>(<span class="st">"bmi"</span>,<span class="st">"sbp"</span>))</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(pairs_list, <span class="cf">function</span>(p) {</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> wcgs[[p[<span class="dv">1</span>]]]; y <span class="ot">&lt;-</span> wcgs[[p[<span class="dv">2</span>]]]</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  ok <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(x, y)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  pear <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x[ok], y[ok], <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  spea <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x[ok], y[ok], <span class="at">method =</span> <span class="st">"spearman"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Variable_1 =</span> p[<span class="dv">1</span>], <span class="at">Variable_2 =</span> p[<span class="dv">2</span>], <span class="at">n =</span> <span class="fu">sum</span>(ok),</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">Pearson_r =</span> <span class="fu">round</span>(<span class="fu">unname</span>(pear<span class="sc">$</span>estimate), <span class="dv">3</span>),</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">Pearson_p =</span> <span class="fu">signif</span>(pear<span class="sc">$</span>p.value, <span class="dv">3</span>),</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">Spearman_rs =</span> <span class="fu">round</span>(<span class="fu">unname</span>(spea<span class="sc">$</span>estimate), <span class="dv">3</span>),</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">Spearman_p =</span> <span class="fu">signif</span>(spea<span class="sc">$</span>p.value, <span class="dv">3</span>))</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div id="tbl-summary-both" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-layout-align="center">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-summary-both-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
